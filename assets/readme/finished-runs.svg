@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="294" viewBox="0 0 760 294" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<rect x="0.5" y="0.5" width="759" height="293" rx="10" fill="none" stroke="#8b949e" stroke-opacity="0.35"/>
+<text x="24" y="34" font-size="18" font-weight="600" fill="#8b949e">Small ML tasks that finished</text>
+<text x="24" y="56" font-size="13" fill="#8b949e">Out of 10 runs: 5 iris classification + 5 CSV regression, same prompts each time</text>
+<text x="24" y="96" font-size="14" font-weight="600" fill="#8b949e">Before</text>
+<text x="24" y="114" font-size="12" fill="#8b949e">PowerShell, no help</text>
+<rect x="250" y="84" width="420" height="26" rx="5" fill="#8b949e" fill-opacity="0.12"/>
+<rect x="250" y="84" width="294.0" height="26" rx="5" fill="#9aa4ae"/>
+<text x="554.0" y="102" font-size="15" font-weight="700" fill="#8b949e">7 / 10</text>
+<text x="24" y="154" font-size="14" font-weight="600" fill="#8b949e">After, with Git</text>
+<text x="24" y="172" font-size="12" fill="#8b949e">Git Bash + plan</text>
+<rect x="250" y="142" width="420" height="26" rx="5" fill="#8b949e" fill-opacity="0.12"/>
+<rect x="250" y="142" width="336.0" height="26" rx="5" fill="#2f81f7"/>
+<text x="596.0" y="160" font-size="15" font-weight="700" fill="#8b949e">8 / 10</text>
+<text x="24" y="212" font-size="14" font-weight="600" fill="#8b949e">After, without Git</text>
+<text x="24" y="230" font-size="12" fill="#8b949e">PowerShell + bash check + plan</text>
+<rect x="250" y="200" width="420" height="26" rx="5" fill="#8b949e" fill-opacity="0.12"/>
+<rect x="250" y="200" width="378.0" height="26" rx="5" fill="#2ea043"/>
+<text x="638.0" y="218" font-size="15" font-weight="700" fill="#8b949e">9 / 10</text>
+<text x="24" y="276" font-size="12" fill="#8b949e">Local 2B model (MiniCPM5 via Ollama). 10 runs a side is small; the shell errors are the clear change.</text>
+</svg>

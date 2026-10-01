@@ -1,14 +1,8 @@
 # ML Harness
 
-**The layer above the trainer.** ML Harness is a local-first tool that answers
-the question nobody else will answer: should you train a model at all?
+ML Harness is a desktop app that helps you decide whether to train a machine learning model, and then does the work it decided on. You describe what you want in plain words. It looks at your data, measures where you stand today, and tells you the cheapest thing that will actually work. Often that is a better prompt or a small script, not a fine-tune.
 
-Most people who think they need a fine-tune need a better prompt, a retrieval
-step, or an evaluation loop run a hundred times. Telling them that honestly —
-before they spend a month and a GPU bill — is the point of this product. When
-training genuinely is the right call, we do not run it ourselves: we hand
-execution to a pinned backend (Unsloth, Hugging Face peft+trl, MLX-LM) and put
-our effort into the decision, the evidence behind it, and making it legible.
+It runs on your own computer, with a model you choose (a local one through Ollama, or any OpenAI-compatible API). Your files stay on your machine.
 
 ## ⬇️ Download
 
@@ -20,157 +14,149 @@ our effort into the decision, the evidence behind it, and making it legible.
 
 | | Step | What to do |
 |---|---|---|
-| 1️⃣ | **Download** | Click the blue **Windows installer** button above. You get one file of about 35 MB. |
-| 2️⃣ | **Install** | Double-click it. The installer is not signed yet, so Windows may say *"Windows protected your PC"*: click **More info**, then **Run anyway**. It installs for your user only and needs no admin rights. |
-| 3️⃣ | **Open** | Click the **ML Harness** icon on your desktop or in the Start menu. The first launch builds its own Python, which needs internet (11 seconds on a clean test machine). After that it opens in seconds. |
+| 1️⃣ | **Download** | Click the blue **Windows installer** button above. It is one file of about 35 MB. |
+| 2️⃣ | **Install** | Double-click it. The installer is not signed yet, so Windows may say *"Windows protected your PC"*. Click **More info**, then **Run anyway**. It installs for your user only and needs no admin rights. |
+| 3️⃣ | **Open** | Click the **ML Harness** icon on your desktop or in the Start menu. The first launch sets up its own Python, so it needs internet. On a clean test machine that took 11 seconds. |
 | 4️⃣ | **Connect a model** | ML Harness ships no model. Click **Connect a model** and pick one your local [Ollama](https://ollama.com/download) already has, or paste an OpenAI-compatible endpoint and key. A key goes to the Windows credential store, never to a file. |
-| 5️⃣ | **Ask** | Type what you want in your own words. For example: *"Train a logistic regression on scikit-learn's iris dataset with an 80/20 split and tell me the test accuracy"*, or *"I have support tickets in this folder and want a model to route them the way my team does."* |
+| 5️⃣ | **Ask** | Type what you want. For example: *"Train a logistic regression on scikit-learn's iris dataset with an 80/20 split and tell me the test accuracy."* |
 
-**You need:** 🪟 Windows 10 or 11, 64-bit · 💾 free disk space for the app and any model you add · 🌐 internet on the first launch.
-**Good to have:** 🦙 [Ollama](https://ollama.com/download) for a free local model · 🔧 [Git for Windows](https://git-scm.com/download/win), so small ML tasks run in Git Bash (without it they run in PowerShell) · 🎮 an NVIDIA GPU if you will train.
+**You need:** 🪟 Windows 10 or 11, 64-bit · 🌐 internet on the first launch.
+**Good to have:** 🦙 [Ollama](https://ollama.com/download) for a free local model · 🔧 [Git for Windows](https://git-scm.com/download/win), because small tasks run a little better in Git Bash · 🎮 an NVIDIA GPU if you plan to train.
 
-🔐 **Check the file.** Each release lists the SHA-256 of every download. In PowerShell:
-`Get-FileHash .\ML-Harness-Setup-0.1.0-x64.exe -Algorithm SHA256`
-
+🔐 **Check the file.** Each release lists the SHA-256 of every download. In PowerShell: `Get-FileHash .\ML-Harness-Setup-0.1.0-x64.exe -Algorithm SHA256`
 🧹 **Uninstall.** Windows Settings → Apps → ML Harness → Uninstall.
 
-📦 **Source.** The public code is at [naidx0/ml-harness-app](https://github.com/naidx0/ml-harness-app).
+## See it run
 
-## What runs today
+[![ML Harness finishing the iris task: it writes train.py, runs it, and reports accuracy 1.0](assets/readme/demo-poster.jpg)](assets/readme/demo.mp4)
 
-A diagnosis-and-build harness for two domains, with a measurement tier and an
-eval loop. One chat box (React over Vite) on a FastAPI engine, bring-your-own
-model: a local Ollama or any OpenAI-compatible endpoint, bound to loopback with
-a bearer token.
+A 36-second recording of the real app (click it to play). One plain-language ask, in Full mode. ML Harness writes `train.py` into the project folder, runs it, and reports the accuracy the script printed. The model's thinking time is sped up six times; the whole turn took about two minutes on a small local model (MiniCPM5, 2B, on one RTX 2060 Super).
 
-- **Three ledgers, one engine.** Machine learning
-  (`docs/diagnosis_engine.yaml`) and AI engineering
-  (`docs/ledgers/ai_engineering.yaml`) each declare five gates; harness design
-  (`docs/ledgers/harness_design.yaml`) declares six. A gated outcome is
-  reachable only through its own ledger's gates, enforced by tests — **an
-  asserted number opens nothing.**
-- **93 registered tools in 15 capability packs.** Each declares one spec and
-  gets two faces from it: the JSON schema the model is given and the button a
-  person clicks. That count is checked against the registry by a test, because
-  a number retyped into a README goes stale at the next commit.
-- **Every displayed number carries its provenance** — measured, stated,
-  inferred or defaulted — and the interface shows which.
+## Why this exists
 
-## Two things a visitor can read
+Most people who think they need to fine-tune a model don't. They need a clearer prompt, a few good examples, a way to look things up (retrieval), or simply a way to measure whether the model is already good enough. Fine-tuning costs days, a GPU and a pile of data, and when it is the wrong fix it fails quietly: the numbers look fine and nothing improves.
 
-**[The judge record](docs/judge_runs/THE-JUDGE.md).** What a model-as-judge was
-asked, what it answered, and every time its answer was withdrawn. It is kept
-because the withdrawals are the useful part.
+Good training tools already exist. [Unsloth](https://unsloth.ai/) and Hugging Face's peft and trl will train a model for you, fast and for free. But every one of them starts after you have decided to train. None of them asks whether you should.
 
-**[The sentinel-N result](docs/judge_runs/2026-09-05-sentinel-n-result.md).**
-The judge was given 72 rewrites that are not degradations at all. It kept 19,
-and **every one of the 19 justified itself with a clause the rewrite still
-contains word for word** — one citing a dropped condition where the two texts
-differ by a single full stop. Deciding the same question by rule instead
-refused 106 non-degradations at zero model calls.
+ML Harness is the step before that. It asks the questions an ML engineer would ask, gets the answers by measuring rather than guessing, and only lets a training run happen when the cheaper options have been tried. When training is the right call, it hands the job to one of those existing trainers instead of reinventing one.
 
-**[Two hundred rows through the wired pipeline](docs/judge_runs/2026-09-05-two-hundred-rows-prereg.md).**
-Preregistered before any call — what would be counted, what would stop the run,
-and the cost — then run on one consumer card and written up in the same file.
-**200 generated, 0 generator failures, 12 refused by the validator, 192 reaching
-the judge, 7 refused by the two gates.** The registered prediction that the
-gates would not fire is refuted in its own words. Reading all 68 kept rows that
-add a content word: **41 lies blocked against 22 genuine degradations lost, a
-ratio of 1.86** — the line for keeping the rule was 0.33, set before the
-reading.
+## How it works
 
-## The library lifted out of it
+You talk to it like a chat assistant. Behind the chat, every answer goes through the same path:
 
-Four checks this harness enforces on itself, extracted so they can be used
-without it: **[four-asserts](https://github.com/naidx0/four-asserts)** — as many
-things ran as were discovered; the resource had a named holder that was still
-alive; the artifact has an identity that outlives its bytes; the verdict's
-reason survives a rule.
+```mermaid
+flowchart LR
+    A["Your ask,<br/>in plain words"] --> B["Look at your data<br/>count rows, find leaks"]
+    B --> C["Measure today<br/>score the model you have<br/>and a trivial baseline"]
+    C --> D{"Five gates"}
+    D -- "a cheaper fix exists" --> E["Do that instead<br/>prompt, examples,<br/>retrieval, smaller model"]
+    D -- "something is missing" --> F["Say exactly what<br/>and how to get it"]
+    D -- "all five pass" --> G["Train with a<br/>pinned recipe"]
+    G --> H["Score the result<br/>against the baseline"]
+```
 
-Across 25 agent and evaluation frameworks read on 2026-09-05, all four together
-were present in **0 of 25**. Adding a tool to a builder is about four lines;
-adding all four asserts to a server and its runner measured eight.
+### The five gates
 
-## Run it locally
+A training run is only reachable after all five pass. Each one exists because skipping it is a common, expensive mistake.
+
+| Gate | What it checks | Why it matters |
+|---|---|---|
+| **Eval set** | You have at least 30 examples with known right answers. | Without them you cannot tell if training helped. |
+| **Baseline measured** | The current model and a trivial baseline (always guess the most common answer) have been scored on those examples. | If the trivial guess already wins, a fine-tune is not the problem to solve. |
+| **Prompt tried** | Several prompt versions and few-shot examples were tried first. | A better prompt is minutes of work. Training is days. |
+| **Retrieval considered** | Whether the model is missing *knowledge* (look it up) or *behaviour* (train it). | Training does not reliably teach facts. Retrieval does. |
+| **Cheaper model considered** | Whether a smaller or different model already does the job. | The cheapest model that passes is the one you want. |
+
+The gates are not a prompt the model could talk its way around. They live in a rules file (`docs/diagnosis_engine.yaml`), the engine checks them, and the tests make sure no training outcome can be reached any other way. A number the model merely claims does not open a gate. Only a measurement does.
+
+The same engine reads two more rule files for other kinds of problem: `docs/ledgers/ai_engineering.yaml` for apps built on a model (agents, retrieval, prompts), with five gates of its own, and `docs/ledgers/harness_design.yaml` for agent harness design, with six.
+
+### Small tasks: it just does them
+
+Not every ask needs a diagnosis. "Train a logistic regression on iris and tell me the accuracy" is a five-line script. For asks like that, ML Harness uses a short three-step plan and does the work itself:
+
+```mermaid
+flowchart LR
+    A["Ask"] --> B["Plan<br/>3 steps"]
+    B --> C["Write train.py<br/>in your project folder"]
+    C --> D["Run it in the<br/>project's own Python"]
+    D --> E["Reply with the number<br/>the script printed"]
+```
+
+Three details make this reliable on a normal Windows PC:
+
+- **The right shell.** Small local models write Linux-style shell commands. Windows runs PowerShell, which rejects most of them. So ML Harness runs commands in Git Bash when Git for Windows is installed. Without Git, it catches the Linux-style commands before PowerShell sees them: it writes the file the model meant to write, and translates or explains the rest.
+- **Its own Python per project.** Each project gets a private Python environment with numpy, pandas and scikit-learn already in it. Nothing the model installs touches your system Python.
+- **Numbers come from the run.** The reply reports what the script printed, and the app records where every number came from (measured, stated, or assumed) and shows it.
+
+### Before and after
+
+These are from the same two tasks run 10 times on each setup (5 iris classification runs, 5 linear regression runs on a CSV), with a small local model.
+
+![Small ML tasks that finished: before 7 of 10, after with Git 8 of 10, after without Git 9 of 10](assets/readme/finished-runs.svg)
+
+![Failed shell commands per run: before 2.0, after with Git 0.0, after without Git 0.5](assets/readme/shell-errors.svg)
+
+Ten runs a side is a small sample, so the finish counts are a modest gain. The shell errors are the clear change: the commands that used to fail now run. Each fix was also tried on its own, and each did worse than the baseline alone (between 2 and 5 of 10). Only the combinations above were kept.
+
+On a clean Windows machine with no Python, no Git and no Ollama installed, the released installer installed, opened from its desktop icon in 11 seconds, connected a local model, and finished the iris task in 129 seconds.
+
+## How it is put together
+
+```mermaid
+flowchart TB
+    W["Desktop window<br/>(Tauri)"] --> E["Engine on your machine<br/>FastAPI, 127.0.0.1 only,<br/>token required"]
+    E --> M["Your model<br/>Ollama or an<br/>OpenAI-compatible API"]
+    E --> T["93 tools<br/>measure data, score models,<br/>run commands, build sandboxes"]
+    E --> R["Rules file<br/>the five gates"]
+    E --> S["Pinned training recipes<br/>Unsloth, peft + trl, MLX-LM"]
+    E --> D[("Local database<br/>every fact with its source")]
+```
+
+- **Local first.** The engine listens only on your own machine and asks for a token on every request. API keys go to the Windows credential store, never into the database.
+- **Bring your own model.** The harness is the reasoning around the model, not the model. Swap models without changing anything else.
+- **93 registered tools in 15 capability packs.** Each tool is described once and gets two faces from that description: the schema the model calls and the button a person clicks. A test checks that count against the code.
+- **Pinned recipes.** Training runs through recipe folders with locked dependencies, and the setup refuses to say "ready" unless the GPU build of PyTorch is really installed. On Windows the default PyTorch download is CPU-only, and that mistake is otherwise silent.
+
+## How it compares
+
+| | Chat assistant | Trainer (Unsloth, AutoTrain) | Notebook | **ML Harness** |
+|---|---|---|---|---|
+| Asks whether you should train | Sometimes, from memory | No, it starts after that decision | Up to you | **Yes, and measures it** |
+| Runs code on your machine | Usually not | Training only | Yes, you write it | **Yes, it writes and runs it** |
+| Numbers you can trust | It may invent them | Training metrics | Yours | **Each number shows its source** |
+| Stops you from training too early | No | No | No | **Five gates** |
+| Trains when it should | No | Yes | If you write it | **Yes, through those trainers** |
+
+## Limits
+
+- **Windows first.** It is built and tested on Windows. Apple Silicon and AMD GPU paths are best effort until someone runs them there.
+- **Unsigned installer.** Windows SmartScreen will warn until it is code-signed.
+- **Generated data is treated with suspicion.** Rows the model generates can never open a gate, and cannot be trained on until a person has checked a sample. The harness cannot tell a right generated answer from a wrong one by itself.
+- **Training needs a recipe environment.** Real training needs a recipe's environment built first (one command, below), and an NVIDIA GPU.
+
+## Run from source
 
 ```powershell
 python -m pip install -e ".[test]"
 .\start.ps1                          # engine and UI; reuses what is already right
 .\start.ps1 --status                 # say what is running, change nothing
 .\start.ps1 --stop                   # stop the engine on --port, and nothing else
-python scripts/gate.py               # the suite, asserting ran == discovered
-python scripts/build_recipe_env.py --all          # the pinned per-recipe environments
+python scripts/gate.py               # the test suite, asserting ran == discovered
+python scripts/build_recipe_env.py --all          # build the pinned recipe environments
 python scripts/build_recipe_env.py --all --check  # verify them, build nothing
+mlh doctor                           # what this installation can see, and what it still needs
 ```
 
-The engine is detached, so it outlives the terminal you started it from — which
-is why `--stop` is here beside `--start` rather than left for you to find. It
-stops the one engine it can identify on that port and says which pid it stopped;
-if something else is listening there it refuses and terminates nothing, because
-stopping a process this launcher did not start is a decision for the person who
-did.
+Under the launcher the engine is `python -m uvicorn app.main:app --host 127.0.0.1 --port 8078`. The engine keeps running after you close the terminal, which is why `--stop` exists; it only stops the engine it started.
 
-Under the launcher the engine is
-`python -m uvicorn app.main:app --host 127.0.0.1 --port 8078`, and that port is
-checked against `app.config.DEFAULT_PORT` by a test.
+`scripts/gate.py` runs the whole suite and then checks three things the plain test runner cannot: that every discovered test actually ran, that no test file failed to import, and that the run reached its final verdict.
 
-### Then connect a model — the harness ships none
+## Further reading
 
-This is a real step and it used to be missing from this page. The engine starts,
-every check goes green, and the product can diagnose nothing until you lend it a
-model. The window says so: with no connection the composer carries *"No model
-connected — the harness thinks with a model you lend it"* over a button, and the
-model selector beside it reads **Connect a model**. Two roads, equal weight —
-anything your local Ollama already has, in one click, or an OpenAI-compatible
-endpoint and a key. The key goes to the OS keychain and never into SQLite.
+- [docs/VISION.md](docs/VISION.md): the longer story of what this is for.
+- [docs/how-to-verify.md](docs/how-to-verify.md): the rules the project holds its own checks to.
+- [The judge record](docs/judge_runs/THE-JUDGE.md): what happened when a model was used to grade other models, including every time its grade was withdrawn.
+- [four-asserts](https://github.com/naidx0/four-asserts): four of this project's self-checks, packaged as a small library.
 
-Without the window:
-
-```powershell
-mlh doctor                           # what this installation can read, and what it still needs
-```
-
-A fresh install answers `? model  none connected - this product cannot diagnose
-anything yet`. That row is a **question, not a fault** — it does not make
-`doctor` exit non-zero, because an exit code that is 1 for every new install is
-an exit code nothing can be gated on. It was added on 2026-09-10 after a
-Windows Sandbox run proved a stranger could install this, see five green rows,
-and never be told a model was needed.
-
-The gate is the check that must pass before anything is committed. It runs the
-suite and then asserts three things the runner cannot: that as many tests ran as
-were discovered, that no module failed to import, and that the run reached its
-own verdict line.
-
-## Limitations, stated rather than discovered
-
-- **Generated rows are the most dangerous thing in here** and are treated that
-  way: they cannot open a gate and cannot be trained on unverified. What is not
-  claimed is that the harness can tell a right generated answer from a wrong
-  one — it cannot, which is exactly why a person reads the sample.
-- **Only one recipe runs without a built environment**, and it trains nothing.
-  Real training depends on pinned per-recipe environments you build first —
-  now one command rather than four retyped out of a comment. Each recipe
-  declares its own build in `recipe.toml` under `[environment]`, and
-  `build_recipe_env.py` executes that declaration and then **imports torch and
-  refuses to say READY unless CUDA is really there**. That check is the point:
-  PyPI's Windows torch wheel is CPU-only, the CUDA build lives only on
-  download.pytorch.org, and installing the wrong one is not an error — you
-  complete every step, see nothing fail, click train, and wait.
-- **The installer is real but unsigned, and there is no cloud execution.** This
-  line used to read *"there is no installer"* and that is no longer true: NSIS
-  builds one, and on 2026-09-10 it was driven in a Windows Sandbox with nothing
-  else on the machine — no Python, no git, no uv — where it installed silently,
-  built its own interpreter, and answered `/health` as a real installed copy.
-  What it is **not** is signed, so SmartScreen will warn. Since 2026-10-01 it is
-  published as a release (see Download above) as well as built locally with
-  `npx tauri build`. Windows is what this
-  is developed and verified on; Apple Silicon and AMD paths are best-effort until
-  someone runs them there.
-- **The trace reader has never been run against a public annotated corpus.**
-
-## The rest of the documentation
-
-`docs/VISION.md` for the full picture, `docs/PHASES.md` for what is being built
-next, `docs/how-to-verify.md` for the laws this repository holds itself to and
-the commit each one was learned in, and `AGENTS.md` for how to work in it.
+MIT licensed.
