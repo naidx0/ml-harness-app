@@ -28,9 +28,9 @@ It runs on your own computer, with a model you choose (a local one through Ollam
 
 ## See it run
 
-[![A judge eval in ML Harness: wrong keeps fall from 19 to 4 out of 72 when the judge's claims are checked against the text](assets/readme/demo-poster.jpg)](assets/readme/demo.mp4)
+[![ML Harness answering an iris task: it writes train.py, runs it and reports the accuracy the script printed](assets/readme/demo-poster.jpg)](assets/readme/demo.mp4)
 
-A 108-second video (click it to play). The first 18 seconds are the real app: one plain-language ask in Full mode, then ML Harness writes `train.py`, runs it, and reports the accuracy the script printed (the model's working time is sped up six times; the whole turn took about two minutes on a 2B local model). The rest walks through a judge eval, explained below.
+A 26-second video (click it to play). The real app on a small local model, with what happens behind each step beside it: it looks at the project, writes `train.py`, runs it in the project's own Python, and answers with the number the script printed. The model's working time is sped up. It ends with the check that keeps its own training data honest, explained in [Checking the judge](#checking-the-judge-a-before-and-after-eval) below.
 
 ## Why this exists
 
