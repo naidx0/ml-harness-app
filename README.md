@@ -28,9 +28,9 @@ It runs on your own computer, with a model you choose (a local one through Ollam
 
 ## See it run
 
-[![ML Harness finishing the iris task: it writes train.py, runs it, and reports accuracy 1.0](assets/readme/demo-poster.jpg)](assets/readme/demo.mp4)
+[![A judge eval in ML Harness: wrong keeps fall from 19 to 4 out of 72 when the judge's claims are checked against the text](assets/readme/demo-poster.jpg)](assets/readme/demo.mp4)
 
-A 36-second recording of the real app (click it to play). One plain-language ask, in Full mode. ML Harness writes `train.py` into the project folder, runs it, and reports the accuracy the script printed. The model's thinking time is sped up six times; the whole turn took about two minutes on a small local model (MiniCPM5, 2B, on one RTX 2060 Super).
+A 108-second video (click it to play). The first 18 seconds are the real app: one plain-language ask in Full mode, then ML Harness writes `train.py`, runs it, and reports the accuracy the script printed (the model's working time is sped up six times; the whole turn took about two minutes on a 2B local model). The rest walks through a judge eval, explained below.
 
 ## Why this exists
 
@@ -100,6 +100,32 @@ These are from the same two tasks run 10 times on each setup (5 iris classificat
 Ten runs a side is a small sample, so the finish counts are a modest gain. The shell errors are the clear change: the commands that used to fail now run. Each fix was also tried on its own, and each did worse than the baseline alone (between 2 and 5 of 10). Only the combinations above were kept.
 
 On a clean Windows machine with no Python, no Git and no Ollama installed, the released installer installed, opened from its desktop icon in 11 seconds, connected a local model, and finished the iris task in 129 seconds.
+
+### Checking the judge: a before-and-after eval
+
+ML Harness can make its own training data. To build preference pairs (a good answer and a worse one, for DPO), a generator writes a deliberately worse version of a real answer, and a judge model decides whether it really is worse in the named way. The judge is the filter: every pair it keeps teaches the trained model to prefer one answer over another. If it keeps a pair where nothing got worse, the training data fills with noise.
+
+So we tested the judge on 72 rewrites that are **not** worse at all: 48 with the final full stop removed, 18 with a number written as a word, 6 with a contraction. The right verdict for every one is DROP.
+
+```mermaid
+flowchart LR
+    A["Real answer"] --> B["Generator<br/>writes a worse version"]
+    B --> C["Judge, 3.7B local model<br/>KEEP or DROP"]
+    C --> D["Wall, no model<br/>is the 'dropped' phrase<br/>still in the rewrite?"]
+    D -- "yes: the reason is false" --> E["Refused, with the<br/>phrase named"]
+    D -- "no" --> F["Training pairs"]
+```
+
+**Before:** the judge alone wrongly kept 19 of the 72. Every one of the 19 gave the same kind of reason, a phrase that was "dropped" but is still in the rewrite word for word. For example, on a rewrite whose only change was a missing full stop, it wrote *"The rewrite drops the 'over 25.00' condition… KEEP"*. The prompt told the judge which kind of damage to look for, and it found that damage whether it was there or not. Asking it more firmly cannot fix a judge that invents evidence.
+
+**The fix:** a short check with no model in it. When a KEEP says a quoted phrase was dropped, search the rewrite for that phrase. If it is there, refuse the verdict and say why. It only ever looks at KEEPs, because a correct DROP often names what was kept ("it keeps the 'usually' qualifier"), and refusing that would punish the judge for being right.
+
+| | Wrong keeps (of 72) | Correct DROPs broken (of 53) | Extra model calls |
+|---|---|---|---|
+| Judge alone | 19 | 0 | 0 |
+| **Judge + wall** | **4** | **0** | **0** |
+
+It misses 4 replies that name no phrase ("drops the final condition"), and the 5-character minimum for a quoted phrase was picked on these same rows, so 15 of 19 is not an out-of-sample score. The rule it led to is the one the app follows everywhere: **a verdict is a yes or no, and the reason shown to you comes from code** (the computed difference between the two texts), never from the judge's own sentence. The full write-up is in [the judge record](docs/judge_runs/THE-JUDGE.md).
 
 ## How it is put together
 
