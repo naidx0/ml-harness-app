@@ -45,7 +45,7 @@ ML Harness is the step before that. It asks the questions an ML engineer would a
 You talk to it like a chat assistant. Behind the chat, every answer goes through the same path:
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Your ask,<br/>in plain words"] --> B["Look at your data<br/>count rows, find leaks"]
     B --> C["Measure today<br/>score the model you have<br/>and a trivial baseline"]
     C --> D{"Five gates"}
