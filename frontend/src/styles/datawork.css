@@ -1,0 +1,357 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE CARVE.
+
+   Every value below is a token from `tokens.css`, which is Graphite
+   transcribed. No literal hexes, no radius off the six-step ramp, and the only
+   literal geometry is the one the book itself fixes: the 3px legend key on
+   `--r-bar` (page 27.1, the one place a radius below 4px survives) and the 6px
+   bar height the budget bar uses on page 24.
+
+   ══ THE HUE BUDGET, COUNTED ═══════════════════════════════════════════════
+
+   Three claims, three hues, and `--viz-1` for the one picture:
+
+     --fits      ONE claim, on the header pill and nowhere else: the leak check
+                 this tool ran over its own two files found nothing AND the two
+                 files account for every row read. It is `ok` in the engine,
+                 which is that conjunction rather than a mood. It is NOT a
+                 claim that a gate opened, and the card says so in ink in its
+                 own section.
+     --wont      ONE claim: they do not. A split that leaks is a failed
+                 artifact, not a successful one with a note.
+     --unknown   Nothing was written. Page 22.2: not a bad answer on the
+                 fits-to-won't scale, a refusal to be on that scale.
+     --viz-1     The held-out share of the split bar. Page 06 exists so that a
+                 picture of a quantity does not spend the verdict budget.
+
+   NOTHING ELSE IS COLOURED. Not the file rows, not the leaked pairs - a red
+   wash behind the pairs would put the verdict hue on eight rows and the pill
+   on one, and page 01's prohibition is exactly about the thing that wins by
+   volume. The pairs are separated by edge and indent, which is how this system
+   already separates the diff gutter and the eval failure rows.
+
+   ══ NOTHING HERE IS --ink-4 ═══════════════════════════════════════════════
+
+   Page 03.3 is a rule and not a preference: --ink-4 measures 2.70:1 dark and
+   2.56:1 light, misses both floors, and its entire permitted use is disabled
+   controls - "not a timestamp, not a unit, not a placeholder, NOT A COUNT".
+   Every count, digest, row index, denominator and unit word on this card is
+   --ink-3 or above. The only --ink-4 is the disclosure chevron, which is
+   chrome inherited from `.runfacts__toggle` and carries no information.
+
+   ══ THE TWO DISTANCES ═════════════════════════════════════════════════════
+
+   `shell.css`'s correction, which `evals.css`, `plan.css` and `retrieval.css`
+   all follow: within a group --sp-8, between sections --sp-16, and no third.
+   Compact is not cramped; the ladder of gaps is what makes a card with five
+   sections read as five things rather than a form.
+
+   ══ AND THE HEAD IS STICKY, FOR THE REASON retrieval.css's IS ═════════════
+
+   `App.tsx` scrolls the thread to `scrollHeight` when items change, so a card
+   taller than the viewport hands the reader its BOTTOM. On this card the
+   bottom is two disclosures; the thing a person needs is the pill saying
+   whether what we just wrote to their disk is usable. A sticky head means that
+   answer is on screen wherever the scroll lands.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.card--carve { border-radius: var(--r-18); }
+.card--carve > .card__body { padding: var(--sp-16); }
+.card--carverefusal { border-color: var(--unknown-edge); }
+.card--carverefusal > .card__body { padding: var(--sp-12); }
+
+.card--carve > .card__body > .card__text { margin-bottom: var(--sp-16); }
+
+/* Wrapping, so a long `into` path in the section hint cannot push the head
+   wider than the column and leave the page scrolled sideways. */
+.card--carve .plansec__head { flex-wrap: wrap; }
+.card--carve .plansec__hint { word-break: break-all; }
+
+.card--carve > .card__head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-2);
+  border-radius: var(--r-18) var(--r-18) 0 0;
+}
+
+/* ══ THE SPLIT BAR ═════════════════════════════════════════════════════════
+   One picture of one quantity: how much of what was read is now held out.
+   6px, the height the budget bar uses on page 24, on --r-bar. */
+
+.carvebar { display: flex; flex-direction: column; gap: var(--sp-8); }
+
+/* THE TRACK IS `--bg-base` ON `--edge-faint`, WHICH IS WHAT `.scale__track`
+   AND `.rrow__track` ALREADY ARE. The first cut used `--surface-4`, and a
+   screenshot in LIGHT caught it: `--surface-4` sat at the top of the light ramp
+   and the card beneath it was the same tone, so the 92% of the bar that is the
+   training half vanished into the card and the picture became a floating violet
+   stub with no scale behind it. (It read `#FFFFFF` here until 2026-09-05; since
+   fa1b9f7 the light ramp is cream and tops out at `#FFFEFC`, which changes the
+   colour and not the collision.) Law five is
+   that light is a separately tuned instrument, not an inverted screenshot, and
+   this is the shape that reads in both. */
+.carvebar__track {
+  position: relative;
+  display: block;
+  height: 6px;
+  border-radius: var(--r-bar);
+  background: var(--bg-base);
+  border: 1px solid var(--edge-faint);
+  overflow: hidden;
+}
+
+/* POSITIONED BY A FRACTION, NOT A PERCENTAGE STRING. `EvalCard`'s ScoreScale
+   records the reason: a carve of every row is a real case, and the arithmetic
+   belongs in one place rather than in every caller. */
+.carvebar__held {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--p) * 100%);
+  min-width: 1px;
+  border-radius: var(--r-bar);
+  background: var(--viz-1);
+}
+
+.carvebar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4) var(--sp-8);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+.carvebar__key {
+  width: 8px;
+  height: 3px;
+  border-radius: var(--r-bar);
+  flex: 0 0 auto;
+}
+.carvebar__key[data-part='eval'] { background: var(--viz-1); }
+/* Same correction as the track above, and the key has to match the thing it is
+   the key FOR: an outline rather than a fill, because the training half of the
+   bar is the empty part of the track. */
+.carvebar__key[data-part='train'] {
+  background: var(--bg-base);
+  box-shadow: inset 0 0 0 1px var(--edge-strong);
+}
+
+.carvebar__word { color: var(--ink-3); }
+.carvebar__n { color: var(--ink-1); font-size: var(--t-10); }
+.carvebar__of { margin-left: auto; }
+
+/* ══ WHAT IT WROTE ═════════════════════════════════════════════════════════
+   Two rows, 26px, the thread's own row height. A grid rather than flex so the
+   two files' counts and digests line up in columns a reader can scan down. */
+
+.wrote {
+  margin-top: var(--sp-8);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto auto;
+  align-items: center;
+}
+
+.wrote__row {
+  display: contents;
+}
+
+/* NO COLUMN GAP, AND THE SPACING IS PADDING INSIDE THE CELLS INSTEAD. A
+   screenshot in light caught this: `display: contents` means the row's rule has
+   to be drawn per cell, and a column gap leaves an unpainted 8px in the middle
+   of it, so a 26px row reads as two rules that do not meet. Padding keeps the
+   ladder of gaps and keeps the rule continuous. */
+.wrote__row > * {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  padding-right: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+}
+.wrote__row > *:last-child { padding-right: 0; }
+
+.wrote__role {
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.wrote__name { color: var(--ink-1); overflow: hidden; text-overflow: ellipsis; }
+.wrote__rows { color: var(--ink-1); justify-content: flex-end; }
+.wrote__unit { color: var(--ink-3); }
+.wrote__bytes { color: var(--ink-3); justify-content: flex-end; }
+.wrote__sha { color: var(--ink-3); }
+
+/* ══ THE LEAKED PAIRS ══════════════════════════════════════════════════════
+   The rows `ResultView` replaces with "3 items, not shown here". Two texts,
+   one above the other, because the claim is that they are the same row and the
+   reader is the one deciding whether they agree.
+
+   NO HUE. See the header: a red wash here would put the verdict colour on
+   every pair and the pill on one, and the wash would win by volume. The
+   separation is an indent and a hairline, which is how the eval card already
+   separates its failure rows. */
+
+.leaks {
+  margin-top: var(--sp-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.leakpair {
+  border-left: 1px solid var(--edge);
+  padding-left: var(--sp-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.leakpair__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-8);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+.leakpair__k { color: var(--ink-3); }
+.leakpair__kind { color: var(--ink-2); }
+.leakpair__sim { color: var(--ink-1); }
+.leakpair__where { color: var(--ink-3); margin-left: auto; }
+
+.leakpair__text {
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  word-break: break-word;
+}
+
+/* ══ WHAT THIS DID NOT DO ══════════════════════════════════════════════════
+   In ink at --t-11, above the fold of any disclosure. These are the two
+   sentences `ResultView` folds behind "show all 654 characters", and they are
+   the ones that keep the five-gate promise. --ink-2 rather than --ink-3: they
+   are the argument of the card, not an aside to it. */
+
+.carvenot {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+.carvenot:last-child { margin-bottom: 0; }
+
+/* The disclosures' value column can hold a whole sentence here - `how` is the
+   selection rule written out - so it wraps rather than stretching the grid. */
+.card--carve .runfacts__v { word-break: break-word; }
+.card--carve .runfacts__sum { color: var(--ink-3); }
+
+/* ══ AND THE ROW TEXT IS DATA ══════════════════════════════════════════════
+   `app/tools/context.py`'s envelope: role `data`, `trusted: false`, and a
+   `handling` sentence. This is the first surface in the product that draws
+   one, so the side label sits on the row itself rather than in a caption -
+   what a person is reading is content out of their own file, and the flag for
+   anything in it addressed at a model is beside it rather than in a note.
+
+   NO HUE ON THE FLAG EITHER. It is a report about somebody's data, not a
+   verdict about their run, and page 01's prohibition is about the thing that
+   would win by volume. --ink-2 and an indent carry it. */
+
+.leakpair__side {
+  display: inline-block;
+  min-width: 34px;
+  margin-right: var(--sp-6);
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: var(--t-10);
+}
+
+.leakpair__text--absent { color: var(--ink-3); }
+.leakpair__cut { color: var(--ink-3); }
+
+.leakpair__flag {
+  margin: var(--sp-2) 0 0 calc(34px + var(--sp-6));
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+/* The provenance tag on a pair's head is a claim about the SIMILARITY, which
+   is the only number on that row, so it sits beside it rather than at the end.
+   `provenance.css` owns the tag itself; this only places it. */
+.leakpair__head > .tag { flex: 0 0 auto; }
+
+
+/* ── Amplified rows ───────────────────────────────────────────────────────
+   Phase 2's card, and the one design decision on it that is not a preference:
+   THERE IS NO GREEN HERE. `CarveCard`'s header records why - a green pill on a
+   card that just wrote a file reads as "this is done", and on a file of
+   generated rows that reading is the exact mistake this whole phase exists to
+   prevent. The only hue is --viz-1 on the bar, which is a quantity, and --wont
+   on a checked sample that found wrong rows, which really is a failure. */
+.card--synth { border-radius: var(--r-18); }
+.card--synth > .card__body { padding: var(--sp-16); }
+.card--synth > .card__body > .card__text { margin-bottom: var(--sp-12); }
+
+/* The two sentences that are never a disclosure. Ink, not colour: they are
+   what is TRUE about this file, not a verdict on it. */
+.synth__laws {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  padding: var(--sp-10) var(--sp-12);
+  margin-bottom: var(--sp-16);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+}
+.synth__law {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-8);
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+.synth__law > svg { flex: 0 0 auto; margin-top: 2px; color: var(--ink-3); }
+.synth__law code { color: var(--ink-1); }
+
+/* One bar, one series: how much of the written file is distinct source rows.
+   It is drawn as the SOURCE inside the WRITTEN rather than as two segments,
+   because two segments would read as a split and nothing here was split. */
+.synth__bar {
+  height: 8px;
+  border-radius: var(--r-4);
+  background: var(--surface-3);
+  overflow: hidden;
+  margin-bottom: var(--sp-10);
+}
+.synth__source {
+  display: block;
+  height: 100%;
+  width: calc(var(--p) * 100%);
+  background: var(--viz-1);
+}
+.synth__note {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+.synth__note--wont { color: var(--wont); }
+.synth__next {
+  margin: var(--sp-16) 0 0;
+  padding-top: var(--sp-10);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+.synth__next strong { color: var(--ink-1); font-weight: 550; }

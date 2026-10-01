@@ -1,0 +1,153 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Root rules, transcribed from Graphite's "RESET + PAGE CHROME" block.
+
+   THE AMBIENT WASHES ARE GONE. The old ground carried three radial gradients,
+   because DESIGN_SYSTEM §2.9 asked for them. Graphite deletes them and states
+   why: the purple and blue visible in the Codex reference screenshots is the
+   desktop WALLPAPER behind the window, not the application. There are no
+   gradients in Codex's chrome and there are none here. The book calls this
+   "the largest single visual change and the one that makes the product read as
+   an instrument rather than a landing page".
+
+   The ground also loses its blue-violet cast. #0b0c10 became #0D0D0F: a tinted
+   ground makes every grey on top of it slightly wrong and quietly costs the
+   accent some of its distinctness.
+   ───────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+:root {
+  min-height: 100%;
+  /* Flat. One colour. No gradient, no attachment trick, nothing behind the
+     window but the window's own ground. */
+  background: var(--bg-ground);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-base);
+  color: var(--ink-1);
+  font-family: var(--font-sans);
+  font-size: var(--t-13);
+  line-height: var(--lh-13);
+  font-weight: 450;
+  letter-spacing: 0;
+  /* NO `-webkit-font-smoothing: antialiased` HERE, AND THAT IS THE WHOLE
+     ANSWER TO "IT LOOKS BLURRY". Max, 2026-09-14: "make it all more HD,
+     sometimes the text resolution looks blurry."
+
+     This line was on `body`, so every glyph in the application inherited it.
+     WebView2 is Chromium, and Chromium's default on Windows is DirectWrite
+     ClearType: subpixel antialiasing that samples each pixel's red, green and
+     blue stripes independently, giving roughly three times the horizontal
+     resolution for placing a stem, plus gamma-corrected stem darkening. Blink
+     maps `antialiased` to grayscale AA - ONE sample per pixel - so the
+     declaration threw away two thirds of the horizontal resolution Windows was
+     already giving us, and skipped the stem darkening, which is why the result
+     reads both softer AND thinner. That is his description exactly.
+
+     It is a macOS habit. There it fixes a real over-darkening; here it costs
+     resolution and buys nothing, and it gets copied into Windows codebases
+     because it looks right on the machine it was written on. Nothing else was
+     under-resolved: DPI awareness is per-monitor V2 (set at runtime by tao
+     before any window exists), the window is not transparent, there is no zoom
+     or root scale, and the type scale is all-integer pixels. */
+  font-feature-settings: "ss01" 1;
+}
+
+::selection { background: var(--selection-bg); color: var(--ink-1); }
+
+/* Mono carries four things and nothing else: numbers that are compared or
+   change, identifiers a user might copy, log and code content, and the verdict
+   and provenance badges. Prose is never mono. */
+.mono, code, pre, .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+}
+.num { font-variant-numeric: var(--num); }
+
+/* ── Icons ────────────────────────────────────────────────────────────────
+   ONE stroke weight for the whole product, set here rather than per glyph so
+   it cannot drift. Colour is inherited, which is what lets the same glyph sit
+   in a rail at --ink-3, on a tool row at --fits, and inside the filled send
+   button at --accent-on-solid. */
+svg { display: block; }
+/* SIZE IS SET BY THE ROW, NOT BY THE GLYPH — Graphite page 09, and until now
+   this rule said the opposite of what it did.
+
+   `.i` carried `width:16px;height:16px`. CSS beats a presentational attribute,
+   so every `<Icon size={12}>` and `<Icon size={14}>` in the product rendered at
+   16px and the `size` prop did nothing anywhere. MEASURED in the running app:
+   a tool row's 14px glyph came back 16x16. Page 21's eighth rule is that exact
+   failure by name — "No icon above 14px. The row is 26px. A 16px glyph in it is
+   a row that is mostly icon, and the whole stack starts to look like a
+   toolbar."
+
+   The width and height now come from the attributes `Icon` always writes, so a
+   call site's size is the rendered size. `.i` keeps what is genuinely one
+   decision for the whole product: the stroke. The `.i-*` classes below still
+   work for markup that sets no attributes, which is how the brand book's own
+   HTML is written. */
+.i {
+  flex: 0 0 auto;
+  stroke: currentColor; fill: none; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.i-12 { width: 12px; height: 12px; }
+.i-14 { width: 14px; height: 14px; }
+.i-18 { width: 18px; height: 18px; }
+.i-20 { width: 20px; height: 20px; }
+
+/* ── Placeholders ─────────────────────────────────────────────────────────
+   The hard rule made visible. Anything the engine has not computed yet is
+   written in angle brackets with a dotted underline, so it can never be
+   mistaken for a measurement. It is never a plausible fiction and it is never
+   allowed to look like one. */
+.ph {
+  color: var(--ink-2);
+  border-bottom: 1px dotted var(--edge-strong);
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────────
+   A double ring, so it stays visible over any surface including a filled
+   accent button. Never removed, never replaced by a colour change alone: a
+   six-hour run is supervised with keys, not with a mouse. */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent);
+  border-radius: inherit;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────────── */
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--r-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+.scroll-y { overflow-y: auto; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────
+   Nothing moves that is not data. The one perpetual animation is the running
+   dot; under reduced motion it goes solid and the elapsed timer carries
+   "alive" through changing content instead. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

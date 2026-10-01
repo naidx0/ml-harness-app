@@ -1,0 +1,91 @@
+# A recipe is a directory the harness owns. `docs/ARCHITECTURE.md` section 4.11.
+#
+# This one is real. It drives Hugging Face `transformers` + `peft` + `trl` and
+# writes a LoRA adapter to disk. We do not write a trainer - Unsloth already
+# shipped a free local one across every accelerator vendor and a slower copy of
+# a free thing is not a business - so this file names a backend and supervises
+# it (`docs/VISION.md`, "What we do not build").
+#
+# peft+trl first rather than Unsloth because it is the portable reference and
+# the correctness oracle: it installs from one index on Windows, Linux and Mac,
+# and it is the thing an Unsloth recipe would later have to agree with.
+# Unsloth's own pins (`trl<=0.24.0`, `transformers<=5.5.0`) mean the two cannot
+# share an environment, which is why every recipe gets its own.
+#
+# The environment is pinned in `requirements.lock` and lives in this
+# directory's own `.venv`. `entrypoint.py` refuses to train outside it rather
+# than silently using whatever the harness happens to have imported.
+#
+# ## WHY THIS RECIPE DECLARES BOTH `train` AND `eval`
+#
+# It is the same declaration twice and it is one decision: **the thing that
+# scores an adapter has to be the environment that made it.** Every tool in
+# this harness that can put text in front of a model declares `providers`, and
+# `app/providers` has exactly two kinds of connection - an OpenAI-compatible
+# endpoint and Ollama. A LoRA adapter is neither, so nothing outside a sandbox
+# can load one. What a sandbox already has is the pinned environment that
+# trained it: the same 45 locked requirements, the same interpreter, `peft` and
+# `transformers` among them. Adding `eval` here is what lets
+# `app/tools/training.py::score_the_adapter` ask `run_in_sandbox` to score the
+# adapter where it was made - `app/jobspec.py` refuses a kind the recipe did
+# not declare, and that refusal was the whole blocker.
+#
+# A recipe that declared `eval` and could only train would be worse than one
+# that declared nothing, so `entrypoint.py` implements the kind rather than
+# accepting it. What `eval` does NOT do is grade: it generates one answer per
+# row and writes them to `predictions.jsonl`, and the harness grades them with
+# `app/tools/evals.py::grade` - the same function, on the same rows, that
+# graded the baseline. Two graders would be two instruments and the comparison
+# would mean nothing.
+
+name = "hf-peft-lora"
+kinds = ["train", "eval"]
+entrypoint = "entrypoint.py"
+description = "LoRA supervised fine-tune driven through Hugging Face peft + trl, in this recipe's own pinned virtualenv, and the eval that scores what it trained inside the same environment."
+
+# ## THE KNOBS, DECLARED WHERE BOTH READERS CAN SEE THEM
+#
+# These are the values `entrypoint.py` applies when a job.json does not name
+# them, and they are here rather than only in the Python because a SECOND
+# reader needs them: the journey overview offers them into the step's form, so
+# a person can see what LoRA rank and learning rate their run will use and
+# change either, instead of discovering the knobs exist by reading a trainer.
+#
+# One copy. `entrypoint.py` reads this table and falls back to the same
+# literals if it is missing, so a recipe.toml without it trains identically -
+# and a value tuned here moves both readers at once, which a copy in the
+# engine would not.
+[defaults]
+lora_r = 16
+lora_alpha = 32
+lora_dropout = 0.05
+learning_rate = 2e-4
+max_seq_len = 512
+max_steps = 20
+
+# ## HOW THIS RECIPE'S ENVIRONMENT IS BUILT, DECLARED RATHER THAN DESCRIBED
+#
+# Every recipe used to carry these steps as prose in its `requirements.lock`
+# header, in three different phrasings, and a newcomer had to read a comment and
+# retype four commands per recipe. Nothing checked the prose, and one of the
+# three said python 3.12 for an environment that is 3.11.15.
+#
+# `scripts/build_recipe_env.py` executes what is below, so the instructions and
+# the thing that runs them cannot drift.
+#
+# `verify` is the part that matters and it is not decoration. PyPI's torch wheel
+# for Windows is CPU-only; the CUDA build only exists on download.pytorch.org.
+# A person who gets the wrong one COMPLETES EVERY SETUP STEP without an error
+# and then trains at a crawl - so the builder imports torch at the end and
+# refuses to call the environment ready unless CUDA is really there.
+[environment]
+python = "3.11"
+
+[[environment.before_lock]]
+requirement = "torch==2.6.0"
+index_url = "https://download.pytorch.org/whl/cu124"
+why = "the CUDA build of torch exists only on this index; PyPI's Windows wheel is CPU-only and fails silently by being slow"
+
+[environment.verify]
+import_module = "torch"
+expect_cuda = true

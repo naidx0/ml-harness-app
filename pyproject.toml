@@ -1,0 +1,119 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-harness"
+version = "0.1.0"
+description = "Local-first educational ML experiment tracker"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "markdown>=3.5",
+    # `python-multipart` WAS HERE AND IS GONE, 2026-08-28. It was declared for
+    # one reason - `POST /ui/intake` took `Form(...)` fields, and FastAPI
+    # refuses to build such a route without a multipart parser, raising at
+    # IMPORT time so an install without it failed on `import app.main` rather
+    # than on the form. THE_PLAN V.3 A9 retired that form and nothing else in
+    # this product declares `Form`, `File` or `UploadFile`, so the reason is
+    # gone and a dependency whose stated reason has gone is the written claim
+    # this file exists to keep honest. If a form comes back, so does this line,
+    # with the route named in the comment the way this one named its own.
+    # Reads docs/diagnosis_engine.yaml in app/diagnosis.py, via yaml.safe_load
+    # only - never yaml.load, so the spec cannot construct Python objects. Added
+    # deliberately rather than as a side effect: the spec uses folded and literal
+    # block scalars, flow mappings inside block sequences, and quoted strings
+    # containing colons and braces, and a hand-rolled subset parser that got any
+    # of that subtly wrong would misread the one document whose entire job is to
+    # be exactly what its author wrote.
+    "pyyaml>=6.0",
+    "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+# `python -m unittest discover -s tests` is the gate every step passes before
+# it commits, and it does not run on a clean install: `tests/support.py` builds
+# a `fastapi.testclient.TestClient`, which starlette refuses to construct
+# without an HTTP client library present. The gate is not optional, so what the
+# gate needs is written down rather than remembered - `pip install -e .[test]`.
+test = [
+    "httpx2>=2.0",
+    # `tests/test_the_ledgers_ship_with_the_package.py` EXECUTES `setup.py` to
+    # read the package data globs out of it - the test that would have caught
+    # Phase V.0, where `pip install .` shipped an engine with no ledgers. It
+    # imports `setuptools` to do that, and a `python -m venv`/`uv venv`
+    # environment does not have setuptools in it, so the gate errored on two
+    # tests in any environment not built by pip. Declared for the same reason
+    # httpx2 is: the gate is not optional, so what it needs is written down.
+    "setuptools>=69",
+    # `app/tools/classical.py` is DELIBERATELY not backed by a runtime
+    # dependency - it refuses with a sentence telling you to install
+    # scikit-learn, and that refusal is a feature. But two tests fit a real
+    # tree and check the scores land where the tool declares they will, and
+    # without sklearn present those tests FAIL rather than skip. Declaring it
+    # here and not in `dependencies` is the exact distinction: the product does
+    # not need it, and the gate that proves the product's claim about it does.
+    "scikit-learn>=1.4",
+]
+
+# THE FIRST THING AN INSTALLED COPY CAN BE ASKED TO DO. `docs/THE_PLAN.md`
+# Phase V step A5 calls it "the first non-zero entry for the install metric",
+# and the metric is not decoration: Phase V.0 measured that `pip install .`
+# produced an engine that could not load its diagnosis spec, could not compute a
+# VRAM figure and could not resolve a recipe. `mlh doctor` is what says whether
+# that is still true ON THE MACHINE SOMEBODY INSTALLED ONTO, which is the only
+# place the answer counts.
+[project.scripts]
+mlh = "app.cli:main"
+
+[tool.setuptools]
+# Listed rather than auto-discovered, so adding a directory under `app/` is a
+# deliberate act. No new runtime dependency arrives with the Conductor: the
+# keychain backends in `app/providers/secrets.py` are stdlib (`ctypes` on
+# Windows, an argv `subprocess` call elsewhere). `keyring` is the obvious
+# library and is the right answer eventually; adding it here would be exactly
+# the "dependency as a side effect of a feature step" that AGENTS.md forbids.
+#
+# `app.facade` - OpenCode's protocol under `/oc` - is imported by `app.main`,
+# so an install without it is an engine that cannot start. It ships no data
+# files: `openapi.json` and `event_contract.json` beside it are read by the
+# tests and the contract script, never at runtime.
+packages = ["app", "app.facade", "app.instructions", "app.migrations", "app.providers", "app.tools"]
+
+[tool.setuptools.package-data]
+# The instruction set is markdown on disk, read at runtime. An install that
+# drops these files produces a model with no laws, which is worse than one
+# that fails to start.
+"app.instructions" = ["*.md"]
+# The cached model configs, same argument. `app/feasibility.py` resolves
+# MODEL_CONFIG_ROOT as `Path(__file__).parent / "model_configs"` - inside the
+# package - and reads a verbatim `config.json` envelope out of it to size a
+# training run. Measured 2026-08-28: a wheel built from this file carried 23
+# hits for `instructions` and ZERO for `model_configs`, so a non-editable
+# install shipped an engine that could not compute a VRAM figure for any model
+# it had already looked up. `pip install -e .` hid it by pointing back at the
+# checkout. There is no `__init__.py` here on purpose - it is data, not a
+# package - so it is declared by glob rather than listed in `packages`.
+"app" = [
+    "model_configs/*.json",
+    # The ledgers, copied in by `setup.py`'s build step. Not in the tree - see
+    # `.gitignore` - because they are generated from `docs/`, which is the source.
+    "_bundled/docs/*.yaml",
+    "_bundled/docs/ledgers/*.yaml",
+    # The recipe DEFINITIONS, copied in by the same build step. THE_PLAN V.3
+    # A1b: a recipe is package data and user data in two parts that share a
+    # directory - `recipe.toml`, `entrypoint.py` and `requirements.lock` are a
+    # few KB the product cannot train without, and `.venv` is 4.8 GB that must
+    # never be in a wheel.
+    #
+    # ONE LEVEL DEEP, and that is what excludes the environment: the glob
+    # reaches files directly inside a recipe and nothing in a subdirectory, so
+    # the venv is left out by its SHAPE rather than by its name. A rule keyed on
+    # the string ".venv" would ship the next one somebody called ".venv311".
+    "_bundled/recipes/*/*",
+    # The freshness-stamped world knowledge: the model ladder and the GPU
+    # price table, small provenance-carrying JSON committed so an installed
+    # copy answers out of the box. `scripts/refresh_knowledge.py` is the only
+    # writer; `mlh doctor` reports their age.
+    "knowledge/*.json",
+]

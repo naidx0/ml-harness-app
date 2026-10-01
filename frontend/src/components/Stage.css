@@ -1,0 +1,351 @@
+/* ── The Stage ──────────────────────────────────────────────────────────────
+   One surface, three sizes: data-size="row" (inline in the transcript, at the
+   reading column's width), "split" (the inspector widened), "window" (the
+   detached instrument window, alone on its page). Every colour below is a
+   token; the hue budget is counted in Stage.tsx's header. Radii are the
+   Basilica ramp: --r-8 (2px) on rows and cells, --r-14 (4px) on the frame. */
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  box-shadow: var(--e2);
+  color: var(--ink-2);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+}
+.stage[data-size='window'] { border: 0; border-radius: 0; box-shadow: none; height: 100vh; }
+.stage[data-size='split'] { border: 0; border-radius: 0; box-shadow: none; height: 100%; }
+.stage[data-size='row'] { margin-top: var(--sp-8); }
+
+/* MIN-HEIGHT, NOT HEIGHT, and the mark does not shrink. Max, 2026-09-19:
+   "Stage" with "Data" rendered underneath it, overlapping. The header is a
+   flex row whose tabs want ~400px of nowrap; flex-shrink is proportional, so
+   the mark was squeezed to min-content, "· Data" broke at its space, and the
+   second line overflowed a hard 36px box and painted across the border. */
+.stage__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-10);
+  min-height: 36px;
+  padding: 0 var(--sp-12);
+  border-bottom: 1px solid var(--edge);
+  flex: 0 0 auto;
+}
+.stage__mark { display: inline-flex; align-items: center; flex: 0 0 auto; white-space: nowrap; gap: var(--sp-6); color: var(--ink-1); font-weight: 500; font-size: var(--t-13); }
+.stage__tabs-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.stage__tabs { display: flex; gap: var(--sp-2); min-width: 0; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; }
+.stage__tabs::-webkit-scrollbar { display: none; }
+.stage__tabs-arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 0;
+}
+.stage__tabs-arrow:hover { color: var(--ink-1); border-color: var(--edge-strong); }
+.stage__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: 26px;
+  padding: 0 var(--sp-10);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--t-12)/var(--lh-12) var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.stage__tab:hover { color: var(--ink-1); background: var(--state-hover); }
+.stage__tab[aria-current] { color: var(--ink-1); border-color: var(--edge-strong); }
+.stage__controls { margin-left: auto; display: inline-flex; gap: var(--sp-4); }
+
+/* the run strip: the selection is gold, and it is the only gold here */
+.stage__runs { display: flex; flex-wrap: wrap; gap: var(--sp-6); padding: var(--sp-8) var(--sp-12); border-bottom: 1px solid var(--edge); flex: 0 0 auto; }
+.stage__run {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: 24px;
+  padding: 0 var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font: 500 var(--t-11)/var(--lh-11) var(--font-sans);
+  cursor: pointer;
+}
+.stage__run:hover { background: var(--state-hover); color: var(--ink-1); }
+.stage__run[data-selected] { border-color: var(--gold); background: var(--state-selected); color: var(--ink-1); }
+.stage__runid, .lattice__id, .stage__digest { font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-3); font-variant-numeric: var(--num); }
+.stage__runscore { font-family: var(--font-mono); font-variant-numeric: var(--num); color: var(--ink-1); }
+
+.stage__body { padding: var(--sp-12); min-height: 0; overflow: auto; }
+.stage[data-size='row'] .stage__body { overflow-x: auto; }
+.stage__grid { display: grid; gap: var(--sp-12); }
+.stage__grid--bench, .stage__grid--two { grid-template-columns: minmax(0, 1fr) 300px; }
+.stage__grid--one { grid-template-columns: minmax(0, 1fr); }
+.stage__grid > .stg-reading { grid-column: 1 / -1; }
+@container (max-width: 760px) { .stage__grid--bench, .stage__grid--two { grid-template-columns: minmax(0, 1fr); } }
+.stage { container-type: inline-size; }
+.stage__side { min-width: 0; }
+.stage__empty { color: var(--ink-3); margin: 0; }
+.stage__note { color: var(--ink-2); font-size: var(--t-11); line-height: var(--lh-11); margin: var(--sp-6) 0 0; }
+.stage__say { color: var(--ink-2); font-size: var(--t-13); line-height: var(--lh-13); margin: var(--sp-8) 0; }
+/* THE BAR, AS A CARD RATHER THAN A SENTENCE WITH A PILL IN IT. Replaces
+   `the bar you set · 70% STATED`. The left edge takes the origin's own colour,
+   so how the number got here is readable without reading a word - which is
+   what Max asked for: "put in a colored card to showcase that status and
+   measure directly". The colours are the provenance tokens, the same three the
+   pill uses, so the card and the pill can never disagree. */
+.stage__bar {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  margin-top: var(--sp-12);
+  margin-bottom: var(--sp-6);
+  padding: var(--sp-6) var(--sp-8);
+  border: 1px solid var(--edge);
+  border-left: 2px solid var(--origin-colour, var(--edge-strong));
+  border-radius: var(--r-8);
+  background: var(--surface-1);
+}
+.stage__bar[data-origin='MEASURED'] { --origin-colour: var(--fits); }
+.stage__bar[data-origin='STATED'],
+.stage__bar[data-origin='ASSERTED'] { --origin-colour: var(--unknown); }
+.stage__bar[data-origin='DEFAULTED'] { --origin-colour: var(--spills); }
+.stage__bar-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* A number set at number size. It was 10px uppercase mono, the same register
+   as the four words around it, which is why the line read as one grey smear. */
+.stage__bar-value {
+  font-family: var(--font-mono);
+  font-size: var(--t-14);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-1);
+}
+.stage__eyebrow { font-family: var(--font-mono); font-size: var(--t-10); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--sp-6); display: flex; gap: var(--sp-6); align-items: center; flex-wrap: wrap; }
+.stage__unit { color: var(--ink-3); font-size: var(--t-11); }
+.stage__good { color: var(--fits); }
+.stage__bad { color: var(--wont); }
+
+.stage__kv { display: grid; grid-template-columns: auto 1fr; gap: var(--sp-4) var(--sp-12); margin: 0; font-size: var(--t-12); }
+.stage__kv dt { color: var(--ink-3); }
+.stage__kv dd { margin: 0; color: var(--ink-1); font-family: var(--font-mono); font-variant-numeric: var(--num); text-align: right; overflow-wrap: anywhere; }
+
+/* the vpill, borrowed from primitives.tsx's vocabulary, with a data-verdict channel */
+.stage .vpill[data-verdict='different'] { color: var(--fits); background: var(--fits-wash); }
+.stage .vpill[data-verdict='no_evidence'], .stage .vpill[data-verdict='unknown'] { color: var(--unknown); background: var(--unknown-wash); }
+.stage .vpill[data-verdict='info'] { color: var(--info); background: var(--info-wash); }
+.stage .vpill[data-verdict='fits'] { color: var(--fits); background: var(--fits-wash); }
+
+/* ── lattice: runs as rows, eval rows as cells ─────────────────────────── */
+.lattice { display: grid; grid-template-columns: minmax(0, 96px) repeat(var(--cols, 1), minmax(8px, 1fr)); gap: 2px; align-items: center; min-width: 0; }
+.lattice__label { font-size: var(--t-11); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: var(--sp-6); }
+.lattice__label[data-selected] { color: var(--ink-1); }
+.lattice__label .lattice__id { margin-left: var(--sp-4); }
+/* THE HEADER WAS THE ONE CELL THAT COULD NOT SHRINK. Its columns are
+   `minmax(8px, 1fr)`, so in a narrow card each one is eight pixels wide and a
+   two-character eval name is wider than that - and with nothing telling it to
+   clip, the label simply drew over its neighbour. The cells below it are
+   fixed-height blocks and never had the problem; only the header did. */
+.lattice__hdr {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lattice__cell { height: 14px; border-radius: var(--r-8); background: var(--surface-3); }
+.lattice__cell[data-ok] { background: var(--fits); opacity: .85; }
+.lattice__cell[data-held] { background: repeating-linear-gradient(45deg, var(--surface-3) 0 3px, var(--surface-1) 3px 6px); }
+.lattice__cell[data-flip='up'] { outline: 1px solid var(--fits); outline-offset: -1px; }
+.lattice__cell[data-flip='down'] { outline: 1px solid var(--wont); outline-offset: -1px; background: var(--wont-wash); }
+
+.stage__legend { display: flex; flex-wrap: wrap; gap: var(--sp-12); margin-top: var(--sp-8); font-size: var(--t-11); color: var(--ink-3); }
+.stage__legend span { display: inline-flex; align-items: center; gap: var(--sp-4); }
+.stg-lg { display: inline-block; width: 12px; height: 8px; border-radius: var(--r-8); background: var(--surface-3); }
+.stg-lg--ok { background: var(--fits); opacity: .85; }
+.stg-lg--held { background: repeating-linear-gradient(45deg, var(--surface-3) 0 3px, var(--surface-1) 3px 6px); }
+.stg-lg--up { outline: 1px solid var(--fits); outline-offset: -1px; background: transparent; }
+.stg-lg--down { outline: 1px solid var(--wont); outline-offset: -1px; background: var(--wont-wash); }
+.stg-lg--viz1 { background: var(--viz-1); }
+.stg-lg--cap { width: 2px; background: var(--wont); }
+.stg-lg--line { height: 0; border-top: 2px solid var(--viz-1); background: transparent; border-radius: 0; width: 14px; }
+.stg-lg--line.stg-lg--b { border-top-style: dashed; border-top-color: var(--viz-2); }
+.stg-lg--line.stg-lg--c { border-top-color: var(--viz-3); }
+
+/* ── score bars against the stated target ─────────────────────────────── */
+.stg-bars { display: grid; gap: var(--sp-4); }
+/* The label and the number were fixed rems, so the track that gave way was the
+   bar between them — at 292px of card it was under a rem wide and the number
+   sat on top of it. Both outer tracks are minmax now. */
+.stg-bars__row { display: grid; grid-template-columns: minmax(0, 6.4rem) minmax(0, 1fr) minmax(0, 2.8rem); align-items: center; gap: var(--sp-6); }
+.stg-bars__row[data-selected] .stg-bars__label { color: var(--ink-1); }
+.stg-bars__label { font-size: var(--t-11); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stg-bars__track { position: relative; height: 12px; background: var(--surface-3); border: 1px solid var(--edge); border-radius: var(--r-8); overflow: hidden; }
+.stg-bars__fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--viz-5); opacity: .9; }
+.stg-bars__fill[data-kind='trained'] { background: var(--viz-3); }
+.stg-bars__fill[data-kind='control'] { background: var(--viz-baseline); }
+.stg-bars__target { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--fits); }
+.stg-bars__num { font-family: var(--font-mono); font-variant-numeric: var(--num); color: var(--ink-1); text-align: right; font-size: var(--t-11); }
+
+/* ── sandbox ledger ────────────────────────────────────────────────────── */
+.sbox { border: 1px solid var(--edge); border-radius: var(--r-14); background: var(--surface-2); padding: var(--sp-10) var(--sp-12); }
+.sbox + .sbox { margin-top: var(--sp-10); }
+.sbox__head { display: flex; align-items: center; gap: var(--sp-10); flex-wrap: wrap; }
+.sbox__name { color: var(--ink-1); font-weight: 500; font-size: var(--t-13); }
+.sbox__runs { margin-left: auto; font-size: var(--t-11); color: var(--ink-2); display: inline-flex; align-items: center; gap: var(--sp-4); }
+.sbox__purpose { color: var(--ink-3); margin: var(--sp-4) 0 0; font-size: var(--t-11); }
+.sbox__cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-12); margin-top: var(--sp-10); }
+@container (max-width: 640px) { .sbox__cols { grid-template-columns: 1fr; } }
+.srun { display: grid; grid-template-columns: minmax(0, 3.4rem) minmax(0, 1fr) minmax(0, auto) minmax(0, auto); gap: var(--sp-8); align-items: center; min-height: 26px; font-size: var(--t-11); }
+.srun__id { font-family: var(--font-mono); color: var(--ink-3); }
+.srun__what { color: var(--ink-1); display: inline-flex; align-items: center; gap: var(--sp-4); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srun__el { font-family: var(--font-mono); font-variant-numeric: var(--num); color: var(--ink-3); }
+.srun__el[data-spending] { color: var(--ink-1); }
+.srun__vram { font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-3); }
+
+/* the VRAM scale: a scale, not a container. The rule is the card's measured memory. */
+.vram { position: relative; height: 10px; border-radius: var(--r-8); background: var(--surface-3); margin: var(--sp-6) 0 var(--sp-4); overflow: visible; }
+.vram__used { position: absolute; left: 0; top: 0; bottom: 0; background: var(--viz-1); border-radius: var(--r-8); }
+.vram__cap { position: absolute; right: 0; top: -3px; bottom: -3px; width: 2px; background: var(--wont); }
+
+/* ── charts: viz namespace only ────────────────────────────────────────── */
+.stg-chart { width: 100%; height: auto; display: block; background: var(--bg-base); border: 1px solid var(--edge); border-radius: var(--r-14); }
+.stg-chart__grid { stroke: var(--viz-grid); }
+.stg-chart__axis { stroke: var(--viz-axis); }
+.stg-chart__tick { font-family: var(--font-mono); font-size: var(--t-10); fill: var(--ink-3); }
+.stg-chart__line { fill: none; stroke-width: 2; stroke: var(--viz-1); }
+.stg-chart__line[data-series='b'] { stroke: var(--viz-2); stroke-dasharray: 6 3; }
+.stg-chart__line[data-series='c'] { stroke: var(--viz-3); }
+
+/* ── gates ─────────────────────────────────────────────────────────────── */
+.stg-gates__head { display: flex; align-items: center; gap: var(--sp-10); margin-bottom: var(--sp-8); }
+.stg-gates { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--sp-8); position: relative; }
+@container (max-width: 700px) { .stg-gates { grid-template-columns: 1fr; } }
+.stg-gate { text-align: center; padding: var(--sp-8) var(--sp-6); border: 1px solid var(--edge); border-radius: var(--r-8); background: var(--surface-2); }
+.stg-gate__node { width: 22px; height: 22px; margin: 0 auto var(--sp-6); border-radius: var(--r-full); border: 1px solid var(--edge-strong); display: grid; place-items: center; font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-2); }
+.stg-gate[data-status='PASSED'] .stg-gate__node { border-color: var(--fits); color: var(--fits); background: var(--fits-wash); }
+.stg-gate[data-status='NOT_CHECKED'] .stg-gate__node { border-style: dashed; color: var(--ink-4); }
+.stg-gate[data-status='NOT_MET'] .stg-gate__node { border-color: var(--wont); color: var(--wont); }
+.stg-gate__name { color: var(--ink-1); font-size: var(--t-11); margin-bottom: var(--sp-4); }
+.stg-gate__clause { font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-4); margin-top: var(--sp-4); overflow-wrap: anywhere; }
+.stg-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--sp-6); }
+.stg-fact { display: grid; grid-template-columns: 1fr auto; gap: var(--sp-2) var(--sp-6); align-items: center; border: 1px solid var(--edge); border-radius: var(--r-8); background: var(--surface-2); padding: var(--sp-6) var(--sp-8); font-size: var(--t-11); }
+.stg-fact__name { font-family: var(--font-mono); color: var(--ink-2); font-size: var(--t-10); grid-column: 1; }
+.stg-fact__value { color: var(--ink-1); font-family: var(--font-mono); font-variant-numeric: var(--num); grid-column: 1; overflow-wrap: anywhere; }
+.stg-fact__tool { grid-column: 2; grid-row: 2; font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-4); }
+.stg-fact .tag { grid-column: 2; grid-row: 1; }
+
+/* ── retrieval ─────────────────────────────────────────────────────────── */
+.rcurve { display: grid; gap: var(--sp-4); }
+.rcurve__row { display: grid; grid-template-columns: minmax(0, 2.6rem) minmax(0, 1fr) minmax(0, 7rem); align-items: center; gap: var(--sp-6); font-size: var(--t-11); }
+.rcurve__k { font-family: var(--font-mono); color: var(--ink-3); }
+.rcurve__track { height: 10px; background: var(--surface-3); border-radius: var(--r-8); overflow: hidden; border: 1px solid var(--edge); }
+.rcurve__track i { display: block; height: 100%; background: var(--viz-2); }
+.rcurve__num { font-family: var(--font-mono); font-variant-numeric: var(--num); color: var(--ink-1); text-align: right; }
+
+/* ── reading band ──────────────────────────────────────────────────────── */
+.stg-reading { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--edge); margin-top: var(--sp-4); }
+@container (max-width: 700px) { .stg-reading { grid-template-columns: 1fr; } }
+.stg-reading > div { display: flex; gap: var(--sp-8); align-items: flex-start; padding: var(--sp-10) var(--sp-8) var(--sp-4); font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-2); }
+.stg-reading > div + div { border-left: 1px solid var(--edge); }
+.stg-reading > div > svg { flex: none; margin-top: 2px; color: var(--ink-3); }
+.stg-reading b { display: block; font-family: var(--font-mono); font-size: var(--t-10); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin-bottom: 2px; }
+.stg-reading__claim { color: var(--ink-1); font-weight: 500; }
+
+/* ── the words: a term is dotted, never coloured; its card is a popover ── */
+.stg-glossary { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-10); padding: var(--sp-6) var(--sp-8) 0; border-top: 1px solid var(--edge-faint); }
+/* VERTICAL PADDING ON AN INLINE TARGET grows the hit area without moving the
+   line: a term is 17px of type and 25px of target, which clears 2.5.8's floor
+   while the strip keeps its height. The dotted underline stays where the text
+   is, because the padding does not push it. */
+.stg-term { position: relative; display: inline-block; color: var(--ink-2); border-bottom: 1px dotted var(--ink-3); cursor: help; font-size: var(--t-11); outline: none; padding-block: 4px; }
+.stg-term:focus-visible { box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent); border-radius: var(--r-4); }
+.stg-term::after {
+  content: attr(data-def);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  width: 30ch;
+  /* 60vw WAS THE WRONG RULER, and on a wide monitor it was comically wrong: a
+     glossary card inside a 292px pane was allowed 1008px of definition on a
+     1680px screen, so it hung two thirds of the way across the transcript
+     beside it. `cqw` is a percentage of `.stage`, the container this term
+     always sits inside, so the card is bounded by the pane that holds it. The
+     240px is the ceiling a definition wants anyway. */
+  max-width: min(240px, 92cqw);
+  padding: var(--sp-8) var(--sp-10);
+  background: var(--surface-3);
+  color: var(--ink-1);
+  border: 1px solid var(--edge-strong);
+  border-radius: var(--r-14);
+  box-shadow: var(--e3);
+  font: 400 var(--t-11)/var(--lh-11) var(--font-sans);
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(2px);
+  transition: opacity var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  z-index: 5;
+}
+.stg-term:hover::after, .stg-term:focus-visible::after { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .stg-term::after { transition: none; } }
+.stage__runs--inline { padding: 0 0 var(--sp-8); border-bottom: 0; }
+
+/* ── the inline row's opener, on a tool row ────────────────────────────── */
+.toolrow__stage {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  /* Was 20px, which took its height from the 10px mono row beside it and
+     landed under the 24px floor. See --tap-min. */
+  min-height: var(--tap-min);
+  padding: 0 var(--sp-8);
+  margin-left: var(--sp-6);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 var(--t-10)/1 var(--font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.toolrow__stage:hover { color: var(--ink-1); border-color: var(--edge-strong); }
+.toolrow__stage[aria-pressed='true'] { color: var(--ink-1); border-color: var(--gold); background: var(--state-selected); }
+
+/* ── the detached window's page ────────────────────────────────────────── */
+.stagewindow { height: 100vh; display: flex; flex-direction: column; background: var(--bg-base); }
+.stagewindow__bar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-8); min-height: var(--topbar-h); padding: 0 var(--sp-12); border-bottom: 1px solid var(--edge); color: var(--ink-2); font-size: var(--t-12); flex: 0 0 auto; }
+.stagewindow__bar .wordmark { white-space: nowrap; flex: 0 0 auto; font-family: var(--font-display); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-1); font-size: var(--t-12); }
+.stagewindow__following { margin-left: auto; font-family: var(--font-mono); font-size: var(--t-10); display: inline-flex; align-items: center; gap: var(--sp-4); }
+.stagewindow > .stage { flex: 1 1 auto; min-height: 0; }

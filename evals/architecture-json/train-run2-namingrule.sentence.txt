@@ -1,0 +1,3 @@
+
+
+Name EVERY component the description mentions, including the client or caller at one end and the store at the other. Use the words the description itself uses for each part.

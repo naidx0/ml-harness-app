@@ -1,0 +1,1780 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE CHAT SURFACE, RETARGETED TO GRAPHITE.
+
+   THE CORRECTION THIS FILE CARRIES.
+
+   docs/DESIGN_SYSTEM.md §9.1 contained a law: "No bubbles. Full-width rows
+   with a 2px role marker on the left." That law is wrong against the source of
+   truth, and DESIGN_DIRECTIVES records it as a defect found by looking at a
+   picture. In Codex the USER message is a rounded grey bubble inset from the
+   right, and the ASSISTANT message is plain full-width text with no bubble, no
+   avatar and no name label. Graphite adopts that exactly and so does this.
+
+   The old law's actual concern — that the transcript carries plans, tables,
+   diffs and log excerpts and needs the width — survives, because the half that
+   needs width is the assistant half, and that half is now full-width. The user
+   half is short, so bubbling it costs nothing.
+
+   The 2px role markers are gone with the rule that asked for them.
+
+   NO NEW HUES. A tool row that succeeded colours its tick --fits and nothing
+   else; a row that is merely present has no colour at all.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ══ THE TRANSCRIPT ═══════════════════════════════════════════════════════ */
+
+/* THE USER MESSAGE — a rounded grey bubble, inset from the right. --r-18, one
+   step of surface above the ground, 14/21. Capped at 82% so it is visibly
+   inset rather than merely right-aligned. */
+.userbubble {
+  align-self: flex-end;
+  max-width: 82%;
+  background: var(--surface-2);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-18);
+  padding: var(--sp-10) var(--sp-12);
+  font-size: var(--t-14);
+  line-height: var(--lh-14);
+  color: var(--ink-1);
+}
+.userbubble p { margin: 0 0 var(--sp-8); }
+.userbubble p:last-child { margin-bottom: 0; }
+
+/* THE ASSISTANT MESSAGE — plain prose. No bubble, no border, no fill, no
+   avatar, no role label. 15/23 is the one place in this product where reading,
+   not scanning, is the task. */
+.prose {
+  font-size: var(--t-15);
+  line-height: var(--lh-15);
+  color: var(--ink-1);
+}
+.prose p { margin: 0 0 var(--sp-10); }
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { font-weight: 600; }
+
+/* Streaming caret. Text appears by replacement of the trailing run, never by
+   fading in per character. */
+@keyframes mlh-caret { 50% { opacity: 0; } }
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  vertical-align: text-bottom;
+  background: var(--accent);
+  animation: mlh-caret 1s step-end infinite;
+}
+
+/* ── Tool-call rows ───────────────────────────────────────────────────────
+   One line each: the model showing its work without shouting. Muted text, 26px
+   high, no bubble, no icon larger than 14px. The BORDERED variant is used when
+   the row has a terminal outcome worth a check mark; the borderless variant is
+   for the reading and thinking steps that precede it.
+   A stack of them sits slightly left of the prose measure, so the transcript
+   reads as prose with quiet marginalia rather than as a list of cards. */
+.toolrow {
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  overflow: hidden;
+}
+/* A row with an outcome earns its border. A row that is only narration does
+   not — that is the whole difference between the two variants. */
+.toolrow[data-state='ok'],
+.toolrow[data-state='failed'],
+.toolrow[data-state='declined'],
+.toolrow[data-open='true'] {
+  border-color: var(--edge);
+  background: var(--surface-1);
+}
+
+.toolrow__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  min-height: 26px;
+  padding: 0 var(--sp-10);
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.toolrow__head:hover { background: var(--state-hover); }
+/* EVERY CHILD OF THE ROW DECLARES ITS OWN LINE BOX. The row is 12px/16px;
+   a child that drops to 10px and says nothing about line-height keeps the
+   16px box, so its text sits ~3px below the optical centre of the 12px icon
+   beside it, which is centred on its own 12px box. `align-items: center`
+   centres two boxes that do not share a baseline. `line-height: 1` on the
+   small children makes each box its own text, and then centring is true.
+   `.toolrow__stage` (Stage.css) already did this with `font: …/1 …`. */
+.toolrow__glyph { color: var(--ink-3); display: flex; align-items: center; flex: 0 0 auto; }
+/* THE LABEL IS THE ONLY THING IN THE ROW THAT CAN AFFORD TO GIVE. It was
+   `flex: 0 0 auto`, so at a narrow pane a long verb - "Run the diagnosis on
+   the facts so far" is 174px - held its full width, `__args` shrank to its
+   10px floor, and the STAGE chip and the chevron were pushed past the row's
+   right edge and clipped by `.toolrow { overflow: hidden }`. Max, 2026-09-20,
+   with a photo of exactly that: "the actual card and view does not in fact fit
+   inside the actual boundaries." Measured at a 360px pane: the chevron's right
+   edge sat at 369px in a 358px row. A sentence that ellipsises is readable; a
+   control that is not there is not clickable, so the sentence gives. */
+.toolrow__label {
+  color: var(--ink-2);
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1;
+}
+.toolrow__args {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+}
+.toolrow__state {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  font-size: var(--t-10);
+  line-height: 1;
+  color: var(--ink-3);
+}
+/* State colour on the glyph only, and only for the two states that are claims:
+   it worked, or it did not. "Working" borrows the run-state pulse rather than
+   introducing a colour of its own. */
+.toolrow[data-state='ok'] .toolrow__state .i { color: var(--fits); }
+.toolrow[data-state='failed'] .toolrow__state { color: var(--wont); }
+/* DECLINED IS A THIRD STATE AND IT IS GREY. The tool returned `ok: false` and
+   nothing broke: `compare()` refusing to subtract two scores measured on
+   disjoint rows is the same act as "do not train anything" at a smaller scale,
+   and the row above the grey COMPARISON DECLINED card used to announce it in
+   --wont as a failure. --unknown, for the reason UNKNOWN is grey on page 22:
+   it is not a bad answer on the worked-to-broke scale, it is off that scale. */
+.toolrow[data-state='declined'] .toolrow__state { color: var(--unknown); }
+.toolrow[data-state='declined'] .toolrow__state .i { color: var(--unknown); }
+.toolrow__driver {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  color: var(--ink-3);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-full);
+  padding: 0 var(--sp-6);
+}
+.toolrow__chev { color: var(--ink-3); display: flex; flex: 0 0 auto; }
+
+.toolrow__body {
+  padding: var(--sp-8) var(--sp-10) var(--sp-10);
+  border-top: 1px solid var(--edge-faint);
+  white-space: normal;
+}
+.toolrow__desc {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.toolrow__section { margin-top: var(--sp-8); }
+.toolrow__sectiontitle {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: var(--sp-4);
+}
+.toolrow__reads {
+  margin: var(--sp-8) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+
+/* Meta rows: the turn line, training, unrecognised events. A line of quiet
+   text with a glyph — no fill, no border. */
+.metarow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 26px;
+  padding: 0 var(--sp-10);
+  margin-left: calc(-1 * var(--sp-10));
+  color: var(--ink-3);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+}
+.metarow code { font-family: var(--font-mono); font-size: var(--t-11); }
+.metarow__num { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+
+/* ── Result tables — never raw JSON ─────────────────────────────────────── */
+
+.kv { display: flex; flex-direction: column; min-width: 0; }
+.kv[data-depth='1'], .kv[data-depth='2'] {
+  border-left: 1px solid var(--edge-faint);
+  padding-left: var(--sp-8);
+  margin-top: 2px;
+}
+.kv__row {
+  display: grid;
+  grid-template-columns: minmax(96px, 22%) minmax(0, 1fr);
+  gap: var(--sp-8);
+  padding: 2px 0;
+  align-items: baseline;
+  border-bottom: 1px solid var(--edge-faint);
+}
+.kv__row:last-child { border-bottom: 0; }
+.kv[data-depth='1'] .kv__row,
+.kv[data-depth='2'] .kv__row {
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+}
+.kv__key {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.kv__val {
+  min-width: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+  overflow-wrap: anywhere;
+}
+.kv__num { font-family: var(--font-mono); font-variant-numeric: var(--num); color: var(--ink-1); }
+.kv__bool { color: var(--ink-1); }
+/* An absent value says it is absent. Never a zero, never an em dash standing
+   in for one. */
+.kv__absent { color: var(--ink-3); font-style: italic; }
+.kv__text { white-space: pre-wrap; }
+.kv__more {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--t-10);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.kv__list { margin: 0; padding-left: var(--sp-16); }
+.kv__list > li { margin: var(--sp-4) 0; }
+
+/* ── Markdown inside a message ──────────────────────────────────────────── */
+
+.md__h {
+  margin: var(--sp-16) 0 var(--sp-4);
+  font-size: var(--t-15);
+  line-height: var(--lh-15);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.prose > .md__h:first-child, .userbubble > .md__h:first-child { margin-top: 0; }
+.md__list { margin: 0 0 var(--sp-10); padding-left: var(--sp-20); }
+.md__list > li { margin: var(--sp-4) 0; }
+/* WHOLE PIXELS. `.86em` inside 13px prose is 11.18px and the padding was
+   1.5px, so an inline code chip sat off the pixel grid in both axes - the one
+   place in the transcript where a person reads an identifier character by
+   character. 11px is the token that was meant. */
+.md__code {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  padding: 2px 5px;
+  border-radius: var(--r-4);
+  background: var(--surface-2);
+  border: 1px solid var(--edge-faint);
+  color: var(--ink-1);
+}
+.md__pre {
+  margin: 0 0 var(--sp-10);
+  padding: var(--sp-10);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  border: 1px solid var(--edge-faint);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: 18px;
+  color: var(--ink-1);
+}
+
+/* ── Stream state, in the app bar ───────────────────────────────────────── */
+
+.streamstate {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: 0 var(--sp-8);
+  height: 22px;
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-full);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  flex: 0 0 auto;
+}
+.streamstate[data-status='reconnecting'] { border-color: var(--spills-edge); color: var(--spills); }
+.streamstate[data-status='failed'] { border-color: var(--wont-edge); color: var(--wont); }
+.streamstate__word { font-weight: 500; }
+/* The live word gets the smallest possible signal: a dot in the health's own
+   colour, and no vocabulary. */
+.streamstate__word::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: var(--sp-4);
+  border-radius: var(--r-full);
+  background: var(--fits);
+  vertical-align: 1px;
+}
+.streamstate[data-status='reconnecting'] .streamstate__word::before { background: var(--spills); }
+.streamstate[data-status='failed'] .streamstate__word::before { background: var(--wont); }
+
+/* ── Dialogs — --r-18, the top of the ramp. ─────────────────────────────── */
+
+.dialog__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--scrim);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--sp-40) var(--sp-20);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 560px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-18);
+  box-shadow: var(--e4);
+  overflow: hidden;
+}
+.dialog--wide { max-width: 720px; }
+
+.dialog__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  height: 38px;
+  padding: 0 var(--sp-8) 0 var(--sp-12);
+  border-bottom: 1px solid var(--edge-faint);
+  color: var(--ink-3);
+  flex: 0 0 auto;
+}
+.dialog__title {
+  margin: 0;
+  font-size: var(--t-13);
+  line-height: var(--lh-13);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+/* The close control is now an icon button rather than a ✕ set in the UI face,
+   so it no longer carries a class of its own. FOUND BY LOOKING: without this it
+   sat flush against the dialog title instead of at the far edge, because the
+   rule that pushed it there was keyed on the class that went away with the
+   character. */
+.dialog__head > .iconbtn:last-child { margin-left: auto; }
+.dialog__body { padding: var(--sp-12); min-height: 0; }
+.dialog__lede {
+  margin: 0 0 var(--sp-12);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+.dialog__section { margin-top: var(--sp-16); }
+/* A pack is a row that opens. Same type as the old section heading, now a
+   button with a chevron and the count; the tools under it are the "then
+   show" half of hidden-first. */
+.packhead {
+  width: 100%;
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--surface-1);
+  padding: 0 var(--sp-10);
+  height: 32px;
+  cursor: pointer;
+  text-align: left;
+  margin: 0;
+}
+.packhead:hover { background: var(--state-hover); }
+.packhead[aria-expanded='true'] { border-color: var(--edge); margin-bottom: var(--sp-6); }
+.packhead__name { flex: 1 1 auto; color: var(--ink-1); text-transform: none; letter-spacing: 0; font-family: var(--font-sans); font-size: var(--t-12); font-weight: 500; }
+.packhead__count { color: var(--ink-4); font-size: var(--t-10); }
+.dialog__section:first-of-type { margin-top: var(--sp-8); }
+.dialog__section { margin-top: var(--sp-6); }
+.dialog__h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin: 0 0 var(--sp-8);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.dialog__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin-top: var(--sp-12);
+}
+
+/* ── Fields ─────────────────────────────────────────────────────────────── */
+
+.field { display: block; margin-bottom: var(--sp-10); }
+.field--inline { display: flex; align-items: center; gap: var(--sp-8); flex-wrap: wrap; }
+.field__label {
+  display: block;
+  margin-bottom: var(--sp-4);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.field--inline .field__label { margin-bottom: 0; }
+.field__hint {
+  display: block;
+  margin-top: var(--sp-4);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+/* WHERE A FILLED FIELD'S VALUE CAME FROM. The journey overview opens a control
+   already knowing what the thread measured - a sandbox name, a baseline run id
+   - and a filled box with no account of its value is indistinguishable from a
+   guess. Green, because this is the same claim `Measured` makes everywhere
+   else in the product, and it is the only place on a form that hue appears. */
+.field__from {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .04em;
+  color: var(--fits);
+  margin-top: var(--sp-2);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font: inherit;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+}
+.input:focus { border-color: var(--edge-strong); }
+.input--area { height: auto; padding: var(--sp-8); resize: vertical; line-height: 18px; }
+
+/* ── Connections ────────────────────────────────────────────────────────── */
+
+.conn__list { display: flex; flex-direction: column; gap: var(--sp-6); }
+.conn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-10);
+  flex-wrap: wrap;
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+}
+/* The active connection is the one place in a list the accent is allowed: it
+   is the product saying which model it is speaking through. */
+.conn[data-active='true'] { border-color: var(--accent-edge); background: var(--accent-wash); }
+.conn__main { min-width: 0; flex: 1 1 220px; }
+.conn__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+  font-weight: 600;
+}
+.conn__model { font-family: var(--font-mono); font-size: var(--t-11); color: var(--ink-2); font-weight: 400; }
+.conn__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-top: 2px;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.conn__num { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+.conn__active {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  font-size: var(--t-10);
+  color: var(--fits);
+}
+/* In use but not yet probed: the same chip in the quiet ink, not a colour it
+   has not earned. It turns --fits the moment a probe answers. */
+.conn__active[data-state="unprobed"] { color: var(--ink-3); }
+
+/* ── Local model picker ─────────────────────────────────────────────────── */
+
+.picker { display: flex; flex-direction: column; gap: var(--sp-4); margin: 0 0 var(--sp-10); }
+.picker__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: var(--sp-6) var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.picker__row:hover { background: var(--state-hover); }
+.picker__row[aria-pressed='true'] { background: var(--accent-wash); border-color: var(--accent-edge); }
+.picker__name { font-family: var(--font-mono); font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-1); overflow-wrap: anywhere; }
+.picker__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.picker__num { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+
+/* ── Controls panel — every tool the harness has, as buttons ────────────── */
+
+.ctrl {
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  margin-bottom: var(--sp-4);
+  background: var(--surface-1);
+  overflow: hidden;
+}
+.ctrl[data-open='true'] { border-color: var(--edge); }
+.ctrl__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  min-height: 28px;
+  padding: var(--sp-4) var(--sp-10);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ctrl__head:hover { background: var(--state-hover); }
+.ctrl__head .i { color: var(--ink-3); }
+.ctrl__label { font-size: var(--t-12); line-height: var(--lh-12); color: var(--ink-1); font-weight: 500; flex: 0 0 auto; }
+.ctrl__verb {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.ctrl__approval {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--spills);
+  border: 1px solid var(--spills-edge);
+  background: var(--spills-wash);
+  border-radius: var(--r-full);
+  padding: 0 var(--sp-6);
+}
+.ctrl__body { padding: var(--sp-8) var(--sp-10) var(--sp-10); border-top: 1px solid var(--edge-faint); }
+.ctrl__desc { margin: 0 0 var(--sp-10); font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-3); }
+.ctrl__approve {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-8);
+  padding: var(--sp-8);
+  border: 1px solid var(--spills-edge);
+  background: var(--spills-wash);
+  border-radius: var(--r-8);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+}
+.ctrl__result { margin-top: var(--sp-10); }
+.ctrl__notinlog {
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink-3);
+  font-style: italic;
+}
+
+/* ── The autonomous switch, in the app bar ───────────────────────────────────
+   One control, two honest states. OFF is the resting chrome of every other
+   app-bar control, because "ask me" is not a warning - it is the product
+   behaving normally. ON is amber, the same tone the approval card uses, since
+   both mean "a person has agreed to something that would otherwise stop". It
+   is never green: green would read as "good", and autonomy is a trade a
+   person made rather than an improvement. */
+
+/* THE CHIP BOTH DROPDOWNS OPEN FROM. Basilica 07.1's quiet button, at chip
+   height: square (--r-8 is the book's r-2), a hairline, the raised stone,
+   the UI face at 11px. Max, 2026-09-11: "make sure they follow our brand
+   book, fonts, buttons, card, box shape." The pill it replaces was the one
+   shape the book names as wrong - "999 only for a dot or a count pill". */
+.modechip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: 24px;
+  padding: 0 var(--sp-6) 0 var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  font-size: var(--t-11);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.modechip:hover { color: var(--ink-1); background: var(--surface-3); border-color: var(--edge-strong); }
+.modechip[aria-expanded='true'] { color: var(--ink-1); border-color: var(--edge-strong); }
+.modechip .i { color: var(--ink-3); }
+.modechip .i:last-child { color: var(--ink-4); }
+.modechip__word { color: inherit; }
+
+/* The mode's colour is the DOT, 999 by the book's own exception. */
+.modechip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--ink-4);
+  flex: 0 0 auto;
+}
+
+.autotoggle { display: inline-flex; flex: 0 0 auto; }
+.autotoggle[data-on] .modechip {
+  border-color: var(--spills-edge);
+  background: var(--spills-wash);
+  color: var(--spills);
+}
+.autotoggle[data-on] .modechip .i { color: var(--spills); }
+
+/* ── Plan / Build, in the app bar ────────────────────────────────────────────
+   A two-segment control rather than a toggle, because neither state is the
+   "off" of the other: planning is a whole way of working, not the absence of
+   building. The pressed segment carries the chrome an app-bar control has at
+   rest; the other recedes.
+
+   Planning is indigo, which is this product's "focus / send" tone and the one
+   thing in the palette that means a person is being asked to think. Building
+   deliberately has no colour at all: it is the product doing what it has
+   always done, and a green "go" would read as a reward for leaving the
+   conversation. Same argument the autonomous switch makes about never being
+   green, pointed at the other half of the pair. */
+
+.modeswitch {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Plan is purple, build is blue - Max's colours, on the dot and the word.
+   The box stays the book's. */
+.modeswitch[data-mode='plan'] .modechip__dot { background: #a78bfa; }
+.modeswitch[data-mode='plan'] .modechip__word { color: #c4b5fd; }
+.modeswitch[data-mode='build'] .modechip__dot { background: var(--accent, #6088ee); }
+.modeswitch[data-mode='build'] .modechip__word { color: #93c5fd; }
+.modeswitch[data-mode='full'] .modechip__dot { background: var(--gold); }
+.modeswitch[data-mode='full'] .modechip__word { color: var(--gold); }
+
+.composer-ctx {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-full);
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.composer-ctx:hover { background: var(--surface-3); }
+.composer-ctx__svg { display: block; }
+
+/* Confirm chrome retired with the A+C dock — Build no longer asks. */
+
+/* THE BUILD LOOP. Reads as a status with a stop, not as a toggle: the
+   person already made the decision when they pressed Build, and a second
+   switch beside it would ask them to make it twice. See
+   components/TheBuildWorksDown.tsx. */
+.buildloop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  height: 24px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  flex: 0 0 auto;
+  color: var(--ink-3);
+  font-size: var(--t-11);
+  white-space: nowrap;
+}
+
+.buildloop[data-working='yes'] {
+  border-color: var(--edge-strong);
+  color: var(--ink-1);
+}
+
+.buildloop__why {
+  font-variant-numeric: tabular-nums;
+}
+
+.buildloop__stop,
+.buildloop__resume {
+  border: 0;
+  background: none;
+  padding: 0 2px;
+  color: var(--ink-2);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.buildloop__stop:hover,
+.buildloop__resume:hover {
+  color: var(--ink-1);
+}
+
+/* THE PLAN PANE. Phases down the top, the selected one in a box under them.
+   Max: "have a harness to get open the side by side and sectioned off" - side
+   by side is this pane beside the transcript, sectioned is the phase list.
+   See components/PlanPanel.tsx. */
+.planpane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  height: 100%;
+  padding: 10px 12px;
+}
+
+.planpane--empty {
+  color: var(--ink-3);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.planpane__phases {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 34%;
+  overflow-y: auto;
+  flex: 0 0 auto;
+}
+
+.planpane__phase {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 6px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.planpane__phase:hover {
+  color: var(--ink-1);
+}
+
+.planpane__phase[aria-current='true'] {
+  border-left-color: var(--edge-strong);
+  color: var(--ink-1);
+}
+
+.planpane__n {
+  flex: 0 0 auto;
+  min-width: 1.2em;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.planpane__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.planpane__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.planpane__edit {
+  flex: 1 1 auto;
+  min-height: 120px;
+  padding: 8px;
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-1);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  resize: none;
+  white-space: pre-wrap;
+}
+
+.planpane__edit:focus {
+  outline: none;
+  border-color: var(--edge-strong);
+}
+
+.planpane__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.planpane__count,
+.planpane__failed {
+  flex: 1 1 auto;
+  color: var(--ink-3);
+}
+
+.planpane__failed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink-1);
+}
+
+.planpane__revert,
+.planpane__save {
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-full);
+  padding: 2px 10px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.planpane__save:not(:disabled) {
+  border-color: var(--edge-strong);
+  color: var(--ink-1);
+}
+
+.planpane__revert:disabled,
+.planpane__save:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* THE POP-OUT BUTTON in the inspector header, and the window it opens.
+   See components/PaneWindow.tsx and `open_pane` in src-tauri/src/lib.rs. */
+.inspector__popout {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  background: none;
+  padding: 2px 4px;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+
+.inspector__popout:hover {
+  color: var(--ink-1);
+}
+
+.panewindow {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-base);
+  color: var(--ink-1);
+}
+
+.panewindow__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  height: 38px;
+  padding: 0 6px 0 12px;
+  border-bottom: 1px solid var(--edge-faint);
+  color: var(--ink-3);
+  font-size: 12px;
+  user-select: none;
+}
+
+.panewindow__title {
+  color: var(--ink-1);
+  font-weight: 500;
+}
+
+.panewindow__thread {
+  flex: 1 1 auto;
+}
+
+/* The popped-out copy of a pane is the same content in an OS window the person
+   can drag to any width, so it needs the same ruler the docked card got — see
+   the note on `.inspector__card` in shell.css. Without this the pop-out is the
+   one place the container queries silently do nothing. */
+.panewindow__body {
+  container-type: inline-size;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.panewindow__unknown {
+  padding: 16px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* THE WINDOW WITH THE RAIL. The inspector's own rail, header and body classes,
+   so the detached pane is the attached one moved, not a second design. */
+.panewindow__body--rail { display: flex; flex-direction: row; overflow: hidden; }
+.panewindow__body--rail .inspector__main { min-width: 0; }
+.panewindow__following {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+}
+
+/* THE MARKDOWN ADDITIONS. A phased plan uses checkboxes between steps, a rule
+   between phases and the occasional quote; before these they rendered as the
+   literal characters the model typed. See lib/markdown.ts. */
+.md__tasks {
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.md__tasks li {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 1px 0;
+}
+
+.md__tasks li[data-done='true'] > span {
+  color: var(--ink-3);
+  text-decoration: line-through;
+}
+
+.md__quote {
+  margin: 8px 0;
+  padding: 2px 0 2px 12px;
+  border-left: 2px solid var(--edge-faint);
+  color: var(--ink-2);
+}
+
+.md__hr {
+  margin: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--edge-faint);
+}
+
+/* THE THINKING PATH, CONDENSED. Max: "showing just icons for the thinking
+   path, and when the icon is clicked on we see the tool call in detail...
+   that way we don't pollute the user's chat." A run of plain tool rows draws
+   as one line; a row that carries a card never reaches here. See
+   components/ToolStrip.tsx and lib/foldTheToolRows.ts. */
+.toolstrip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0;
+  padding: 3px 2px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.toolstrip__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.toolstrip__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  padding: 0;
+}
+
+.toolstrip__icon:hover {
+  color: var(--ink-1);
+  border-color: var(--edge-faint);
+}
+
+.toolstrip__icon[aria-pressed='true'] {
+  color: var(--ink-1);
+  border-color: var(--edge-strong);
+}
+
+.toolstrip__icon[data-failed] {
+  color: var(--wont);
+}
+
+.toolstrip__said {
+  font-variant-numeric: tabular-nums;
+}
+
+/* THE SPINNER IS A BRAILLE ORBIT, Sequence's (packages/web2/src/chat, the
+   `.spin.braille` glyph), at Max's request on 2026-09-11. Ten glyphs stepping
+   in a 14px mono cell: it never reflows the line, and it reads as "working"
+   where a ring reads as "wait". `prefers-reduced-motion` holds the first
+   glyph still, because the glyph is the information and the orbit is the
+   decoration. The name of the running step shimmers beside it, Sequence's
+   other half. */
+/* A TOOL THAT IS STILL RUNNING: a pulse, not the orbit. The orbit means "the
+   model is thinking" and belongs to one row at a time; two of them moving at
+   once was the doubling Max named on 2026-09-13. */
+.toolstrip__pulse {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+  animation: mlh-pulse 1200ms ease-in-out infinite;
+}
+@keyframes mlh-pulse {
+  0%, 100% { opacity: .35; transform: scale(.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.toolstrip__spin {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  align-self: center;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--t-12);
+  line-height: 14px;
+  text-align: center;
+  color: var(--ink-1);
+}
+.toolstrip__spin::after {
+  content: '⠋';
+  animation: mlh-braille 900ms steps(1, end) infinite;
+}
+@keyframes mlh-braille {
+  0% { content: '⠋'; }
+  10% { content: '⠙'; }
+  20% { content: '⠹'; }
+  30% { content: '⠸'; }
+  40% { content: '⠼'; }
+  50% { content: '⠴'; }
+  60% { content: '⠦'; }
+  70% { content: '⠧'; }
+  80% { content: '⠇'; }
+  90% { content: '⠏'; }
+}
+
+.toolstrip__said[data-live],
+.thinking__word {
+  background-image: linear-gradient(
+    90deg,
+    var(--ink-3) 0%,
+    var(--ink-2) 40%,
+    var(--ink-1) 50%,
+    var(--ink-2) 60%,
+    var(--ink-3) 100%
+  );
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: mlh-shimmer 3.6s ease-in-out infinite;
+}
+@keyframes mlh-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* The row that stands in for a turn whose first token has not arrived. */
+/* The stop button is the send button's shape and none of its saturation:
+   ending a turn is an ordinary control, not a destructive one. */
+.sendbtn--stop {
+  background: var(--surface-3);
+  color: var(--ink-1);
+  border: 1px solid var(--edge-strong);
+}
+.sendbtn--stop:hover { background: var(--surface-4); border-color: var(--wont); color: var(--wont); }
+
+.thinking {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 22px;
+  flex-wrap: wrap;
+}
+.thinking__word {
+  font-size: var(--t-12);
+  /* Not `.prose`'s 23px. The spinner beside it is a hard 14px box, so a 23px
+     line box around 12px text put the two on different baselines. */
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+}
+.thinking__tool {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--t-11);
+  line-height: 1;
+  color: var(--ink-3);
+  max-width: 36ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toolstrip__spin::after { animation: none; content: '⠋'; }
+  .toolstrip__pulse { animation: none; opacity: .8; }
+  .toolstrip__said[data-live],
+  .thinking__word {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+    color: var(--ink-1);
+  }
+}
+
+/* THE CONVERSATION'S MODES, under the chat box. A colour per mode so a
+   glance says which the next message goes into: plan is purple, build is
+   blue. The owner asked for exactly that. See components/Composer.tsx. */
+/* THE LINE UNDER THE BOX. Max, 2026-09-12: the path and the attached file
+   sit under the chat box, and the modes took their place inside it, "this
+   way it doesn't stack over itself". One line, 20px, quiet: --ink-3 at
+   --t-11, the path in mono at --t-10, ellipsized at the drive end. The
+   build loop's state sits at the right end because it is state, not input. */
+.composer__where {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-width: 0;
+  height: 22px;
+  padding: 0 var(--sp-8);
+  margin-top: 4px;
+  color: var(--ink-3);
+  font-size: var(--t-11);
+}
+.where__path,
+.where__files {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  min-width: 0;
+  height: 20px;
+  padding: 0 var(--sp-4);
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.where__path { flex: 0 1 auto; max-width: 52ch; }
+.where__files { flex: 0 1 auto; max-width: 28ch; cursor: pointer; font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-2); }
+.where__files:hover { background: var(--state-hover); color: var(--ink-1); }
+.where__files .mono { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.where__path .i, .where__files .i { color: var(--ink-4); }
+.where__pathtext {
+  font-size: var(--t-10);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* the readable half of a path is its tail; the marks keep the edge
+     punctuation from flipping under rtl */
+  direction: rtl;
+}
+.where__path--amber { color: var(--spills); cursor: pointer; }
+.where__path--amber .i { color: var(--spills); }
+.where__path--amber:hover { background: var(--spills-wash); }
+
+/* CS3 usage strip — tokens / calls / wall time above the path line. */
+.usage-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-8);
+  min-width: 0;
+  padding: 0 var(--sp-8);
+  margin-top: 2px;
+  color: var(--ink-3);
+  font-size: var(--t-10);
+}
+.usage-strip__fig {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.usage-strip__fig .num { font-family: var(--font-mono); color: var(--ink-2); }
+.usage-strip__unit { color: var(--ink-4); }
+.usage-strip__more {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.usage-strip__more:hover { color: var(--ink-1); }
+
+.composer__invite {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  color: var(--ink-3);
+  font-size: var(--t-10);
+  cursor: pointer;
+  user-select: none;
+}
+.composer__invite input { accent-color: var(--accent); }
+
+.goalbar__source {
+  display: inline-flex;
+  gap: 2px;
+}
+.goalbar__source .goalbar__open[data-current] {
+  color: var(--ink-1);
+  background: var(--state-hover);
+}
+
+/* CS5 / CS17 — What changed: condensed rows; expand for detail */
+.what-changed {
+  margin: var(--sp-8) 0;
+  padding: var(--sp-10) var(--sp-12);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.what-changed__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+  color: var(--ink-3);
+  font-size: var(--t-11);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.what-changed__title { color: var(--ink-2); }
+.what-changed__revert {
+  margin-left: auto;
+  border: 1px solid var(--edge);
+  background: var(--surface-1);
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  font-size: var(--t-11);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 2px 8px;
+  border-radius: var(--r-4);
+  cursor: pointer;
+}
+.what-changed__revert:disabled { opacity: 0.5; cursor: default; }
+.what-changed__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--t-12);
+  color: var(--ink-2);
+  min-width: 0;
+}
+.what-changed__list > li { min-width: 0; }
+.what-changed__row {
+  display: grid;
+  grid-template-columns: 12px auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: baseline;
+  width: 100%;
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+  min-width: 0;
+}
+.what-changed__row:not(:disabled) {
+  cursor: pointer;
+  border-radius: var(--r-4);
+}
+.what-changed__row:not(:disabled):hover { background: var(--state-hover); }
+.what-changed__sign {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 600;
+  font-size: var(--t-12);
+  line-height: 1;
+  text-align: center;
+}
+.what-changed__sign[data-sense='plus'] { color: var(--fits); }
+.what-changed__sign[data-sense='minus'] { color: var(--wont); }
+.what-changed__sign[data-sense='neutral'] { color: var(--ink-3); }
+.what-changed__k {
+  display: inline-block;
+  font-size: var(--t-10);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0 3px;
+  border-radius: var(--r-4);
+  border: 0;
+  background: transparent;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+.what-changed__k[data-kind='ticked'] { color: var(--fits); }
+.what-changed__k[data-kind='plan'] { color: var(--gold); }
+.what-changed__k[data-kind='file'] { color: var(--ink-3); }
+.what-changed__k[data-kind='fact'] { color: var(--ink-3); }
+.what-changed__k[data-kind='parked'] { color: var(--spills); }
+.what-changed__body,
+.what-changed__sum {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.what-changed__sum {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 100%;
+}
+.what-changed__prov {
+  flex: 0 0 auto;
+  color: var(--ink-4);
+  font-size: var(--t-10);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+/* HOW MANY TIMES, when it was more than once. A fact stamped three times is
+   one change and three tool runs, and the second number is the interesting
+   one - it is how a repeat loop shows up in the card that summarises it. */
+.what-changed__times {
+  flex: 0 0 auto;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--t-10);
+  line-height: 1;
+  color: var(--spills);
+  border: 1px solid var(--spills-edge, var(--edge));
+  border-radius: var(--r-full);
+  padding: 1px 5px;
+}
+.what-changed__tool {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--t-11);
+  color: var(--accent);
+}
+.what-changed__detail {
+  margin: 0 0 4px 18px;
+  padding: 4px 0 4px 8px;
+  border-left: 1px solid var(--edge-faint);
+  color: var(--ink-3);
+  font-size: var(--t-11);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.what-changed__detail p { margin: 0 0 4px; }
+.what-changed__detail p:last-child { margin-bottom: 0; }
+.what-changed__fact { color: var(--ink-2); }
+.what-changed__why { color: var(--ink-4); }
+.what-changed__path {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+.what-changed__more {
+  display: block;
+  width: 100%;
+  margin-top: var(--sp-4);
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font-family: var(--font-sans);
+  font-size: var(--t-11);
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+}
+.what-changed__more:hover { color: var(--ink-1); }
+.what-changed__note {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+
+/* CS7 / CS18 — start sheet: quiet decision strip under the hardware card.
+   Instrument Sans throughout; square chips (--r-8); no duplicate journeys
+   (Suggestions above the composer already carry the starter prompts). */
+.start-sheet .empty {
+  min-height: 0;
+  padding: 0;
+  display: block;
+}
+.start-sheet .empty__inner {
+  padding: 0;
+  max-width: none;
+  gap: var(--sp-12);
+}
+.start-sheet__controls {
+  margin-top: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  text-align: left;
+  width: 100%;
+  max-width: 420px;
+  font-family: var(--font-sans);
+}
+.start-sheet__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-6);
+}
+.start-sheet__row--actions {
+  padding-top: var(--sp-2);
+}
+.start-sheet__label {
+  flex: 0 0 88px;
+  font-family: var(--font-sans);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.start-sheet__seg {
+  display: inline-flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.start-sheet__chip {
+  border: 1px solid var(--edge);
+  background: var(--surface-1);
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  font-size: var(--t-12);
+  line-height: 1.2;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: var(--r-8);
+  cursor: pointer;
+}
+.start-sheet__chip[aria-pressed="true"] {
+  border-color: var(--gold);
+  color: var(--ink-1);
+  background: color-mix(in srgb, var(--gold) 12%, var(--surface-1));
+}
+.start-sheet__select {
+  flex: 1 1 160px;
+  min-width: 140px;
+  font-family: var(--font-sans);
+  font-size: var(--t-12);
+  line-height: 1.2;
+  padding: 5px 8px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-1);
+  color: var(--ink-2);
+}
+.start-sheet__folder,
+.start-sheet__connect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--edge);
+  background: var(--surface-1);
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  font-size: var(--t-12);
+  line-height: 1.2;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: var(--r-8);
+  cursor: pointer;
+}
+.start-sheet__connect:hover,
+.start-sheet__folder:hover {
+  background: var(--surface-2);
+  border-color: var(--edge-strong);
+  color: var(--ink-1);
+}
+
+/* A HAND-OFF, IN THE STREAM, IN THE ORDER IT HAPPENED. Gold is a sub-agent
+   here exactly as it is on the board and in the rail; the dot carries the
+   state and the row carries the time, which is what the board cannot. */
+.subrow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 24px;
+  padding: 0 var(--sp-10);
+  margin-left: calc(-1 * var(--sp-10));
+  font-size: var(--t-11);
+  line-height: 1;
+  color: var(--ink-3);
+}
+.subrow__dot {
+  width: var(--dot);
+  height: var(--dot);
+  flex: 0 0 auto;
+  border-radius: var(--r-full);
+  background: var(--gold);
+}
+.subrow[data-event='sent'] .subrow__dot { animation: mlh-pulse 1200ms ease-in-out infinite; }
+.subrow[data-state='done'] .subrow__dot { background: var(--fits); }
+.subrow[data-state='stopped'] .subrow__dot { background: var(--spills); }
+.subrow[data-state='failed'] .subrow__dot { background: var(--wont); }
+.subrow__said { flex: 0 0 auto; color: var(--ink-2); }
+.subrow__phase {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  color: var(--gold);
+  text-align: left;
+}
+button.subrow__phase { cursor: pointer; }
+button.subrow__phase:hover { text-decoration: underline; }
+.subrow__counts { flex: 0 0 auto; color: var(--ink-4); }
+.subrow__why {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-4);
+}
+
+/* CS4 — packs / digest on the detailed sub-agent board */
+.subcard__packs {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--t-10);
+  color: var(--ink-4);
+  letter-spacing: 0.02em;
+}
+.subcard__digest {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--t-11);
+  color: var(--ink-3);
+  white-space: pre-wrap;
+  text-align: left;
+}
+/* 2026-09-19 — what a worker was told, and every tool it ran. Both are
+   expanded-only: the card stays one glance wide and the detail is there when
+   somebody goes looking. */
+.subcard__when-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-8);
+  margin-top: var(--sp-4);
+  font-size: var(--t-10);
+  line-height: 1;
+  color: var(--ink-4);
+}
+.subcard__still { color: var(--gold); }
+
+.subcard__brieflabel {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-bottom: var(--sp-4);
+}
+.subcard__brief {
+  display: block;
+  margin-top: var(--sp-8);
+  text-align: left;
+}
+.subcard__brieftext {
+  display: block;
+  max-height: 9.5em;
+  overflow-y: auto;
+  padding: var(--sp-6) var(--sp-8);
+  border-left: 2px solid var(--edge);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  white-space: pre-wrap;
+}
+.subcard__tools {
+  display: block;
+  margin-top: var(--sp-8);
+  text-align: left;
+}
+.subcard__toollist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+.subcard__tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px var(--sp-6);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-full);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  color: var(--ink-3);
+}
+.subcard__tool b { font-weight: 500; color: var(--ink-2); }
+.subcard__count[data-kind='tools'] { color: var(--ink-2); }
+.subcard__count[data-kind='context'] { color: var(--ink-4); }
+
+.agents-pane .subboard {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.where__loop { margin-left: auto; flex: 0 0 auto; display: inline-flex; }
+
+
+/* The moves the engine named under a verdict. 2026-09-19: these were parsed
+   away at the door for weeks while the card said the engine sent none. */
+.alts { margin-top: var(--sp-10); }
+.alts__lead {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-bottom: var(--sp-6);
+}
+.alts__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-6); }
+.alts__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-8);
+  padding-left: var(--sp-10);
+  border-left: 2px solid var(--edge);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.alts__row[data-now] { border-left-color: var(--accent); }
+.alts__text { flex: 1 1 22ch; min-width: 0; }
+.alts__tool { flex: 0 0 auto; font-size: var(--t-10); line-height: 1; color: var(--ink-3); }
+
+/* How far down the plan is. The Ramp Kit's task-row idiom in our tokens. */
+.buildloop__rail { display: inline-flex; align-items: center; gap: var(--sp-6); flex: 0 0 auto; }
+.buildloop__railtrack {
+  width: 56px;
+  height: 4px;
+  border-radius: var(--r-bar);
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.buildloop__railfill { display: block; height: 100%; background: var(--fits); }
+.buildloop__railnum { font-size: var(--t-10); line-height: 1; color: var(--ink-3); }

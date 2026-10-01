@@ -1,0 +1,547 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE CONNECT SURFACES — the one-click dialog and the settings door.
+
+   One stylesheet, because they are two depths of one thing. Max: "The model
+   thing should be like 'Connect the model' and it should be in settings. Click
+   on what you already have on this machine right away… and then if they want
+   to dive a little deeper they can go to settings to configure more models,
+   configure API keys." The fast surface and the deep surface show the same
+   objects at different resolutions, so they share a vocabulary rather than
+   each inventing one.
+
+   It lives beside its components rather than in `styles/` because another lane
+   owns that directory this run. Nothing here is a token: every value below is
+   `var(--…)` out of `styles/tokens.css`, which is Graphite transcribed. If a
+   literal appears in this file it is a defect.
+
+   CLASS NAMES ARE PREFIXED `cx-` (connect) and `set-` (settings) so a rule
+   here can never collide with one in the shared sheets, whatever order the
+   bundler happens to inject them in.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ── The two roads ────────────────────────────────────────────────────────
+   Local first and API second is the order this product argues for — "your data
+   stays on your machine" — but SECOND IS NOT SMALLER. Max: "What if they don't
+   want to choose a local model? Want to just choose some API model." Both
+   headings are the same heading, both roads sit on the same surface, and
+   neither is behind a disclosure. The only difference between them is which
+   one is on top. */
+
+.cx-road {
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-14);
+  background: var(--surface-2);
+  padding: var(--sp-10);
+  margin-bottom: var(--sp-10);
+}
+.cx-road__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+}
+.cx-road__title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.cx-road__spacer { margin-left: auto; }
+.cx-road__note {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+/* ── A model on this machine, as one click ────────────────────────────────
+   The whole row is the button. Not a row with a "connect" button on the end:
+   the click target is the thing you are choosing, which is the difference
+   between picking a model and operating a form about models. */
+
+.cx-models { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+.cx-model {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  min-height: var(--row-h);
+  padding: var(--sp-6) var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.cx-model:hover:not(:disabled) { background: var(--state-hover); }
+.cx-model:active:not(:disabled) { background: var(--state-press); }
+.cx-model:disabled { cursor: default; }
+/* The connected one. The accent is allowed here for the same reason
+   `.conn[data-active]` allows it: the product is saying which model it is
+   speaking through, which is a claim about the world. */
+.cx-model[data-active='true'] {
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
+
+.cx-model__body { min-width: 0; flex: 1 1 auto; }
+.cx-model__name {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+  overflow-wrap: anywhere;
+}
+.cx-model__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.cx-model__num { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+.cx-model__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex: 0 0 auto;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.cx-model__state[data-tone='fits'] { color: var(--fits); }
+
+/* ── The endpoint chips on the API road ───────────────────────────────────
+   A row of names, one pressed. `.chip` already draws this; these two rules
+   only give the row its wrap and the pressed one its meaning. */
+
+.cx-endpoints {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-10);
+}
+
+/* ── Where the key goes, said before it is typed ─────────────────────────── */
+
+.cx-keynote {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin-top: var(--sp-4);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.cx-keynote > .i { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── The door to the deep surface ────────────────────────────────────────── */
+
+.cx-deeper {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin-top: var(--sp-12);
+  padding-top: var(--sp-10);
+  border-top: 1px solid var(--edge-faint);
+}
+.cx-deeper__text {
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  margin-left: auto;
+  text-align: right;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SETTINGS — the deep surface, and the only "account" this product has.
+
+   Max: "At the bottom left you just have the account and settings… your local
+   config settings can be controlled from here instead of an actual online
+   account." There is no online account and there should not be one, so what
+   lives behind that row is the machine, the connected models, the keys and
+   the preferences.
+
+   Two columns: a section list on the left, one section on the right. A
+   settings surface with everything on one scroll is where a settings surface
+   stops being usable, and the left list is also the answer to "what can I even
+   change" without scrolling to find out.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.set {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.set__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-8);
+  border-right: 1px solid var(--edge-faint);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* The same 30px row the rail uses, so the two lists in this product read as
+   one list type rather than two. */
+.set__navitem {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  height: var(--row-h);
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-10);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.set__navitem:hover { background: var(--state-hover); }
+/* Selection is a shape — a fully rounded lighter rectangle, never an accent
+   bar. Rail.tsx: "where I am is not a claim about the world". */
+.set__navitem[aria-pressed='true'] { background: var(--state-selected); color: var(--ink-1); }
+.set__navitem > .i { flex: 0 0 auto; color: var(--ink-3); }
+.set__navitem[aria-pressed='true'] > .i { color: var(--ink-2); }
+
+.set__body {
+  padding: var(--sp-12);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.set__lede {
+  margin: 0 0 var(--sp-12);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+
+.set__group { margin-bottom: var(--sp-16); }
+.set__group:last-child { margin-bottom: 0; }
+
+.set__h {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin: 0 0 var(--sp-8);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.set__h .set__hspace { margin-left: auto; }
+
+/* A key/value line. Mono on the right, because every one of these is a number,
+   an identifier or a path — and mono always sets one step down from the sans
+   beside it. */
+.set__kv {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  min-height: 22px;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--edge-faint);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+}
+.set__kv:last-child { border-bottom: 0; }
+.set__kvk { color: var(--ink-2); flex: 0 0 40%; }
+.set__kvv {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+  font-variant-numeric: var(--num);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+.set__kvv[data-absent='true'] { color: var(--ink-4); font-family: var(--font-sans); }
+.set__src {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+  overflow-wrap: anywhere;
+}
+
+/* One saved connection, opened for editing in place. */
+.set__conn {
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+  margin-bottom: var(--sp-6);
+  overflow: hidden;
+}
+.set__conn[data-active='true'] { border-color: var(--accent-edge); }
+.set__connhead {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  padding: var(--sp-8) var(--sp-10);
+}
+.set__conntitle { min-width: 0; flex: 1 1 200px; }
+.set__connname {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+  font-weight: 600;
+}
+.set__connmodel {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.set__connmeta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.set__connnum { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+.set__connedit {
+  padding: var(--sp-10);
+  border-top: 1px solid var(--edge-faint);
+  background: var(--surface-1);
+}
+
+/* The destructive confirmation. It states what goes, in words, before it goes:
+   the row AND the key, because those are two different places on the machine
+   and someone should know both are being cleared. */
+.set__danger {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  padding: var(--sp-8) var(--sp-10);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+
+/* A claim the product has written down but has not built. It is drawn as a
+   quote from the specification rather than as a feature, because
+   DESIGN_DIRECTIVES §3 and AGENTS.md invariant 5 both say the same thing about
+   showing something we have not got. */
+.set__unbuilt {
+  border: 1px dashed var(--edge);
+  border-radius: var(--r-10);
+  padding: var(--sp-8) var(--sp-10);
+  margin-top: var(--sp-6);
+  font-size: var(--t-11);
+  line-height: 16px;
+  color: var(--ink-3);
+}
+.set__unbuilt strong { color: var(--ink-2); font-weight: 600; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   THE COMPOSER'S PLUS — an attach-context menu, labelled.
+
+   Max: "The plus takes you to knowledge, which looks like it takes you to the
+   terminal or something. It's cool, but it's a little hard to understand."
+   Codex's plus is the reference and its labelling is the point: the menu says
+   what each thing is in words, so the glyph never has to carry the meaning on
+   its own.
+
+   Every row in here maps to a tool that exists in `GET /api/tools`. A row that
+   named something the registry cannot do would be the fixture problem in a
+   different costume.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.cx-attach {
+  position: absolute;
+  bottom: calc(100% + var(--sp-6));
+  left: 0;
+  z-index: 30;
+  width: 320px;
+  max-width: calc(100vw - var(--sp-32));
+  padding: var(--sp-6);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-1);
+  box-shadow: var(--e3);
+}
+
+.cx-attach__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: var(--sp-4) var(--sp-6) var(--sp-6);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cx-attach__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-8);
+  width: 100%;
+  padding: var(--sp-6) var(--sp-8);
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.cx-attach__item:hover { background: var(--state-hover); }
+.cx-attach__item > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-3); }
+.cx-attach__label {
+  display: block;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+}
+.cx-attach__what {
+  display: block;
+  margin-top: 1px;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+.cx-attach__form { padding: var(--sp-4) var(--sp-6) var(--sp-6); }
+.cx-attach__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-8);
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  cursor: pointer;
+}
+.cx-attach__back:hover { color: var(--ink-1); }
+
+/* The plus carries the popover's positioning context rather than the composer
+   row: the panel is anchored to the button that opened it, and `.composer__row`
+   belongs to a stylesheet another lane owns this run. */
+.cx-attachwrap { position: relative; display: inline-flex; }
+
+/* Body copy inside a settings section.
+   FOUND BY LOOKING. The Portals and About sections were set in `.cx-road__note`,
+   which is 10/14 — right for a one-line caption under a list, and three
+   paragraphs of it is a wall. Max, on the shipped build: "Sometimes the text can
+   be a bit much." Compact is the only density, and compact does not mean
+   illegible: 11/16 with real paragraph spacing is still compact and is the
+   difference between a caption and something a person reads. */
+.set__prose {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-11);
+  line-height: 16px;
+  color: var(--ink-2);
+  max-width: 62ch;
+}
+.set__prose:last-child { margin-bottom: 0; }
+.set__prose em { font-style: italic; color: var(--ink-1); }
+.set__prose strong { color: var(--ink-1); font-weight: 600; }
+.set__details {
+  margin-top: var(--sp-8);
+  font-size: var(--t-12);
+  color: var(--ink-3);
+}
+.set__details > summary {
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: var(--ink-2);
+  list-style: none;
+}
+.set__details > summary::-webkit-details-marker { display: none; }
+.set__details[open] > summary { margin-bottom: var(--sp-6); color: var(--ink-1); }
+.set__details .set__prose { margin-top: var(--sp-6); }
+
+/* The one-line answer at the top of a section, for the question the section
+   exists to answer. Max asked "what's the biggest difference between consumer
+   and enterprise" and the specification answers it in one sentence; burying
+   that sentence under two paragraphs is how the product failed to answer him. */
+.set__answer {
+  margin: 0 0 var(--sp-12);
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-1);
+}
+
+/* THE CONNECTION'S NAME, clickable to rename. Reads as text until you touch
+   it - a control that looks like a field invites editing a label most people
+   never need to change. See the `Nickname` component. */
+.conn__rename {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: text;
+  border-bottom: 1px dashed transparent;
+}
+
+.conn__rename:hover {
+  border-bottom-color: var(--edge-strong);
+}
+
+.conn__renamebox {
+  border: 0;
+  border-bottom: 1px solid var(--edge-strong);
+  background: none;
+  padding: 0;
+  color: var(--ink-1);
+  font: inherit;
+  min-width: 8ch;
+  max-width: 22ch;
+  outline: none;
+}

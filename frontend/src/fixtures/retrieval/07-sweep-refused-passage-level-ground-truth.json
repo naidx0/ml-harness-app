@@ -1,0 +1,224 @@
+{
+  "situation": "The passage-level-ground-truth refusal, which only a sweep can reach: measure_retriever_recall accepts a passage key happily for one index, and a sweep cannot, because a passage key names a cut and a sweep varies the cut. Two indexes were built before the refusal and the reply names them rather than pretending the database is untouched.",
+  "corpus": "contracts/ - as 03, scored against an eval set whose ground-truth column holds `contract-NN.md#0`.",
+  "produced_by": {
+    "tool": "compare_chunkings",
+    "arguments": {
+      "corpus_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\contracts",
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts_passages.jsonl",
+      "question_field": "question",
+      "ground_truth_field": "gold_passage",
+      "settings": [
+        {
+          "passage_chars": 400,
+          "passage_overlap": 60
+        },
+        {
+          "passage_chars": 1200,
+          "passage_overlap": 60
+        }
+      ],
+      "k": 3,
+      "name": "contracts-passages",
+      "run": true
+    },
+    "index_built_first": null,
+    "thread_id": 7,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\claude\\C--Users-example-OneDrive-Documents-GitHub-ml-harness\\95a6345b-2d3c-44f9-ad75-3c543aa629e6\\scratchpad\\gate\\capture.db",
+    "work_root": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2",
+    "captured_at_utc": "2026-08-21T10:49:08+00:00",
+    "engine": "app/tools/retrieval.py, via app.tools.REGISTRY.call"
+  },
+  "shape": {
+    "top_level_keys": 29,
+    "rows_a_flat_table_would_draw": 142,
+    "rows_the_payload_actually_holds": 151,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 3,
+    "rows_hidden_behind_those_summaries": 9,
+    "what_is_summarised_away": {
+      "levers.we_cannot_pull[]": 3
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 8,
+    "longest_string_chars": 2068,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": true,
+    "ran": true,
+    "error": "ground_truth_is_not_invariant_under_the_cut",
+    "corpus_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\contracts",
+    "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts_passages.jsonl",
+    "settings": [
+      {
+        "passage_chars": 400,
+        "passage_overlap": 60,
+        "index_name": "contracts-passages#chunk-400-60",
+        "cut_fingerprint": "a8f746f00f236f70d60bf9271d7f7f53f4988cb1f65f46be34ec25c76e33f57b",
+        "passages": 362,
+        "posting_rows": 9390,
+        "terms": 14793,
+        "short_fragments_dropped": 0,
+        "passages_with_no_indexable_term": 0,
+        "would_truncate": false,
+        "already_built": false,
+        "existing_index_id": null,
+        "name_taken_by_another_corpus": false
+      },
+      {
+        "passage_chars": 1200,
+        "passage_overlap": 60,
+        "index_name": "contracts-passages#chunk-1200-60",
+        "cut_fingerprint": "69146d2f6a271616161e70ba1dd5f7c5e303d0cc153241ec03e1ee94398db372",
+        "passages": 110,
+        "posting_rows": 4772,
+        "terms": 14793,
+        "short_fragments_dropped": 0,
+        "passages_with_no_indexable_term": 0,
+        "would_truncate": false,
+        "already_built": false,
+        "existing_index_id": null,
+        "name_taken_by_another_corpus": false
+      }
+    ],
+    "cuts": {
+      "distinct_cuts": 2,
+      "identical_groups": [],
+      "family_over_distinct_cuts": 1,
+      "says": ""
+    },
+    "will_do": {
+      "settings": 2,
+      "distinct_cuts": 2,
+      "rebuilds": 2,
+      "reused_without_rebuilding": 0,
+      "documents_each_time": 58,
+      "documents_skipped": 0,
+      "passages_written": 472,
+      "posting_rows_written": 14162,
+      "retrievals": 80,
+      "questions_each_setting_is_scored_on": 40,
+      "pairwise_comparisons": 1,
+      "pairwise_comparisons_over_distinct_cuts": 1,
+      "counted_by": "app/tools/retrieval.py's own kept_passages(), which is the same function build() writes from - so these are the rows that will actually be inserted and not an estimate of them. A posting row is one distinct term in one passage, which is exactly what build inserts. No duration is stated anywhere here because nothing has measured one on this machine."
+    },
+    "cost": {
+      "model_tokens": {
+        "dimension": "model_tokens",
+        "unit": "tokens",
+        "provenance": "INFERRED",
+        "value": 0.0,
+        "how": "compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine.",
+        "find_out_by": "",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "model_tokens: 0 tokens (inferred) - compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine."
+      },
+      "model_requests": {
+        "dimension": "model_requests",
+        "unit": "requests",
+        "provenance": "INFERRED",
+        "value": 0.0,
+        "how": "compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine.",
+        "find_out_by": "",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "model_requests: 0 requests (inferred) - compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine."
+      },
+      "wall_clock": {
+        "dimension": "wall_clock",
+        "unit": "seconds",
+        "provenance": "UNKNOWN",
+        "value": null,
+        "how": "nothing in this harness has recorded how long a rebuild of this corpus takes on this machine, so there is no measurement to derive one from and any duration here would be invented. What is known is the work: 2 rebuild(s), 472 passage(s), 14162 posting row(s) and 80 retrieval(s), all counted rather than guessed",
+        "find_out_by": "run this sweep with a single setting - the reply says what that one setting writes - time it, and the rest is arithmetic over the per-setting counts already in this plan",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "wall_clock: unknown - nothing in this harness has recorded how long a rebuild of this corpus takes on this machine, so there is no measurement to derive one from and any duration here would be invented. What is known is the work: 2 rebuild(s), 472 passage(s), 14162 posting row(s) and 80 retrieval(s), all counted rather than guessed. To find out: run this sweep with a single setting - the reply says what that one setting writes - time it, and the rest is arithmetic over the per-setting counts already in this plan"
+      },
+      "disk": {
+        "dimension": "disk",
+        "unit": "bytes",
+        "provenance": "UNKNOWN",
+        "value": null,
+        "how": "this writes 472 passage row(s) and 14162 posting row(s) into this project's own database, and nothing has measured how many bytes a row of either costs",
+        "find_out_by": "compare the size of the harness database before and after one setting of this sweep",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "disk: unknown - this writes 472 passage row(s) and 14162 posting row(s) into this project's own database, and nothing has measured how many bytes a row of either costs. To find out: compare the size of the harness database before and after one setting of this sweep"
+      }
+    },
+    "questions": {
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts_passages.jsonl",
+      "question_field": "question",
+      "ground_truth_field": "gold_passage",
+      "ground_truth_chosen_how": "named in the call",
+      "rows_seen": 40,
+      "rows_read": 40,
+      "eligible": 40,
+      "unlabelled": 0,
+      "unlabelled_by_reason": {},
+      "k": 3
+    },
+    "indexes": [
+      {
+        "passage_chars": 400,
+        "passage_overlap": 60,
+        "index_id": 17,
+        "index_name": "contracts-passages#chunk-400-60",
+        "passages": 362,
+        "documents": 58,
+        "total_tokens": 14793,
+        "reused": false,
+        "truncated": false,
+        "cut_by": "blank-line paragraphs, packed up to 400 characters; a paragraph longer than that split at word boundaries with 60 characters of overlap; fragments under 40 characters dropped"
+      }
+    ],
+    "compared_questions": 0,
+    "per_setting": [],
+    "comparisons": [],
+    "family_size": 0,
+    "separated_n": 0,
+    "not_beaten_by_anything": [],
+    "highest_recall_here": [],
+    "crowned": null,
+    "verdict": "nothing_was_compared",
+    "confirmation": {
+      "ok": false,
+      "why": "the sweep did not reach a comparison"
+    },
+    "measured": [],
+    "not_measured": "Nothing was compared. The ground truth in 'gold_passage' resolves at the passage level, and A PASSAGE KEY NAMES A CUT. This sweep varies the cut: contracts-passages#chunk-400-60's passage 3 and contracts-passages#chunk-1200-60's passage 3 are different pieces of text, and at some settings a given passage key does not exist at all - so each setting would be asked a different question and the answers would not be comparable however good the arithmetic on top of them was. Name the DOCUMENT that answers each question instead - the path relative to the corpus root - which is the same document however the corpus is chopped. 1 index(es) were built and are in this conversation; you can search them and you can score any one of them on its own with measure_retriever_recall, where a passage key is a perfectly good ground truth.",
+    "levers": {
+      "we_can_vary": "chunking - passage_chars and passage_overlap, which build_retrieval_index declares as a stated choice rather than a measured optimum. It is local, it costs no tokens, it sends nothing anywhere, and it is the only one of the four this harness can vary and re-measure for you.",
+      "we_cannot_pull": [
+        {
+          "lever": "hybrid BM25 + dense retrieval",
+          "why_not": "a dense retriever needs an embedding model, and this harness ships no AI. rank_bm25, sentence-transformers and faiss are not installed and adding one is a new dependency; the connected Ollama on this machine holds chat models and no embedding model.",
+          "who_can": "you, by connecting an embedding model - at which point every number it produced would be a number about that endpoint, would have to say so, and would mean sending your corpus through it. That is a different tool with a different provenance and a different egress conversation, and it is not this one."
+        },
+        {
+          "lever": "a cross-encoder reranker",
+          "why_not": "the same reason with a heavier model attached: a cross-encoder is a model, this harness ships none, and there is no reranker on this machine to call.",
+          "who_can": "you, with your own reranker. The bench would then measure it the same way it measures chunking here - one lever at a time, paired, on the same eval set - because two levers at once is not an experiment."
+        },
+        {
+          "lever": "query rewriting",
+          "why_not": "rewriting a query means asking a model to write a new one, so the recall it produced would be a fact about your connected model and not about your retriever, and this file makes no network call at all.",
+          "who_can": "you, with your own connected model - and the resulting number belongs to that model as much as to the index, which is why it cannot be reported next to these as though it were the same measurement."
+        }
+      ],
+      "says": "The diagnosis engine's NO_TRAIN__FIX_RETRIEVAL names four levers and this harness owns one of them. WE CAN VARY: chunking - passage_chars and passage_overlap, which build_retrieval_index declares as a stated choice rather than a measured optimum. It is local, it costs no tokens, it sends nothing anywhere, and it is the only one of the four this harness can vary and re-measure for you. WE CANNOT PULL, and these are refusals of honesty rather than of effort: HYBRID BM25 + DENSE RETRIEVAL - a dense retriever needs an embedding model, and this harness ships no AI. rank_bm25, sentence-transformers and faiss are not installed and adding one is a new dependency; the connected Ollama on this machine holds chat models and no embedding model. Who can: you, by connecting an embedding model - at which point every number it produced would be a number about that endpoint, would have to say so, and would mean sending your corpus through it. That is a different tool with a different provenance and a different egress conversation, and it is not this one. A CROSS-ENCODER RERANKER - the same reason with a heavier model attached: a cross-encoder is a model, this harness ships none, and there is no reranker on this machine to call. Who can: you, with your own reranker. The bench would then measure it the same way it measures chunking here - one lever at a time, paired, on the same eval set - because two levers at once is not an experiment. QUERY REWRITING - rewriting a query means asking a model to write a new one, so the recall it produced would be a fact about your connected model and not about your retriever, and this file makes no network call at all. Who can: you, with your own connected model - and the resulting number belongs to that model as much as to the index, which is why it cannot be reported next to these as though it were the same measurement. A sweep of chunk sizes is one quarter of what the engine asked for, and if it comes back saying nothing separates, that is a real answer about chunking and says nothing at all about the other three.",
+      "in_one_line": "CHUNKING IS ONE OF THE FOUR LEVERS NO_TRAIN__FIX_RETRIEVAL NAMES and it is the only one this harness owns. The other three - hybrid BM25 + dense retrieval, a cross-encoder reranker, query rewriting - are not refusals of effort. Each needs a model this harness does not ship, and pulling any of them would make the resulting number a fact about your endpoint as much as about your index. The levers block says who can pull each one and what it would cost in provenance. This is one quarter of what the engine asked for, and a sweep that separates nothing is a real answer about chunking and no answer at all about the other three."
+    },
+    "stamps_nothing": "Nothing was recorded and nothing here can record anything: compare_chunkings declares measures=(), checked at registration, so the instrument it is handed cannot stamp a fact. retriever_recall_at_k is source: inspect and measure_retriever_recall is its only instrument. THE REASON IS NOT BOOKKEEPING: the highest recall in a sweep is a maximum selected on the same questions it would be reported against, and stamping it would put the one number in this bench that opens a gate under exactly that bias. GOING AND TAKING THE STAMP YOURSELF IS THE RIGHT NEXT MOVE, AND IT IS NEITHER A COPY OF THE NUMBER HERE NOR A CURE FOR HOW IT WAS CHOSEN. Scoring is deterministic, so nothing about re-running changes what the retriever does - but measure_retriever_recall scores ONE index over the rows THAT index can score, and this comparison is made over the rows EVERY setting scored minus every row a score tie decided under any of them. Those are different denominators whenever a sweep dropped anything, and then the figure it hands back is a different number from the one in the curve. It also goes through the seven refusals it owns, and any of them returns a number with no stamp, or no number: a setting whose own run has an unresolved ground truth, a tie, or a truncated index is not stampable, and this reply says which of these settings are. What re-measuring buys is PROVENANCE, which is real and is the right thing to do before anybody quotes a figure. What it buys about SELECTION is nothing - re-scoring the setting a maximum picked, on the questions that picked it, cannot un-pick it. The number in this reply that was not selected on its own questions is the confirmed recall in the confirmation block.",
+    "decides_nothing": "Nothing was compared, so nothing was concluded and no gate moved. retriever_recall_at_k is whatever it already was.",
+    "summary": "Nothing was compared. The ground truth in 'gold_passage' resolves at the passage level, and A PASSAGE KEY NAMES A CUT. This sweep varies the cut: contracts-passages#chunk-400-60's passage 3 and contracts-passages#chunk-1200-60's passage 3 are different pieces of text, and at some settings a given passage key does not exist at all - so each setting would be asked a different question and the answers would not be comparable however good the arithmetic on top of them was. Name the DOCUMENT that answers each question instead - the path relative to the corpus root - which is the same document however the corpus is chopped. 1 index(es) were built and are in this conversation; you can search them and you can score any one of them on its own with measure_retriever_recall, where a passage key is a perfectly good ground truth. CHUNKING IS ONE OF THE FOUR LEVERS NO_TRAIN__FIX_RETRIEVAL NAMES and it is the only one this harness owns. The other three - hybrid BM25 + dense retrieval, a cross-encoder reranker, query rewriting - are not refusals of effort. Each needs a model this harness does not ship, and pulling any of them would make the resulting number a fact about your endpoint as much as about your index. The levers block says who can pull each one and what it would cost in provenance. This is one quarter of what the engine asked for, and a sweep that separates nothing is a real answer about chunking and no answer at all about the other three.",
+    "says": "Nothing was compared. The ground truth in 'gold_passage' resolves at the passage level, and A PASSAGE KEY NAMES A CUT. This sweep varies the cut: contracts-passages#chunk-400-60's passage 3 and contracts-passages#chunk-1200-60's passage 3 are different pieces of text, and at some settings a given passage key does not exist at all - so each setting would be asked a different question and the answers would not be comparable however good the arithmetic on top of them was. Name the DOCUMENT that answers each question instead - the path relative to the corpus root - which is the same document however the corpus is chopped. 1 index(es) were built and are in this conversation; you can search them and you can score any one of them on its own with measure_retriever_recall, where a passage key is a perfectly good ground truth. CHUNKING IS ONE OF THE FOUR LEVERS NO_TRAIN__FIX_RETRIEVAL NAMES and it is the only one this harness owns. The other three - hybrid BM25 + dense retrieval, a cross-encoder reranker, query rewriting - are not refusals of effort. Each needs a model this harness does not ship, and pulling any of them would make the resulting number a fact about your endpoint as much as about your index. The levers block says who can pull each one and what it would cost in provenance. This is one quarter of what the engine asked for, and a sweep that separates nothing is a real answer about chunking and no answer at all about the other three.",
+    "ground_truth_level": "passage"
+  }
+}

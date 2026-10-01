@@ -1,0 +1,35 @@
+{
+  "$schema": "https://opencode.ai/desktop-theme.json",
+  "name": "ML Harness",
+  "id": "harness",
+
+  "dark": {
+    "palette": {
+      "neutral": "#1F1F1D",
+      "ink": "#F8F3E6",
+      "primary": "#6088EE",
+      "interactive": "#6088EE",
+      "success": "#5FD3A8",
+      "warning": "#E8B45E",
+      "error": "#EF7E7E",
+      "info": "#5EB0DE",
+      "diffAdd": "#5FD3A8",
+      "diffDelete": "#EF7E7E"
+    }
+  },
+
+  "light": {
+    "palette": {
+      "neutral": "#F7F4ED",
+      "ink": "#24231F",
+      "primary": "#4E74DC",
+      "interactive": "#4E74DC",
+      "success": "#2F9E77",
+      "warning": "#B5803A",
+      "error": "#C2524F",
+      "info": "#3D7FA6",
+      "diffAdd": "#2F9E77",
+      "diffDelete": "#C2524F"
+    }
+  }
+}

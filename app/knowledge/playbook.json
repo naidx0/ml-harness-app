@@ -1,0 +1,349 @@
+{
+  "written_by": "hand, curated against the walks of 2026-08-30/31",
+  "what_this_is": "the ask-to-journey dictionary. A small model cannot hold ML methodology, so it does not have to: map_the_ask keyword-matches the person's sentence to one of these journeys and returns the ordered steps, each naming a REGISTERED tool and what to put in it. The model's job shrinks to relaying steps and filling blanks the person gives it.",
+  "journeys": [
+    {
+      "name": "train_on_my_files",
+      "keywords": [
+        "train",
+        "model",
+        "my files",
+        "my folder",
+        "design system",
+        "my data",
+        "fine-tune",
+        "finetune",
+        "learn my",
+        "from scratch",
+        "web app",
+        "webapp",
+        "my style",
+        "from a description",
+        "from descriptions",
+        "turn a description",
+        "examples like that",
+        "examples like this",
+        "my examples",
+        "my own data",
+        "my own examples",
+        "here is one example",
+        "output json",
+        "json from",
+        "teach it"
+      ],
+      "says": "Train a small local model that knows the person's own material.",
+      "steps": [
+        {
+          "tool": "attach_context",
+          "why": "record where the material lives",
+          "args_hint": "path = the person's folder"
+        },
+        {
+          "tool": "carve_rows",
+          "why": "data collection: cut raw md/css/html into verbatim tagged rows",
+          "args_hint": "root = their folder; into = a built-by-harness subfolder; needs approval",
+          "unnecessary_if": "carve_eval_set"
+        },
+        {
+          "tool": "drop_duplicates",
+          "why": "clean what was cut, keeping removals visible",
+          "args_hint": "path = the carved file; needs approval",
+          "unnecessary_if": "carve_eval_set"
+        },
+        {
+          "tool": "carve_eval_set",
+          "why": "split off a test the model never studies for",
+          "args_hint": "path = deduplicated file; answer_column = whichever column of that file holds the answer; needs approval"
+        },
+        {
+          "tool": "synthesize_rows",
+          "why": "data generation: amplify the training half, every row tagged",
+          "args_hint": "path = the train split; answer_column = whichever column of that file holds the answer; count ~800; needs approval",
+          "unnecessary_if": "run_in_sandbox"
+        },
+        {
+          "tool": "check_split_leakage",
+          "why": "prove the test is fair before any number is trusted",
+          "args_hint": "train = the synthetic file; eval = the eval file"
+        },
+        {
+          "tool": "measure_eval_set",
+          "why": "put the eval's size on the record",
+          "args_hint": "path = the eval file"
+        },
+        {
+          "tool": "state_facts",
+          "why": "the person's own bar and task, recorded as STATED",
+          "args_hint": "target_score, modality, task_family, goal_text - ask the person, do not guess"
+        },
+        {
+          "tool": "read_model_shortlist",
+          "why": "model choice from the dated ladder, not from memory",
+          "args_hint": "none"
+        },
+        {
+          "tool": "read_model_config",
+          "why": "size the chosen model with fetched facts",
+          "args_hint": "repo_id = the ladder's small pick"
+        },
+        {
+          "tool": "can_this_machine_train",
+          "why": "fit is measured VRAM math, not a vibe",
+          "args_hint": "repo_id = same"
+        },
+        {
+          "tool": "where_to_train",
+          "why": "local vs rented, with reasons",
+          "args_hint": "repo_id = same"
+        },
+        {
+          "tool": "measure_baseline",
+          "why": "where we start, before anything trains",
+          "args_hint": "eval_path = the eval file; input_field and expected_field = that file's own column names, read from it"
+        },
+        {
+          "tool": "run_eval",
+          "why": "anchor the comparison: the bench records the run id",
+          "args_hint": "same fields; NOTE the run_id"
+        },
+        {
+          "tool": "make_sandbox",
+          "why": "an isolated pinned home for the run",
+          "args_hint": "recipe = hf-peft-lora; data = the synthetic file"
+        },
+        {
+          "tool": "run_in_sandbox",
+          "why": "training itself, supervised, costed",
+          "args_hint": "kind=train; config needs base_model, dataset_path, max_steps; needs approval"
+        },
+        {
+          "tool": "score_the_adapter",
+          "why": "the honest paired verdict on the same rows",
+          "args_hint": "sandbox name + the noted baseline run_id; needs approval"
+        }
+      ],
+      "what_unnecessary_if_means": "The later step whose success makes this one moot. Somebody who arrives with graded rows cannot run carve_rows or drop_duplicates - there is no folder of documents to cut - and carve_eval_set succeeding proves rows existed and were good enough to split, which is what those two exist to produce. Marking them done would claim work nobody did; leaving them not started would demand work nobody needs. The route knows which is which, so the knowledge lives here rather than as a table in app/journey.py."
+    },
+    {
+      "name": "route_or_classify",
+      "keywords": [
+        "classify",
+        "route",
+        "categorize",
+        "label",
+        "sort",
+        "tickets",
+        "support",
+        "buckets",
+        "which category"
+      ],
+      "says": "Sort things into known buckets - often no training is needed at all.",
+      "steps": [
+        {
+          "tool": "attach_context",
+          "why": "record where the data lives",
+          "args_hint": "path"
+        },
+        {
+          "tool": "assess_the_data",
+          "why": "count classes and usable rows before believing anything",
+          "args_hint": "path; say which column is the label"
+        },
+        {
+          "tool": "carve_eval_set",
+          "why": "a held-out test",
+          "args_hint": "path, answer_column = the label; needs approval"
+        },
+        {
+          "tool": "measure_baseline",
+          "why": "the connected model may already clear the bar",
+          "args_hint": "eval_path, input/expected fields"
+        },
+        {
+          "tool": "state_facts",
+          "why": "the person's target score",
+          "args_hint": "target_score"
+        },
+        {
+          "tool": "run_diagnosis",
+          "why": "let the tree route it - trees, SetFit, or no-train are real answers",
+          "args_hint": "none"
+        }
+      ]
+    },
+    {
+      "name": "make_an_eval",
+      "keywords": [
+        "eval",
+        "evaluate",
+        "test set",
+        "benchmark",
+        "measure",
+        "how good",
+        "grade",
+        "score my",
+        "any good",
+        "in numbers",
+        "how well",
+        "whether it works"
+      ],
+      "says": "Build a test that can actually separate better from worse.",
+      "steps": [
+        {
+          "tool": "carve_eval_set",
+          "why": "a proper split, sized by the gate",
+          "args_hint": "path, answer_column; needs approval"
+        },
+        {
+          "tool": "measure_eval_set",
+          "why": "size on the record",
+          "args_hint": "path"
+        },
+        {
+          "tool": "check_split_leakage",
+          "why": "a leaked test measures memory, not skill",
+          "args_hint": "train_path, eval_path"
+        },
+        {
+          "tool": "measure_baseline",
+          "why": "the trivial baseline must be beatable or the task is wrong",
+          "args_hint": "eval_path, fields"
+        }
+      ]
+    },
+    {
+      "name": "improve_without_training",
+      "keywords": [
+        "prompt",
+        "cheaper",
+        "faster",
+        "too slow",
+        "costs too much",
+        "rag",
+        "retrieval",
+        "context",
+        "without training"
+      ],
+      "says": "The cheap ladder first: prompt, retrieval, format - training is the last rung.",
+      "steps": [
+        {
+          "tool": "try_prompt",
+          "why": "the cheapest thing, measured not vibed",
+          "args_hint": "eval fields + the prompt"
+        },
+        {
+          "tool": "build_retrieval_index",
+          "why": "if the failure is missing knowledge",
+          "args_hint": "corpus path; needs approval"
+        },
+        {
+          "tool": "measure_retriever_recall",
+          "why": "retrieval helps only if it recalls",
+          "args_hint": "index + eval"
+        },
+        {
+          "tool": "run_diagnosis",
+          "why": "the tree says when the ladder is exhausted",
+          "args_hint": "none"
+        }
+      ]
+    },
+    {
+      "name": "run_locally",
+      "keywords": [
+        "run locally",
+        "serve",
+        "serving",
+        "ollama",
+        "inference",
+        "quant",
+        "quantization",
+        "which engine",
+        "host the model",
+        "deploy locally",
+        "run on my",
+        "my own laptop",
+        "my laptop",
+        "my own machine",
+        "on this machine",
+        "nothing leaving",
+        "without sending",
+        "stays on my",
+        "no cloud"
+      ],
+      "says": "Pick and serve a model on this machine, from validated recipes rather than guesses.",
+      "steps": [
+        {
+          "tool": "inspect_hardware",
+          "why": "what this box actually has, measured",
+          "args_hint": "none"
+        },
+        {
+          "tool": "read_model_shortlist",
+          "why": "the dated ladder of sensible models",
+          "args_hint": "none"
+        },
+        {
+          "tool": "read_local_recipes",
+          "why": "how people verifiably run models like these - engine, quant, launchable",
+          "args_hint": "none"
+        },
+        {
+          "tool": "read_gpu_prices",
+          "why": "if it does not fit here, what renting one costs today",
+          "args_hint": "none"
+        },
+        {
+          "tool": "can_this_machine_train",
+          "why": "fit math for the pick (also sizes inference headroom)",
+          "args_hint": "repo_id"
+        }
+      ]
+    },
+    {
+      "name": "improve_the_last_run",
+      "keywords": [
+        "score higher",
+        "beat my",
+        "better than the last",
+        "next one better",
+        "make the next one",
+        "improve the model",
+        "improve my model",
+        "not good enough",
+        "beat the baseline",
+        "higher score",
+        "the next adapter",
+        "another run"
+      ],
+      "says": "Beat a score you already have - on the same rows that produced it, or the new number is about a different question.",
+      "steps": [
+        {
+          "tool": "measure_baseline",
+          "why": "where we start, before anything trains",
+          "args_hint": "eval_path = the eval file; input_field and expected_field = that file's own column names, read from it"
+        },
+        {
+          "tool": "run_eval",
+          "why": "anchor the comparison: the bench records the run id",
+          "args_hint": "same fields; NOTE the run_id"
+        },
+        {
+          "tool": "make_sandbox",
+          "why": "an isolated pinned home for the run",
+          "args_hint": "recipe = hf-peft-lora; data = the synthetic file"
+        },
+        {
+          "tool": "run_in_sandbox",
+          "why": "training itself, supervised, costed",
+          "args_hint": "kind=train; config needs base_model, dataset_path, max_steps; needs approval"
+        },
+        {
+          "tool": "score_the_adapter",
+          "why": "the honest paired verdict on the same rows",
+          "args_hint": "sandbox name + the noted baseline run_id; needs approval"
+        }
+      ]
+    }
+  ]
+}

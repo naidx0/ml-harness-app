@@ -1,0 +1,446 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE QUESTION CARD — Graphite pages 11, 12, 13, 16 and 23.4.
+
+   COMPOSED, NOT INVENTED. Page 11: "the text field, select, toggle, slider,
+   checkbox and radio on this page are built from the button chassis and
+   existing tokens rather than from new ones — same 28px height, same --r-10,
+   same border and hover pair, same focus ring. No colour, radius, type size or
+   spacing value on this page is new."
+
+   The same claim is made for this file and it is checkable: every value below
+   is a token out of `styles/tokens.css`, and the shared classes this card
+   leans on — `.card`, `.card__head`, `.card__kicker`, `.card__headline`,
+   `.card__text`, `.input`, `.field__hint`, `.btn`, `.tag`, `.mono` — are the
+   ones every other card in the product already uses. Nothing here restyles a
+   shared class; every rule is under `.card--question` or `.qcard__*`.
+
+   TWO DISTANCES, NOT ONE. `DiagnosisCard` learned this from Max looking at it:
+   "five bordered blocks of the same visual weight at one repeating distance —
+   which is a wall, and it is a wall whether or not any single gap is small.
+   The fix is not more space everywhere; it is TWO distances instead of one."
+   Within a group --sp-8. Between sections --sp-16. This card has four sections
+   — what is true now, what that means, the control, the actions — and the
+   footnote below a hairline.
+
+   THE HUE BUDGET. Page 01: every hue on screen is a claim about the world, and
+   there are never more hues than there are claims. At rest this card draws:
+
+     · the ORIGIN of the claim somebody already made — grey for ASSERTED and
+       STATED, green only if something was genuinely measured;
+     · the DEFAULT the person would take by saying "I don't know" — amber,
+       page 11.3's "amber for 'I picked this for you'";
+     · the word naming where the answer WILL land, in that origin's own colour;
+     · --wont, and only when a value the person typed cannot be used.
+
+   Four claims, at most four hues, and three of them are the provenance channel
+   doing the one job it exists for. There is no accent anywhere on this card
+   except the focus ring, which is interaction rather than a claim, and there is
+   no filled button: page 10 spends the accent fill on send and on an approval's
+   primary action, and answering a question is neither.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ── The card ─────────────────────────────────────────────────────────────
+   --r-14 and --sp-12, one step below the diagnosis card's --r-18 and --sp-16.
+   That is the book's own way of ranking two cards without giving either a
+   colour: the verdict is the largest surface in the product and a question is
+   subordinate to it. */
+
+.card--question {
+  display: block;
+  margin-top: var(--sp-8);
+}
+
+.card--question > .card__body {
+  display: flex;
+  flex-direction: column;
+  /* The BETWEEN-SECTIONS distance. Every direct child of the body is a
+     section; the within-group distance lives inside each one.
+
+     FOUR SECTIONS, NOT SIX. Measured on the rendered card: with the headline,
+     the claim, the ledger's sentence, the control, the buttons and the
+     consequence line all as siblings, every gap on the card was --sp-16 and the
+     card read as one evenly spaced wall — the exact thing Max saw on the
+     diagnosis card. The headline and the claim are one thought and the control,
+     the buttons and the consequence are another, so they are grouped and the
+     card has two distances again. */
+  gap: var(--sp-16);
+}
+
+/* What is being asked, and what is standing in for the answer right now. */
+.qcard__lede {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+/* The one thing to do, and what happens if it is not done.
+   --sp-8 and not --sp-10: measured on the rendered card, 8 / 10 / 16 is THREE
+   distances, and the rule this card is obeying says two. */
+.qcard__collect {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+/* `.card__headline` is --t-15/600 and carries --sp-8 below it by default. The
+   gap above owns the spacing here, so the margin is dropped rather than
+   fighting it. */
+.card--question .qcard__headline {
+  margin-bottom: 0;
+  font-size: var(--t-15);
+  line-height: var(--lh-15);
+}
+
+/* `.card__text` carries --sp-12 below. Same reason. */
+.card--question .qcard__why {
+  margin: 0;
+}
+
+.qcard__opens {
+  margin-left: auto;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ── Part one: what is true right now ─────────────────────────────────────
+   The claim somebody already made, wearing its origin, or the plain statement
+   that nobody has answered. Neither is alarmed and neither is credulous: 11px
+   in --ink-3, with the tag carrying the whole of the judgement. */
+
+.qcard__now {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+.qcard__fact {
+  color: var(--ink-2);
+  font-size: var(--t-11);
+}
+
+.qcard__nowsaid {
+  color: var(--ink-3);
+}
+
+.qcard__nowvalue {
+  color: var(--ink-1);
+  font-variant-numeric: var(--num);
+}
+
+.qcard__how {
+  color: var(--ink-4);
+}
+
+.qcard__dash {
+  color: var(--ink-4);
+}
+
+/* ── The control ──────────────────────────────────────────────────────────
+   Page 11.1's chassis, unchanged: 28px, --surface-2, one quiet border, the
+   global focus ring. `.input` is the shipped class and is not touched here. */
+
+.qcard__ask {
+  display: flex;
+  flex-direction: column;
+  /* WITHIN a group. The label, the field, its hint and its error are one
+     thing. */
+  gap: var(--sp-8);
+}
+
+.qcard__field {
+  display: block;
+}
+
+.qcard__label {
+  display: block;
+  margin-bottom: var(--sp-4);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+/* A path is an identifier, so it sets in mono. Page 11.1: "value type --t-12
+   sans · --t-11 mono for numbers and paths". */
+.qcard__field .input.mono {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  font-variant-numeric: var(--num);
+}
+
+.qcard__field .field__hint {
+  margin-top: var(--sp-4);
+}
+
+/* A number field's spinner is 20px of chrome that does nothing a keyboard does
+   not do better, and it pushes a long count against the arrows. */
+.qcard__field .input[type='number']::-webkit-outer-spin-button,
+.qcard__field .input[type='number']::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.qcard__field .input[type='number'] {
+  appearance: textfield;
+}
+
+/* Page 11.4: a select is the right control when the set of answers is closed
+   and short, and every option reads as a value rather than a sentence. Same
+   chassis as the text field. */
+.qcard__field select.input {
+  cursor: pointer;
+}
+
+/* ── The segmented control, for a closed set of two ───────────────────────
+   Page 11.5, to the letter: a 28px shell around 24px buttons, and "the selected
+   segment lifts to --surface-3 with --e1 — it is raised, not coloured, because
+   the accent belongs to the send button".
+
+   The track is --bg-base rather than --surface-2 so it reads as recessed in
+   both themes: in dark --bg-base is below the card, and in light the surfaces
+   are the cream ramp (--surface-2 #FCFAF4, --surface-3 #FEFDF9) whose steps are
+   too fine to carry elevation on their own, so --e1's hairline ring and shadow
+   carry it instead of tone.
+
+   THIS COMMENT SAID "both #FFFFFF" UNTIL 2026-09-05. That was true before
+   fa1b9f7 made the light theme cream, and a stale note describing the ground as
+   white is how white gets put back. */
+
+.qcard__seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: var(--control-h);
+  padding: 2px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--bg-base);
+}
+
+.qcard__segbtn {
+  height: 24px;
+  padding: 0 var(--sp-10);
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: var(--t-12);
+  font-weight: 550;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+
+.qcard__segbtn:hover {
+  background: var(--state-hover);
+  color: var(--ink-1);
+}
+
+.qcard__segbtn[aria-pressed='true'] {
+  background: var(--surface-3);
+  box-shadow: var(--e1);
+  color: var(--ink-1);
+}
+
+/* Page 11.2: "a disabled field goes transparent rather than grey, so
+   unavailable reads as absence in both themes." */
+.qcard__segbtn:disabled {
+  color: var(--ink-4);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+/* ── The inline error ─────────────────────────────────────────────────────
+   Page 11.3: --wont, one line, under the field, with ic-alert at 12px, saying
+   what is wrong AND what would fix it. Border only on the field — "the fill
+   stays neutral so the value itself is still readable" — and never a red fill,
+   never red text in a box.
+
+   The sentence is composed in the component and both halves are required
+   there: `argumentsFor` throws "…is a number. "x" is not one — type the figure
+   on its own, with no units or commas." */
+
+.qcard__problem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: 0;
+  color: var(--wont);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+
+.qcard__problem > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.card--question:has(.qcard__problem) .qcard__field .input {
+  border-color: var(--wont-edge);
+}
+
+/* ── Part three: the actions ──────────────────────────────────────────────
+   Two buttons on the ordinary 28px bordered chassis and nothing filled. Equal
+   weight is the design saying "I don't know" is a legal answer rather than a
+   way out. */
+
+.qcard__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+
+/* Where the answer will land, in the provenance vocabulary of page 13.
+
+   DELIBERATELY NOT A `.tag`. Page 13.5: "a tag without a number is
+   meaningless", and there is no number here yet — only a promise about the one
+   that is coming. So the WORD carries the origin's own colour and none of the
+   16px pill, which keeps the four tags meaning exactly what they mean
+   everywhere else in the product. Page 05's law still holds: the state carries
+   a word, and the word is the load-bearing half. */
+.qcard__lands {
+  margin-left: auto;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.qcard__landsword {
+  color: var(--lands);
+  font-size: var(--t-10);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+
+/* ── The default, shown before it is chosen ───────────────────────────────
+   Page 11.3's "two errors that are not errors": a hint line under the control
+   carrying the value the field would take and its DEFAULT tag. Amber for "I
+   picked this for you". Nothing about this is red and nothing about it is a
+   failure — it is the consequence of an answer the product is offering. */
+
+/* The project folder as a one-click answer to a path field. A quiet text
+   control, not a filled button: it is an offer, and the field stays the
+   thing being answered. */
+.qcard__usews {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  cursor: pointer;
+  text-align: left;
+}
+
+.qcard__usews:hover { color: var(--ink-1); }
+
+.qcard__usews .mono { word-break: break-all; }
+
+.qcard__fallback {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+/* ── What happened ────────────────────────────────────────────────────────
+   The tool's own sentence first and always, then one row per fact it wrote,
+   each wearing the origin the ENGINE gave it. */
+
+.qcard__landed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+/* THE GLYPH STAYS ON THE FIRST LINE OF THE SENTENCE. Found by looking: the
+   measuring tools answer with a whole sentence — "Counted 120 rows in …;
+   eval_size_n is now measured rather than claimed" — and with `flex-wrap` on,
+   that sentence became a full-width flex item and pushed itself below the tick.
+   Aligned to the top of the text and given a shrinkable text column instead. */
+.qcard__state {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+
+.qcard__state > span:not(.tag):not(.mono) {
+  flex: 1 1 60%;
+  min-width: 0;
+}
+
+.qcard__state > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--ink-3);
+}
+
+.qcard__state--failed,
+.qcard__state--failed > svg {
+  color: var(--wont);
+}
+
+.qcard__noargs {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+.qcard__noargs > svg {
+  flex: 0 0 auto;
+}
+
+/* ── The footnote ─────────────────────────────────────────────────────────
+   Page 23.5's construction for the revisit condition, borrowed for the same
+   job: "a hairline in --edge-faint, --ink-3 text, one 12px glyph. It is the
+   quietest thing on the card." Here it carries the gate and its clause
+   verbatim, which is what makes this card checkable by someone who does not
+   trust it. */
+
+.qcard__foot {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: 0;
+  padding-top: var(--sp-10);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+.qcard__foot > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.qcard__foot .mono {
+  color: var(--ink-2);
+  word-break: break-word;
+}

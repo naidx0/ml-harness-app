@@ -1,0 +1,145 @@
+{
+  "situation": "A recall that recorded NOTHING and said why: refusal 7 of the seven, the one where a score TIE and not the retriever decided whether the right passage was inside the top k. Chosen over the other six because it is the one that still produces a recall, a curve and a per-row table - every number a successful run has - and may not stamp any of it.",
+  "corpus": "duplicated/ - four documents and one byte-identical vendored copy, `handbook (1).md` beside `handbook.md`, which is what a downloads folder looks like. At k=1 the recall is the alphabetical order of two file names.",
+  "produced_by": {
+    "tool": "measure_retriever_recall",
+    "arguments": {
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\duplicated.jsonl",
+      "question_field": "question",
+      "ground_truth_field": "gold_document",
+      "k": 1,
+      "index_id": 2
+    },
+    "index_built_first": {
+      "path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\duplicated",
+      "name": "duplicated"
+    },
+    "thread_id": 2,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\claude\\C--Users-example-OneDrive-Documents-GitHub-ml-harness\\95a6345b-2d3c-44f9-ad75-3c543aa629e6\\scratchpad\\gate\\capture.db",
+    "work_root": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2",
+    "captured_at_utc": "2026-08-21T10:49:08+00:00",
+    "engine": "app/tools/retrieval.py, via app.tools.REGISTRY.call"
+  },
+  "shape": {
+    "top_level_keys": 36,
+    "rows_a_flat_table_would_draw": 77,
+    "rows_the_payload_actually_holds": 77,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 4,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {
+      "misses[].returned": 1,
+      "misses[].tie_decided_at_k": 1,
+      "rows[].returned": 1,
+      "rows[].tie_decided_at_k": 1
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 2,
+    "longest_string_chars": 877,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": true,
+    "index_id": 2,
+    "index_name": "duplicated",
+    "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\duplicated.jsonl",
+    "question_field": "question",
+    "ground_truth_field": "gold_document",
+    "ground_truth_chosen_how": "named in the call",
+    "ground_truth_level": "document",
+    "levels": {
+      "document": 1
+    },
+    "matched_by": {
+      "doc_key": 1
+    },
+    "k": 1,
+    "questions_scored": 1,
+    "questions_eligible": 1,
+    "rows_seen": 1,
+    "rows_read": 1,
+    "hit_row_cap": false,
+    "unlabelled_rows": [],
+    "unlabelled_n": 0,
+    "unlabelled_by_reason": {},
+    "tie_decided_rows": [
+      {
+        "row": 0,
+        "question": "zarquon protocol",
+        "ground_truth": "handbook.md",
+        "why": "the right passage scored exactly what 1 other passage(s) in this index scored, so whether it lands inside the top 1 is decided by the tie-break and not by the retriever"
+      }
+    ],
+    "tie_decided_n": 1,
+    "hits": 0,
+    "recall_at_k": 0.0,
+    "recall_curve": [
+      {
+        "k": 1,
+        "hits": 0,
+        "of": 1,
+        "recall": 0.0,
+        "tie_decided": 1
+      }
+    ],
+    "unresolved_ground_truth": [],
+    "unresolved_n": 0,
+    "rows": [
+      {
+        "row": 0,
+        "question": "zarquon protocol",
+        "ground_truth": "handbook.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 1,
+        "worst_possible_rank": 2,
+        "tie_decided_at_k": [
+          1
+        ],
+        "top_passage": "handbook (1).md#0",
+        "returned": [
+          "handbook (1).md#0"
+        ]
+      }
+    ],
+    "misses": [
+      {
+        "row": 0,
+        "question": "zarquon protocol",
+        "ground_truth": "handbook.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 1,
+        "worst_possible_rank": 2,
+        "tie_decided_at_k": [
+          1
+        ],
+        "top_passage": "handbook (1).md#0",
+        "returned": [
+          "handbook (1).md#0"
+        ]
+      }
+    ],
+    "answer_in_passage": null,
+    "resolution": {
+      "n": 1,
+      "ci_95": [
+        0.0,
+        0.7934506856227626
+      ],
+      "half_width_points": 39.67253428113813,
+      "resolves_a_difference_of_at_least_points": 138.5903824349678,
+      "rows_for_a_10_point_difference": 193,
+      "more_rows_needed_for_10_points": 192,
+      "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+      "says": "1 rows put this score between 0% and 79% with 95% confidence (+-39.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 139 points. To resolve a 10-point difference this way you would need 193 rows, which is 192 more than you have."
+    },
+    "stampable": false,
+    "scorer": "BM25, k1=1.5, b=0.75, over 5 passages. No model was asked anything and nothing left this machine.",
+    "decides_nothing": "This is a measurement of the retriever alone. It does not say the answer would be right, it does not set retrieval_tried - which is yours to say - and it opens no gate by itself.",
+    "summary": "0 of 1 questions had a passage from the right document in the top 1 (0%), measured against duplicated - 5 passages from 5 documents, BM25, on this machine. Ground truth came from the 'gold_document' column, named in the call. Recall rises with k and here is the whole curve: k=1 0/1. 1 rows put this score between 0% and 79% with 95% confidence (+-39.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 139 points. To resolve a 10-point difference this way you would need 193 rows, which is 192 more than you have. 1 row(s) were decided by a tie rather than by the retriever: the right passage scored exactly what one or more other passages scored, so whether it fell inside the top 1 is the tie-break's answer and not a measurement. Duplicate documents in the corpus are the usual cause. Nothing was recorded.",
+    "measured": [],
+    "not_measured": "Nothing was recorded. 0 of 1 questions had a passage from the right document in the top 1 (0%), measured against duplicated - 5 passages from 5 documents, BM25, on this machine. Ground truth came from the 'gold_document' column, named in the call. Recall rises with k and here is the whole curve: k=1 0/1. 1 rows put this score between 0% and 79% with 95% confidence (+-39.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 139 points. To resolve a 10-point difference this way you would need 193 rows, which is 192 more than you have. 1 row(s) were decided by a tie rather than by the retriever: the right passage scored exactly what one or more other passages scored, so whether it fell inside the top 1 is the tie-break's answer and not a measurement. Duplicate documents in the corpus are the usual cause. Nothing was recorded."
+  }
+}

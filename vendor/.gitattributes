@@ -1,0 +1,5 @@
+# Upstream's bytes, kept exactly as upstream wrote them.
+# Git must not normalise line endings here, or the vendored copy stops being
+# byte-comparable with the commit PROVENANCE.json pins it to - which is the
+# whole point of pinning it.
+* -text

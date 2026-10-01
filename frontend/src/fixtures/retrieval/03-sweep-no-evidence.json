@@ -1,0 +1,760 @@
+{
+  "situation": "A sweep that ends in NO EVIDENCE across every pair, over cuts that genuinely differ - four distinct cuts, six pairwise comparisons, none of them separating after Holm.",
+  "corpus": "contracts/ - 40 documents of seven paragraphs each, of deliberately unequal lengths, so a greedy packer answers differently at 300 characters and at 1200.",
+  "produced_by": {
+    "tool": "compare_chunkings",
+    "arguments": {
+      "corpus_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\contracts",
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts.jsonl",
+      "question_field": "question",
+      "ground_truth_field": "gold_document",
+      "settings": [
+        {
+          "passage_chars": 250,
+          "passage_overlap": 60
+        },
+        {
+          "passage_chars": 450,
+          "passage_overlap": 60
+        },
+        {
+          "passage_chars": 900,
+          "passage_overlap": 60
+        },
+        {
+          "passage_chars": 1800,
+          "passage_overlap": 60
+        }
+      ],
+      "k": 3,
+      "name": "contracts",
+      "run": true
+    },
+    "index_built_first": null,
+    "thread_id": 3,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\claude\\C--Users-example-OneDrive-Documents-GitHub-ml-harness\\95a6345b-2d3c-44f9-ad75-3c543aa629e6\\scratchpad\\gate\\capture.db",
+    "work_root": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2",
+    "captured_at_utc": "2026-08-21T10:49:08+00:00",
+    "engine": "app/tools/retrieval.py, via app.tools.REGISTRY.call"
+  },
+  "shape": {
+    "top_level_keys": 40,
+    "rows_a_flat_table_would_draw": 372,
+    "rows_the_payload_actually_holds": 559,
+    "max_nesting_depth": 6,
+    "containers_summarised_away_at_depth_3": 17,
+    "rows_hidden_behind_those_summaries": 187,
+    "what_is_summarised_away": {
+      "confirmation.confirm_curve[]": 4,
+      "per_setting[].own_run": 4,
+      "per_setting[].resolution": 4,
+      "levers.we_cannot_pull[]": 3,
+      "confirmation.rows[]": 2
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 18,
+    "longest_string_chars": 5900,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": true,
+    "ran": true,
+    "corpus_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\contracts",
+    "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts.jsonl",
+    "settings": [
+      {
+        "passage_chars": 250,
+        "passage_overlap": 60,
+        "index_name": "contracts#chunk-250-60",
+        "cut_fingerprint": "eba65d4471d8fb3f444252923e503642b5af2bd2ccb85bb960d4b9bdf2860c3b",
+        "passages": 542,
+        "posting_rows": 9968,
+        "terms": 15586,
+        "short_fragments_dropped": 0,
+        "passages_with_no_indexable_term": 0,
+        "would_truncate": false,
+        "already_built": false,
+        "existing_index_id": null,
+        "name_taken_by_another_corpus": false
+      },
+      {
+        "passage_chars": 450,
+        "passage_overlap": 60,
+        "index_name": "contracts#chunk-450-60",
+        "cut_fingerprint": "fc81db4cc88dceefa298e11f673513701ae081fd2ae96210daef68cb7b4ece09",
+        "passages": 267,
+        "posting_rows": 7131,
+        "terms": 14793,
+        "short_fragments_dropped": 0,
+        "passages_with_no_indexable_term": 0,
+        "would_truncate": false,
+        "already_built": false,
+        "existing_index_id": null,
+        "name_taken_by_another_corpus": false
+      },
+      {
+        "passage_chars": 900,
+        "passage_overlap": 60,
+        "index_name": "contracts#chunk-900-60",
+        "cut_fingerprint": "306ce2e60d55a8d391957871513007cd109c3a7e06238d5d5ce9620981acf4ec",
+        "passages": 153,
+        "posting_rows": 5509,
+        "terms": 14793,
+        "short_fragments_dropped": 0,
+        "passages_with_no_indexable_term": 0,
+        "would_truncate": false,
+        "already_built": false,
+        "existing_index_id": null,
+        "name_taken_by_another_corpus": false
+      },
+      {
+        "passage_chars": 1800,
+        "passage_overlap": 60,
+        "index_name": "contracts#chunk-1800-60",
+        "cut_fingerprint": "dcb3c5df4d1285d0f22332e478c5882804bd38e2f49f4fb45c26131f007f0ec2",
+        "passages": 76,
+        "posting_rows": 3758,
+        "terms": 14793,
+        "short_fragments_dropped": 0,
+        "passages_with_no_indexable_term": 0,
+        "would_truncate": false,
+        "already_built": false,
+        "existing_index_id": null,
+        "name_taken_by_another_corpus": false
+      }
+    ],
+    "cuts": {
+      "distinct_cuts": 4,
+      "identical_groups": [],
+      "family_over_distinct_cuts": 6,
+      "says": ""
+    },
+    "will_do": {
+      "settings": 4,
+      "distinct_cuts": 4,
+      "rebuilds": 4,
+      "reused_without_rebuilding": 0,
+      "documents_each_time": 58,
+      "documents_skipped": 0,
+      "passages_written": 1038,
+      "posting_rows_written": 26366,
+      "retrievals": 160,
+      "questions_each_setting_is_scored_on": 40,
+      "pairwise_comparisons": 6,
+      "pairwise_comparisons_over_distinct_cuts": 6,
+      "counted_by": "app/tools/retrieval.py's own kept_passages(), which is the same function build() writes from - so these are the rows that will actually be inserted and not an estimate of them. A posting row is one distinct term in one passage, which is exactly what build inserts. No duration is stated anywhere here because nothing has measured one on this machine."
+    },
+    "cost": {
+      "model_tokens": {
+        "dimension": "model_tokens",
+        "unit": "tokens",
+        "provenance": "INFERRED",
+        "value": 0.0,
+        "how": "compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine.",
+        "find_out_by": "",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "model_tokens: 0 tokens (inferred) - compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine."
+      },
+      "model_requests": {
+        "dimension": "model_requests",
+        "unit": "requests",
+        "provenance": "INFERRED",
+        "value": 0.0,
+        "how": "compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine.",
+        "find_out_by": "",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "model_requests: 0 requests (inferred) - compare_chunkings declares reads=['filesystem', 'datasets', 'retrieval'], which does not include `providers`, so nothing it does can reach your model. Every retrieval in this sweep is BM25 arithmetic over a token count on this machine."
+      },
+      "wall_clock": {
+        "dimension": "wall_clock",
+        "unit": "seconds",
+        "provenance": "UNKNOWN",
+        "value": null,
+        "how": "nothing in this harness has recorded how long a rebuild of this corpus takes on this machine, so there is no measurement to derive one from and any duration here would be invented. What is known is the work: 4 rebuild(s), 1038 passage(s), 26366 posting row(s) and 160 retrieval(s), all counted rather than guessed",
+        "find_out_by": "run this sweep with a single setting - the reply says what that one setting writes - time it, and the rest is arithmetic over the per-setting counts already in this plan",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "wall_clock: unknown - nothing in this harness has recorded how long a rebuild of this corpus takes on this machine, so there is no measurement to derive one from and any duration here would be invented. What is known is the work: 4 rebuild(s), 1038 passage(s), 26366 posting row(s) and 160 retrieval(s), all counted rather than guessed. To find out: run this sweep with a single setting - the reply says what that one setting writes - time it, and the rest is arithmetic over the per-setting counts already in this plan"
+      },
+      "disk": {
+        "dimension": "disk",
+        "unit": "bytes",
+        "provenance": "UNKNOWN",
+        "value": null,
+        "how": "this writes 1038 passage row(s) and 26366 posting row(s) into this project's own database, and nothing has measured how many bytes a row of either costs",
+        "find_out_by": "compare the size of the harness database before and after one setting of this sweep",
+        "reading": null,
+        "subjects": [],
+        "from": [],
+        "say": "disk: unknown - this writes 1038 passage row(s) and 26366 posting row(s) into this project's own database, and nothing has measured how many bytes a row of either costs. To find out: compare the size of the harness database before and after one setting of this sweep"
+      }
+    },
+    "questions": {
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts.jsonl",
+      "question_field": "question",
+      "ground_truth_field": "gold_document",
+      "ground_truth_chosen_how": "named in the call",
+      "rows_seen": 40,
+      "rows_read": 40,
+      "eligible": 40,
+      "unlabelled": 0,
+      "unlabelled_by_reason": {},
+      "k": 3
+    },
+    "indexes": [
+      {
+        "passage_chars": 250,
+        "passage_overlap": 60,
+        "index_id": 3,
+        "index_name": "contracts#chunk-250-60",
+        "passages": 542,
+        "documents": 58,
+        "total_tokens": 15586,
+        "reused": false,
+        "truncated": false,
+        "cut_by": "blank-line paragraphs, packed up to 250 characters; a paragraph longer than that split at word boundaries with 60 characters of overlap; fragments under 40 characters dropped"
+      },
+      {
+        "passage_chars": 450,
+        "passage_overlap": 60,
+        "index_id": 4,
+        "index_name": "contracts#chunk-450-60",
+        "passages": 267,
+        "documents": 58,
+        "total_tokens": 14793,
+        "reused": false,
+        "truncated": false,
+        "cut_by": "blank-line paragraphs, packed up to 450 characters; a paragraph longer than that split at word boundaries with 60 characters of overlap; fragments under 40 characters dropped"
+      },
+      {
+        "passage_chars": 900,
+        "passage_overlap": 60,
+        "index_id": 5,
+        "index_name": "contracts#chunk-900-60",
+        "passages": 153,
+        "documents": 58,
+        "total_tokens": 14793,
+        "reused": false,
+        "truncated": false,
+        "cut_by": "blank-line paragraphs, packed up to 900 characters; a paragraph longer than that split at word boundaries with 60 characters of overlap; fragments under 40 characters dropped"
+      },
+      {
+        "passage_chars": 1800,
+        "passage_overlap": 60,
+        "index_id": 6,
+        "index_name": "contracts#chunk-1800-60",
+        "passages": 76,
+        "documents": 58,
+        "total_tokens": 14793,
+        "reused": false,
+        "truncated": false,
+        "cut_by": "blank-line paragraphs, packed up to 1800 characters; a paragraph longer than that split at word boundaries with 60 characters of overlap; fragments under 40 characters dropped"
+      }
+    ],
+    "compared_questions": 40,
+    "dropped_not_scored_by_every_setting": 0,
+    "dropped_decided_by_a_tie": 0,
+    "dropped_rows": {
+      "not_scored_by_every_setting": [],
+      "decided_by_a_tie": [],
+      "why": "A question only some settings could score, or one whose answer was decided by two passages tying on score rather than by the retriever, carries no information about the cut - and leaving either in would let the tie-break or the join decide which chunking wins. Dropped for every setting at once, because dropping it from one side only would unpair the rows."
+    },
+    "per_setting": [
+      {
+        "setting": "250/60",
+        "hits": 34,
+        "of": 40,
+        "recall": 0.85,
+        "resolution": {
+          "n": 40,
+          "ci_95": [
+            0.709276756335103,
+            0.9293881228267964
+          ],
+          "half_width_points": 11.005568324584669,
+          "resolves_a_difference_of_at_least_points": 21.91306351441454,
+          "rows_for_a_10_point_difference": 193,
+          "more_rows_needed_for_10_points": 153,
+          "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+          "says": "40 rows put this score between 71% and 93% with 95% confidence (+-11.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 22 points. To resolve a 10-point difference this way you would need 193 rows, which is 153 more than you have."
+        },
+        "passage_chars": 250,
+        "passage_overlap": 60,
+        "index_id": 3,
+        "index_name": "contracts#chunk-250-60",
+        "passages": 542,
+        "own_run": {
+          "hits": 34,
+          "of": 40,
+          "recall": 0.85,
+          "recall_curve": [
+            {
+              "k": 1,
+              "hits": 34,
+              "of": 40,
+              "recall": 0.85,
+              "tie_decided": 0
+            },
+            {
+              "k": 2,
+              "hits": 34,
+              "of": 40,
+              "recall": 0.85,
+              "tie_decided": 0
+            },
+            {
+              "k": 3,
+              "hits": 34,
+              "of": 40,
+              "recall": 0.85,
+              "tie_decided": 0
+            }
+          ],
+          "unresolved_n": 0,
+          "tie_decided_n": 0,
+          "stampable_on_its_own": true,
+          "says": "Over every row this setting could score on its own - 40 of them - it retrieved the right document for 34. That is a different denominator from the 40 question(s) the comparison is made on and it is not the number any comparison here used."
+        }
+      },
+      {
+        "setting": "450/60",
+        "hits": 36,
+        "of": 40,
+        "recall": 0.9,
+        "resolution": {
+          "n": 40,
+          "ci_95": [
+            0.769482247724777,
+            0.9604204713173937
+          ],
+          "half_width_points": 9.546911179630834,
+          "resolves_a_difference_of_at_least_points": 21.91306351441454,
+          "rows_for_a_10_point_difference": 193,
+          "more_rows_needed_for_10_points": 153,
+          "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+          "says": "40 rows put this score between 77% and 96% with 95% confidence (+-9.5 points). Two separate runs on a set this size cannot be told apart unless they differ by about 22 points. To resolve a 10-point difference this way you would need 193 rows, which is 153 more than you have."
+        },
+        "passage_chars": 450,
+        "passage_overlap": 60,
+        "index_id": 4,
+        "index_name": "contracts#chunk-450-60",
+        "passages": 267,
+        "own_run": {
+          "hits": 36,
+          "of": 40,
+          "recall": 0.9,
+          "recall_curve": [
+            {
+              "k": 1,
+              "hits": 36,
+              "of": 40,
+              "recall": 0.9,
+              "tie_decided": 0
+            },
+            {
+              "k": 2,
+              "hits": 36,
+              "of": 40,
+              "recall": 0.9,
+              "tie_decided": 0
+            },
+            {
+              "k": 3,
+              "hits": 36,
+              "of": 40,
+              "recall": 0.9,
+              "tie_decided": 0
+            }
+          ],
+          "unresolved_n": 0,
+          "tie_decided_n": 0,
+          "stampable_on_its_own": true,
+          "says": "Over every row this setting could score on its own - 40 of them - it retrieved the right document for 36. That is a different denominator from the 40 question(s) the comparison is made on and it is not the number any comparison here used."
+        }
+      },
+      {
+        "setting": "900/60",
+        "hits": 40,
+        "of": 40,
+        "recall": 1.0,
+        "resolution": {
+          "n": 40,
+          "ci_95": [
+            0.9123783988027135,
+            1.0
+          ],
+          "half_width_points": 4.381080059864323,
+          "resolves_a_difference_of_at_least_points": 21.91306351441454,
+          "rows_for_a_10_point_difference": 193,
+          "more_rows_needed_for_10_points": 153,
+          "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+          "says": "40 rows put this score between 91% and 100% with 95% confidence (+-4.4 points). Two separate runs on a set this size cannot be told apart unless they differ by about 22 points. To resolve a 10-point difference this way you would need 193 rows, which is 153 more than you have."
+        },
+        "passage_chars": 900,
+        "passage_overlap": 60,
+        "index_id": 5,
+        "index_name": "contracts#chunk-900-60",
+        "passages": 153,
+        "own_run": {
+          "hits": 40,
+          "of": 40,
+          "recall": 1.0,
+          "recall_curve": [
+            {
+              "k": 1,
+              "hits": 40,
+              "of": 40,
+              "recall": 1.0,
+              "tie_decided": 0
+            },
+            {
+              "k": 2,
+              "hits": 40,
+              "of": 40,
+              "recall": 1.0,
+              "tie_decided": 0
+            },
+            {
+              "k": 3,
+              "hits": 40,
+              "of": 40,
+              "recall": 1.0,
+              "tie_decided": 0
+            }
+          ],
+          "unresolved_n": 0,
+          "tie_decided_n": 0,
+          "stampable_on_its_own": true,
+          "says": "Over every row this setting could score on its own - 40 of them - it retrieved the right document for 40. That is a different denominator from the 40 question(s) the comparison is made on and it is not the number any comparison here used."
+        }
+      },
+      {
+        "setting": "1800/60",
+        "hits": 40,
+        "of": 40,
+        "recall": 1.0,
+        "resolution": {
+          "n": 40,
+          "ci_95": [
+            0.9123783988027135,
+            1.0
+          ],
+          "half_width_points": 4.381080059864323,
+          "resolves_a_difference_of_at_least_points": 21.91306351441454,
+          "rows_for_a_10_point_difference": 193,
+          "more_rows_needed_for_10_points": 153,
+          "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+          "says": "40 rows put this score between 91% and 100% with 95% confidence (+-4.4 points). Two separate runs on a set this size cannot be told apart unless they differ by about 22 points. To resolve a 10-point difference this way you would need 193 rows, which is 153 more than you have."
+        },
+        "passage_chars": 1800,
+        "passage_overlap": 60,
+        "index_id": 6,
+        "index_name": "contracts#chunk-1800-60",
+        "passages": 76,
+        "own_run": {
+          "hits": 40,
+          "of": 40,
+          "recall": 1.0,
+          "recall_curve": [
+            {
+              "k": 1,
+              "hits": 40,
+              "of": 40,
+              "recall": 1.0,
+              "tie_decided": 0
+            },
+            {
+              "k": 2,
+              "hits": 40,
+              "of": 40,
+              "recall": 1.0,
+              "tie_decided": 0
+            },
+            {
+              "k": 3,
+              "hits": 40,
+              "of": 40,
+              "recall": 1.0,
+              "tie_decided": 0
+            }
+          ],
+          "unresolved_n": 0,
+          "tie_decided_n": 0,
+          "stampable_on_its_own": true,
+          "says": "Over every row this setting could score on its own - 40 of them - it retrieved the right document for 40. That is a different denominator from the 40 question(s) the comparison is made on and it is not the number any comparison here used."
+        }
+      }
+    ],
+    "comparisons": [
+      {
+        "a": "250/60",
+        "b": "450/60",
+        "a_better_on": 0,
+        "b_better_on": 2,
+        "changed": 2,
+        "agreed": 38,
+        "delta": -0.05,
+        "test": "McNemar, two-sided exact binomial over the questions whose verdict changed",
+        "p": 0.5,
+        "rank_in_family": 5,
+        "holm_threshold": 0.025,
+        "adjusted_p": 1.0,
+        "separated": false,
+        "better": "450/60",
+        "min_changed_questions_to_separate": 7,
+        "says": "NO EVIDENCE between '250/60' and '450/60'. They differ by -5.0% on 40 paired questions, but only 2 changed verdict (0 to '250/60', 2 to '450/60'), McNemar exact p=0.5 against this family's threshold of 0.025. At least 7 question(s) would have to change verdict between these two before the test could separate them at all."
+      },
+      {
+        "a": "250/60",
+        "b": "900/60",
+        "a_better_on": 0,
+        "b_better_on": 6,
+        "changed": 6,
+        "agreed": 34,
+        "delta": -0.15,
+        "test": "McNemar, two-sided exact binomial over the questions whose verdict changed",
+        "p": 0.03125,
+        "rank_in_family": 1,
+        "holm_threshold": 0.008333333333333333,
+        "adjusted_p": 0.1875,
+        "separated": false,
+        "better": "900/60",
+        "min_changed_questions_to_separate": 8,
+        "says": "NO EVIDENCE between '250/60' and '900/60'. They differ by -15.0% on 40 paired questions, but only 6 changed verdict (0 to '250/60', 6 to '900/60'), McNemar exact p=0.0312 against this family's threshold of 0.00833. At least 8 question(s) would have to change verdict between these two before the test could separate them at all."
+      },
+      {
+        "a": "250/60",
+        "b": "1800/60",
+        "a_better_on": 0,
+        "b_better_on": 6,
+        "changed": 6,
+        "agreed": 34,
+        "delta": -0.15,
+        "test": "McNemar, two-sided exact binomial over the questions whose verdict changed",
+        "p": 0.03125,
+        "rank_in_family": 2,
+        "holm_threshold": 0.01,
+        "adjusted_p": 0.1875,
+        "separated": false,
+        "better": "1800/60",
+        "min_changed_questions_to_separate": 8,
+        "says": "NO EVIDENCE between '250/60' and '1800/60'. They differ by -15.0% on 40 paired questions, but only 6 changed verdict (0 to '250/60', 6 to '1800/60'), McNemar exact p=0.0312 against this family's threshold of 0.01. At least 8 question(s) would have to change verdict between these two before the test could separate them at all."
+      },
+      {
+        "a": "450/60",
+        "b": "900/60",
+        "a_better_on": 0,
+        "b_better_on": 4,
+        "changed": 4,
+        "agreed": 36,
+        "delta": -0.1,
+        "test": "McNemar, two-sided exact binomial over the questions whose verdict changed",
+        "p": 0.125,
+        "rank_in_family": 3,
+        "holm_threshold": 0.0125,
+        "adjusted_p": 0.5,
+        "separated": false,
+        "better": "900/60",
+        "min_changed_questions_to_separate": 8,
+        "says": "NO EVIDENCE between '450/60' and '900/60'. They differ by -10.0% on 40 paired questions, but only 4 changed verdict (0 to '450/60', 4 to '900/60'), McNemar exact p=0.125 against this family's threshold of 0.0125. At least 8 question(s) would have to change verdict between these two before the test could separate them at all."
+      },
+      {
+        "a": "450/60",
+        "b": "1800/60",
+        "a_better_on": 0,
+        "b_better_on": 4,
+        "changed": 4,
+        "agreed": 36,
+        "delta": -0.1,
+        "test": "McNemar, two-sided exact binomial over the questions whose verdict changed",
+        "p": 0.125,
+        "rank_in_family": 4,
+        "holm_threshold": 0.016666666666666666,
+        "adjusted_p": 0.5,
+        "separated": false,
+        "better": "1800/60",
+        "min_changed_questions_to_separate": 7,
+        "says": "NO EVIDENCE between '450/60' and '1800/60'. They differ by -10.0% on 40 paired questions, but only 4 changed verdict (0 to '450/60', 4 to '1800/60'), McNemar exact p=0.125 against this family's threshold of 0.0167. At least 7 question(s) would have to change verdict between these two before the test could separate them at all."
+      },
+      {
+        "a": "900/60",
+        "b": "1800/60",
+        "a_better_on": 0,
+        "b_better_on": 0,
+        "changed": 0,
+        "agreed": 40,
+        "delta": 0.0,
+        "test": "McNemar, two-sided exact binomial over the questions whose verdict changed",
+        "p": 1.0,
+        "rank_in_family": 6,
+        "holm_threshold": 0.05,
+        "adjusted_p": 1.0,
+        "separated": false,
+        "better": null,
+        "min_changed_questions_to_separate": 6,
+        "says": "Not one of the 40 questions changed its verdict between '900/60' and '1800/60'. There is no evidence of any difference between these two chunkings on this eval set, and none to report as a small win."
+      }
+    ],
+    "family_size": 6,
+    "separated_n": 0,
+    "alpha": 0.05,
+    "correction": "Holm-Bonferroni, step-down, over all 6 pairwise comparison(s) in this sweep, holding the family-wise error rate at 0.05. Uncorrected, every one of those 6 tests would keep 0.05 of its own; corrected, the tightest threshold any of them has to clear is 0.0083333. Letting a family this size keep 0.05 apiece is the same defect as reporting forty unresolvable deltas and letting somebody believe the tenth.",
+    "tightest_threshold": 0.008333333333333333,
+    "min_changed_questions_at_this_family_size": 8,
+    "most_changed_by_any_pair": 6,
+    "beaten_by": {
+      "250/60": [],
+      "450/60": [],
+      "900/60": [],
+      "1800/60": []
+    },
+    "not_beaten_by_anything": [
+      "250/60",
+      "450/60",
+      "900/60",
+      "1800/60"
+    ],
+    "highest_recall_here": [
+      "900/60",
+      "1800/60"
+    ],
+    "crowned": null,
+    "why_nothing_is_crowned": "2 settings tie for the highest recall in this sweep at 40 of 40 - ['900/60', '1800/60'] - AND A TIE AT THE TOP IS NOT A SHORTLIST. The largest of 4 estimates measured on the same 40 questions is biased upward even when every setting is truly identical - the selection is made on the noise and then reported as though the setting had been chosen in advance. The split-half confirmation is where that bias is measured on your own rows rather than asserted.",
+    "verdict": "no_evidence",
+    "confirmation": {
+      "ok": true,
+      "chosen_on_questions": 20,
+      "confirmed_on_questions": 20,
+      "split_by": "alternating position among the rows this comparison kept, in file order - even positions choose, odd positions confirm. Those are the rows every setting scored minus the rows a score tie decided, so a position here is not a line number in the eval file. No seed, nothing random, reproducible by eye.",
+      "assumes": "that the two halves are interchangeable. An eval file that alternates easy and hard questions is not, and this function cannot see that from a hit vector.",
+      "gap_direction": "unchanged",
+      "gap_is_a_read_on_selection": false,
+      "rows": [
+        {
+          "setting": "900/60",
+          "chosen_on_hits": 20,
+          "chosen_on_of": 20,
+          "chosen_on_recall": 1.0,
+          "confirmed_hits": 20,
+          "confirmed_of": 20,
+          "confirmed_recall": 1.0,
+          "shrinkage": 0.0,
+          "resolution": {
+            "n": 20,
+            "ci_95": [
+              0.8388748419471806,
+              1.0
+            ],
+            "half_width_points": 8.056257902640967,
+            "resolves_a_difference_of_at_least_points": 30.98975161522808,
+            "rows_for_a_10_point_difference": 193,
+            "more_rows_needed_for_10_points": 173,
+            "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+            "says": "20 rows put this score between 84% and 100% with 95% confidence (+-8.1 points). Two separate runs on a set this size cannot be told apart unless they differ by about 31 points. To resolve a 10-point difference this way you would need 193 rows, which is 173 more than you have."
+          }
+        },
+        {
+          "setting": "1800/60",
+          "chosen_on_hits": 20,
+          "chosen_on_of": 20,
+          "chosen_on_recall": 1.0,
+          "confirmed_hits": 20,
+          "confirmed_of": 20,
+          "confirmed_recall": 1.0,
+          "shrinkage": 0.0,
+          "resolution": {
+            "n": 20,
+            "ci_95": [
+              0.8388748419471806,
+              1.0
+            ],
+            "half_width_points": 8.056257902640967,
+            "resolves_a_difference_of_at_least_points": 30.98975161522808,
+            "rows_for_a_10_point_difference": 193,
+            "more_rows_needed_for_10_points": 173,
+            "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+            "says": "20 rows put this score between 84% and 100% with 95% confidence (+-8.1 points). Two separate runs on a set this size cannot be told apart unless they differ by about 31 points. To resolve a 10-point difference this way you would need 193 rows, which is 173 more than you have."
+          }
+        }
+      ],
+      "tie_on_the_choosing_half": true,
+      "chosen": [
+        "900/60",
+        "1800/60"
+      ],
+      "confirm_curve": [
+        {
+          "setting": "250/60",
+          "chosen_on_hits": 17,
+          "chosen_on_of": 20,
+          "confirmed_hits": 17,
+          "confirmed_of": 20
+        },
+        {
+          "setting": "450/60",
+          "chosen_on_hits": 18,
+          "chosen_on_of": 20,
+          "confirmed_hits": 18,
+          "confirmed_of": 20
+        },
+        {
+          "setting": "900/60",
+          "chosen_on_hits": 20,
+          "chosen_on_of": 20,
+          "confirmed_hits": 20,
+          "confirmed_of": 20
+        },
+        {
+          "setting": "1800/60",
+          "chosen_on_hits": 20,
+          "chosen_on_of": 20,
+          "confirmed_hits": 20,
+          "confirmed_of": 20
+        }
+      ],
+      "says": "2 settings tied for the highest recall on the 20 questions used to choose, so the selection did not pick one. Chosen on 20 question(s), confirmed on the 20 question(s) that played no part in choosing: '900/60' 20/20 when it was chosen and 20/20 on the questions that did not choose it, '1800/60' 20/20 when it was chosen and 20/20 on the questions that did not choose it. The chosen setting(s) scored EXACTLY THE SAME on the questions that played no part in choosing as on the ones that did, so this split measured no gap at all. That is one draw of a noisy quantity and not a finding that the selection cost nothing; it is what a sweep looks like when the settings are at a ceiling or a floor on both halves, which the two recalls above will show. The reason the sweep's own maximum is not a number to report is the selection, and it is unchanged. WHAT THE SPLIT ASSUMES, since it is not checkable from here: that the two halves are interchangeable. It splits by alternating POSITION AMONG THE ROWS THIS COMPARISON KEPT - not by line in your file, because rows some setting could not score and rows a score tie decided are already out - so a file whose questions alternate easy and hard hands the two halves different questions, and then every number in this block is about that structure and not about chunking."
+    },
+    "measured_on": "the questions EVERY setting scored, which is the only set on which a difference between them means anything",
+    "measured": [],
+    "not_measured": "Nothing was recorded and nothing here can record anything: compare_chunkings declares measures=(), checked at registration, so the instrument it is handed cannot stamp a fact. retriever_recall_at_k is source: inspect and measure_retriever_recall is its only instrument. THE REASON IS NOT BOOKKEEPING: the highest recall in a sweep is a maximum selected on the same questions it would be reported against, and stamping it would put the one number in this bench that opens a gate under exactly that bias. GOING AND TAKING THE STAMP YOURSELF IS THE RIGHT NEXT MOVE, AND IT IS NEITHER A COPY OF THE NUMBER HERE NOR A CURE FOR HOW IT WAS CHOSEN. Scoring is deterministic, so nothing about re-running changes what the retriever does - but measure_retriever_recall scores ONE index over the rows THAT index can score, and this comparison is made over the rows EVERY setting scored minus every row a score tie decided under any of them. Those are different denominators whenever a sweep dropped anything, and then the figure it hands back is a different number from the one in the curve. It also goes through the seven refusals it owns, and any of them returns a number with no stamp, or no number: a setting whose own run has an unresolved ground truth, a tie, or a truncated index is not stampable, and this reply says which of these settings are. What re-measuring buys is PROVENANCE, which is real and is the right thing to do before anybody quotes a figure. What it buys about SELECTION is nothing - re-scoring the setting a maximum picked, on the questions that picked it, cannot un-pick it. The number in this reply that was not selected on its own questions is the confirmed recall in the confirmation block.",
+    "stamps_nothing": "Nothing was recorded and nothing here can record anything: compare_chunkings declares measures=(), checked at registration, so the instrument it is handed cannot stamp a fact. retriever_recall_at_k is source: inspect and measure_retriever_recall is its only instrument. THE REASON IS NOT BOOKKEEPING: the highest recall in a sweep is a maximum selected on the same questions it would be reported against, and stamping it would put the one number in this bench that opens a gate under exactly that bias. GOING AND TAKING THE STAMP YOURSELF IS THE RIGHT NEXT MOVE, AND IT IS NEITHER A COPY OF THE NUMBER HERE NOR A CURE FOR HOW IT WAS CHOSEN. Scoring is deterministic, so nothing about re-running changes what the retriever does - but measure_retriever_recall scores ONE index over the rows THAT index can score, and this comparison is made over the rows EVERY setting scored minus every row a score tie decided under any of them. Those are different denominators whenever a sweep dropped anything, and then the figure it hands back is a different number from the one in the curve. It also goes through the seven refusals it owns, and any of them returns a number with no stamp, or no number: a setting whose own run has an unresolved ground truth, a tie, or a truncated index is not stampable, and this reply says which of these settings are. What re-measuring buys is PROVENANCE, which is real and is the right thing to do before anybody quotes a figure. What it buys about SELECTION is nothing - re-scoring the setting a maximum picked, on the questions that picked it, cannot un-pick it. The number in this reply that was not selected on its own questions is the confirmed recall in the confirmation block.",
+    "levers": {
+      "we_can_vary": "chunking - passage_chars and passage_overlap, which build_retrieval_index declares as a stated choice rather than a measured optimum. It is local, it costs no tokens, it sends nothing anywhere, and it is the only one of the four this harness can vary and re-measure for you.",
+      "we_cannot_pull": [
+        {
+          "lever": "hybrid BM25 + dense retrieval",
+          "why_not": "a dense retriever needs an embedding model, and this harness ships no AI. rank_bm25, sentence-transformers and faiss are not installed and adding one is a new dependency; the connected Ollama on this machine holds chat models and no embedding model.",
+          "who_can": "you, by connecting an embedding model - at which point every number it produced would be a number about that endpoint, would have to say so, and would mean sending your corpus through it. That is a different tool with a different provenance and a different egress conversation, and it is not this one."
+        },
+        {
+          "lever": "a cross-encoder reranker",
+          "why_not": "the same reason with a heavier model attached: a cross-encoder is a model, this harness ships none, and there is no reranker on this machine to call.",
+          "who_can": "you, with your own reranker. The bench would then measure it the same way it measures chunking here - one lever at a time, paired, on the same eval set - because two levers at once is not an experiment."
+        },
+        {
+          "lever": "query rewriting",
+          "why_not": "rewriting a query means asking a model to write a new one, so the recall it produced would be a fact about your connected model and not about your retriever, and this file makes no network call at all.",
+          "who_can": "you, with your own connected model - and the resulting number belongs to that model as much as to the index, which is why it cannot be reported next to these as though it were the same measurement."
+        }
+      ],
+      "says": "The diagnosis engine's NO_TRAIN__FIX_RETRIEVAL names four levers and this harness owns one of them. WE CAN VARY: chunking - passage_chars and passage_overlap, which build_retrieval_index declares as a stated choice rather than a measured optimum. It is local, it costs no tokens, it sends nothing anywhere, and it is the only one of the four this harness can vary and re-measure for you. WE CANNOT PULL, and these are refusals of honesty rather than of effort: HYBRID BM25 + DENSE RETRIEVAL - a dense retriever needs an embedding model, and this harness ships no AI. rank_bm25, sentence-transformers and faiss are not installed and adding one is a new dependency; the connected Ollama on this machine holds chat models and no embedding model. Who can: you, by connecting an embedding model - at which point every number it produced would be a number about that endpoint, would have to say so, and would mean sending your corpus through it. That is a different tool with a different provenance and a different egress conversation, and it is not this one. A CROSS-ENCODER RERANKER - the same reason with a heavier model attached: a cross-encoder is a model, this harness ships none, and there is no reranker on this machine to call. Who can: you, with your own reranker. The bench would then measure it the same way it measures chunking here - one lever at a time, paired, on the same eval set - because two levers at once is not an experiment. QUERY REWRITING - rewriting a query means asking a model to write a new one, so the recall it produced would be a fact about your connected model and not about your retriever, and this file makes no network call at all. Who can: you, with your own connected model - and the resulting number belongs to that model as much as to the index, which is why it cannot be reported next to these as though it were the same measurement. A sweep of chunk sizes is one quarter of what the engine asked for, and if it comes back saying nothing separates, that is a real answer about chunking and says nothing at all about the other three.",
+      "in_one_line": "CHUNKING IS ONE OF THE FOUR LEVERS NO_TRAIN__FIX_RETRIEVAL NAMES and it is the only one this harness owns. The other three - hybrid BM25 + dense retrieval, a cross-encoder reranker, query rewriting - are not refusals of effort. Each needs a model this harness does not ship, and pulling any of them would make the resulting number a fact about your endpoint as much as about your index. The levers block says who can pull each one and what it would cost in provenance. This is one quarter of what the engine asked for, and a sweep that separates nothing is a real answer about chunking and no answer at all about the other three."
+    },
+    "scorer": "BM25, k1=1.5, b=0.75, on this machine. Every setting was scored on the same eval set with the same ground truth column at the same k. No model was asked anything and nothing left this machine.",
+    "decides_nothing": "This is a comparison of chunkings and nothing else. It does not set retrieval_tried - which is yours to say - it records no fact, and it opens no gate.",
+    "re_measuring": {
+      "rows_this_comparison_used": 40,
+      "rows_dropped_before_comparing": 0,
+      "settings_whose_own_run_uses_the_same_rows": 4,
+      "settings_whose_own_run_would_stamp": 4,
+      "how_to_name_a_setting": "measure_retriever_recall takes index_id. Without one it scores the newest index in this conversation, which after a sweep is whichever setting happened to be LAST in the list you passed - an order, not a choice. Name the id.",
+      "says": "IF YOU GO AND TAKE THE STAMP: this comparison is over 40 question(s); 0 row(s) were dropped from it and measure_retriever_recall does not drop them, so 0 of these 4 setting(s) would be scored on a different denominator and hand back a different figure from the curve above. 4 of 4 would stamp at all; the rest hit one of the seven refusals measure_retriever_recall owns and return no fact. Setting by setting: 250/60 -> index_id 3 ('contracts#chunk-250-60'), 34/40 here and 34/40 on its own rows, stampable, 450/60 -> index_id 4 ('contracts#chunk-450-60'), 36/40 here and 36/40 on its own rows, stampable, 900/60 -> index_id 5 ('contracts#chunk-900-60'), 40/40 here and 40/40 on its own rows, stampable, 1800/60 -> index_id 6 ('contracts#chunk-1800-60'), 40/40 here and 40/40 on its own rows, stampable."
+    },
+    "says": "Varied ONE lever - chunking - across 4 setting(s) over 58 document(s) from C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\contracts, scored on the SAME 40 question(s) from C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts.jsonl with the same ground truth column ('gold_document') at k=3. The whole curve, which is what there is to report: 250/60 34/40, 450/60 36/40, 900/60 40/40, 1800/60 40/40. NO EVIDENCE that any of these 4 chunking settings differs from any other on this eval set. Recall over the 40 questions every setting scored ran from 34 of 40 to 40 of 40; 6 pairwise McNemar exact test(s) were run over the questions that changed verdict, corrected together by Holm-Bonferroni at alpha=0.05, and not one of them separated. The most any pair disagreed on was 6 question(s), and at this family size the tightest threshold is 0.0083333, which McNemar's exact test cannot reach at all until at least 8 question(s) change verdict between the two settings being compared. 2 settings tie for the highest recall in this sweep at 40 of 40 - ['900/60', '1800/60'] - AND A TIE AT THE TOP IS NOT A SHORTLIST. The largest of 4 estimates measured on the same 40 questions is biased upward even when every setting is truly identical - the selection is made on the noise and then reported as though the setting had been chosen in advance. The split-half confirmation is where that bias is measured on your own rows rather than asserted. 2 settings tied for the highest recall on the 20 questions used to choose, so the selection did not pick one. Chosen on 20 question(s), confirmed on the 20 question(s) that played no part in choosing: '900/60' 20/20 when it was chosen and 20/20 on the questions that did not choose it, '1800/60' 20/20 when it was chosen and 20/20 on the questions that did not choose it. The chosen setting(s) scored EXACTLY THE SAME on the questions that played no part in choosing as on the ones that did, so this split measured no gap at all. That is one draw of a noisy quantity and not a finding that the selection cost nothing; it is what a sweep looks like when the settings are at a ceiling or a floor on both halves, which the two recalls above will show. The reason the sweep's own maximum is not a number to report is the selection, and it is unchanged. WHAT THE SPLIT ASSUMES, since it is not checkable from here: that the two halves are interchangeable. It splits by alternating POSITION AMONG THE ROWS THIS COMPARISON KEPT - not by line in your file, because rows some setting could not score and rows a score tie decided are already out - so a file whose questions alternate easy and hard hands the two halves different questions, and then every number in this block is about that structure and not about chunking. Nothing was recorded and nothing here can record anything: compare_chunkings declares measures=(), checked at registration, so the instrument it is handed cannot stamp a fact. retriever_recall_at_k is source: inspect and measure_retriever_recall is its only instrument. THE REASON IS NOT BOOKKEEPING: the highest recall in a sweep is a maximum selected on the same questions it would be reported against, and stamping it would put the one number in this bench that opens a gate under exactly that bias. GOING AND TAKING THE STAMP YOURSELF IS THE RIGHT NEXT MOVE, AND IT IS NEITHER A COPY OF THE NUMBER HERE NOR A CURE FOR HOW IT WAS CHOSEN. Scoring is deterministic, so nothing about re-running changes what the retriever does - but measure_retriever_recall scores ONE index over the rows THAT index can score, and this comparison is made over the rows EVERY setting scored minus every row a score tie decided under any of them. Those are different denominators whenever a sweep dropped anything, and then the figure it hands back is a different number from the one in the curve. It also goes through the seven refusals it owns, and any of them returns a number with no stamp, or no number: a setting whose own run has an unresolved ground truth, a tie, or a truncated index is not stampable, and this reply says which of these settings are. What re-measuring buys is PROVENANCE, which is real and is the right thing to do before anybody quotes a figure. What it buys about SELECTION is nothing - re-scoring the setting a maximum picked, on the questions that picked it, cannot un-pick it. The number in this reply that was not selected on its own questions is the confirmed recall in the confirmation block. IF YOU GO AND TAKE THE STAMP: this comparison is over 40 question(s); 0 row(s) were dropped from it and measure_retriever_recall does not drop them, so 0 of these 4 setting(s) would be scored on a different denominator and hand back a different figure from the curve above. 4 of 4 would stamp at all; the rest hit one of the seven refusals measure_retriever_recall owns and return no fact. Setting by setting: 250/60 -> index_id 3 ('contracts#chunk-250-60'), 34/40 here and 34/40 on its own rows, stampable, 450/60 -> index_id 4 ('contracts#chunk-450-60'), 36/40 here and 36/40 on its own rows, stampable, 900/60 -> index_id 5 ('contracts#chunk-900-60'), 40/40 here and 40/40 on its own rows, stampable, 1800/60 -> index_id 6 ('contracts#chunk-1800-60'), 40/40 here and 40/40 on its own rows, stampable. CHUNKING IS ONE OF THE FOUR LEVERS NO_TRAIN__FIX_RETRIEVAL NAMES and it is the only one this harness owns. The other three - hybrid BM25 + dense retrieval, a cross-encoder reranker, query rewriting - are not refusals of effort. Each needs a model this harness does not ship, and pulling any of them would make the resulting number a fact about your endpoint as much as about your index. The levers block says who can pull each one and what it would cost in provenance. This is one quarter of what the engine asked for, and a sweep that separates nothing is a real answer about chunking and no answer at all about the other three.",
+    "summary": "Varied ONE lever - chunking - across 4 setting(s) over 58 document(s) from C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\contracts, scored on the SAME 40 question(s) from C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\contracts.jsonl with the same ground truth column ('gold_document') at k=3. The whole curve, which is what there is to report: 250/60 34/40, 450/60 36/40, 900/60 40/40, 1800/60 40/40. NO EVIDENCE that any of these 4 chunking settings differs from any other on this eval set. Recall over the 40 questions every setting scored ran from 34 of 40 to 40 of 40; 6 pairwise McNemar exact test(s) were run over the questions that changed verdict, corrected together by Holm-Bonferroni at alpha=0.05, and not one of them separated. The most any pair disagreed on was 6 question(s), and at this family size the tightest threshold is 0.0083333, which McNemar's exact test cannot reach at all until at least 8 question(s) change verdict between the two settings being compared. 2 settings tie for the highest recall in this sweep at 40 of 40 - ['900/60', '1800/60'] - AND A TIE AT THE TOP IS NOT A SHORTLIST. The largest of 4 estimates measured on the same 40 questions is biased upward even when every setting is truly identical - the selection is made on the noise and then reported as though the setting had been chosen in advance. The split-half confirmation is where that bias is measured on your own rows rather than asserted. 2 settings tied for the highest recall on the 20 questions used to choose, so the selection did not pick one. Chosen on 20 question(s), confirmed on the 20 question(s) that played no part in choosing: '900/60' 20/20 when it was chosen and 20/20 on the questions that did not choose it, '1800/60' 20/20 when it was chosen and 20/20 on the questions that did not choose it. The chosen setting(s) scored EXACTLY THE SAME on the questions that played no part in choosing as on the ones that did, so this split measured no gap at all. That is one draw of a noisy quantity and not a finding that the selection cost nothing; it is what a sweep looks like when the settings are at a ceiling or a floor on both halves, which the two recalls above will show. The reason the sweep's own maximum is not a number to report is the selection, and it is unchanged. WHAT THE SPLIT ASSUMES, since it is not checkable from here: that the two halves are interchangeable. It splits by alternating POSITION AMONG THE ROWS THIS COMPARISON KEPT - not by line in your file, because rows some setting could not score and rows a score tie decided are already out - so a file whose questions alternate easy and hard hands the two halves different questions, and then every number in this block is about that structure and not about chunking. Nothing was recorded and nothing here can record anything: compare_chunkings declares measures=(), checked at registration, so the instrument it is handed cannot stamp a fact. retriever_recall_at_k is source: inspect and measure_retriever_recall is its only instrument. THE REASON IS NOT BOOKKEEPING: the highest recall in a sweep is a maximum selected on the same questions it would be reported against, and stamping it would put the one number in this bench that opens a gate under exactly that bias. GOING AND TAKING THE STAMP YOURSELF IS THE RIGHT NEXT MOVE, AND IT IS NEITHER A COPY OF THE NUMBER HERE NOR A CURE FOR HOW IT WAS CHOSEN. Scoring is deterministic, so nothing about re-running changes what the retriever does - but measure_retriever_recall scores ONE index over the rows THAT index can score, and this comparison is made over the rows EVERY setting scored minus every row a score tie decided under any of them. Those are different denominators whenever a sweep dropped anything, and then the figure it hands back is a different number from the one in the curve. It also goes through the seven refusals it owns, and any of them returns a number with no stamp, or no number: a setting whose own run has an unresolved ground truth, a tie, or a truncated index is not stampable, and this reply says which of these settings are. What re-measuring buys is PROVENANCE, which is real and is the right thing to do before anybody quotes a figure. What it buys about SELECTION is nothing - re-scoring the setting a maximum picked, on the questions that picked it, cannot un-pick it. The number in this reply that was not selected on its own questions is the confirmed recall in the confirmation block. IF YOU GO AND TAKE THE STAMP: this comparison is over 40 question(s); 0 row(s) were dropped from it and measure_retriever_recall does not drop them, so 0 of these 4 setting(s) would be scored on a different denominator and hand back a different figure from the curve above. 4 of 4 would stamp at all; the rest hit one of the seven refusals measure_retriever_recall owns and return no fact. Setting by setting: 250/60 -> index_id 3 ('contracts#chunk-250-60'), 34/40 here and 34/40 on its own rows, stampable, 450/60 -> index_id 4 ('contracts#chunk-450-60'), 36/40 here and 36/40 on its own rows, stampable, 900/60 -> index_id 5 ('contracts#chunk-900-60'), 40/40 here and 40/40 on its own rows, stampable, 1800/60 -> index_id 6 ('contracts#chunk-1800-60'), 40/40 here and 40/40 on its own rows, stampable. CHUNKING IS ONE OF THE FOUR LEVERS NO_TRAIN__FIX_RETRIEVAL NAMES and it is the only one this harness owns. The other three - hybrid BM25 + dense retrieval, a cross-encoder reranker, query rewriting - are not refusals of effort. Each needs a model this harness does not ship, and pulling any of them would make the resulting number a fact about your endpoint as much as about your index. The levers block says who can pull each one and what it would cost in provenance. This is one quarter of what the engine asked for, and a sweep that separates nothing is a real answer about chunking and no answer at all about the other three."
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "fetched_at": "2026-09-21T16:05:18+00:00",
+  "source": "console.vast.ai public offer search (verified, rentable, single-GPU, on-demand)",
+  "honesty": "These are live marketplace asks at fetch time, not a vendor rate card and not a promise. A single-offer row is one machine's price. Prices move daily; the fetched_at above is part of the number.",
+  "gpus": [
+    {
+      "gpu": "RTX 3060",
+      "vram_gb": 12,
+      "usd_per_hour_min": 0.062,
+      "usd_per_hour_median": 0.062,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "RTX 4070",
+      "vram_gb": 12,
+      "usd_per_hour_min": 0.109,
+      "usd_per_hour_median": 0.109,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "RTX 3090",
+      "vram_gb": 24,
+      "usd_per_hour_min": 0.116,
+      "usd_per_hour_median": 0.116,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "Tesla V100",
+      "vram_gb": 32,
+      "usd_per_hour_min": 0.124,
+      "usd_per_hour_median": 0.124,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "RTX A5000",
+      "vram_gb": 24,
+      "usd_per_hour_min": 0.232,
+      "usd_per_hour_median": 0.232,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "L4",
+      "vram_gb": 22,
+      "usd_per_hour_min": 0.336,
+      "usd_per_hour_median": 0.336,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "RTX 5090",
+      "vram_gb": 32,
+      "usd_per_hour_min": 0.513,
+      "usd_per_hour_median": 0.537,
+      "offers_sampled": 2
+    },
+    {
+      "gpu": "RTX 6000Ada",
+      "vram_gb": 48,
+      "usd_per_hour_min": 0.709,
+      "usd_per_hour_median": 0.709,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "A100 SXM4",
+      "vram_gb": 80,
+      "usd_per_hour_min": 0.721,
+      "usd_per_hour_median": 1.002,
+      "offers_sampled": 3
+    },
+    {
+      "gpu": "A100 PCIE",
+      "vram_gb": 80,
+      "usd_per_hour_min": 1.002,
+      "usd_per_hour_median": 1.002,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "RTX 4090",
+      "vram_gb": 48,
+      "usd_per_hour_min": 1.269,
+      "usd_per_hour_median": 1.269,
+      "offers_sampled": 1
+    },
+    {
+      "gpu": "H100 NVL",
+      "vram_gb": 94,
+      "usd_per_hour_min": 2.802,
+      "usd_per_hour_median": 3.537,
+      "offers_sampled": 2
+    }
+  ],
+  "market_offers_seen": 64
+}

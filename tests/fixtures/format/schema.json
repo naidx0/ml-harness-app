@@ -1,0 +1,21 @@
+{
+  "title": "a routed ticket",
+  "type": "object",
+  "required": [
+    "intent",
+    "confidence"
+  ],
+  "properties": {
+    "intent": {
+      "type": "string",
+      "enum": [
+        "refund",
+        "status",
+        "other"
+      ]
+    },
+    "confidence": {
+      "type": "number"
+    }
+  }
+}

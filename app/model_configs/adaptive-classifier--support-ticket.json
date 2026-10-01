@@ -1,0 +1,62 @@
+{
+  "config": {
+    "config": {
+      "batch_size": 16,
+      "cost_coefficients": {},
+      "cost_function_type": "separable",
+      "device_map": "auto",
+      "early_stopping_patience": 3,
+      "enable_strategic_mode": false,
+      "epochs": 10,
+      "ewc_lambda": 100.0,
+      "gradient_checkpointing": false,
+      "learning_rate": 2e-05,
+      "max_examples_per_class": 150,
+      "max_length": 512,
+      "min_confidence": 0.1,
+      "min_examples_per_class": 3,
+      "neural_weight": 0.4,
+      "num_representative_examples": 5,
+      "prototype_update_frequency": 10,
+      "prototype_weight": 0.6,
+      "quantization": null,
+      "similarity_threshold": 0.7,
+      "strategic_blend_regular_weight": 0.6,
+      "strategic_blend_strategic_weight": 0.4,
+      "strategic_lambda": 0.1,
+      "strategic_prediction_head_weight": 0.5,
+      "strategic_prediction_proto_weight": 0.5,
+      "strategic_robust_head_weight": 0.2,
+      "strategic_robust_proto_weight": 0.8,
+      "strategic_training_frequency": 10,
+      "warmup_steps": 0
+    },
+    "embedding_dim": 768,
+    "id_to_label": {
+      "0": "general_inquiry",
+      "1": "technical",
+      "2": "account",
+      "3": "billing"
+    },
+    "label_to_id": {
+      "account": 2,
+      "billing": 3,
+      "general_inquiry": 0,
+      "technical": 1
+    },
+    "model_name": "answerdotai/ModernBERT-base",
+    "train_steps": 11,
+    "training_history": {
+      "account": 100,
+      "billing": 100,
+      "general_inquiry": 100,
+      "technical": 100
+    }
+  },
+  "fetched_at": "2026-08-20T19:59:43+00:00",
+  "parameters_source": "huggingface safetensors index",
+  "parameters_total": 890500,
+  "repo_id": "adaptive-classifier/support-ticket",
+  "revision": "0fb7d8788d7e3170743bab115775e63ef9ce9771",
+  "url": "https://huggingface.co/adaptive-classifier/support-ticket/resolve/0fb7d8788d7e3170743bab115775e63ef9ce9771/config.json"
+}

@@ -1,0 +1,1328 @@
+# =============================================================================
+# THE HARNESS-BUILDING LEDGER
+#
+# "You want to build a thing that uses a model. Should you, what shape, and
+#  what would tell you that you were wrong?"
+#
+# The third domain, and it is UPSTREAM of the other two. `docs/diagnosis_engine.yaml`
+# asks *should you train*. `docs/ledgers/ai_engineering.yaml` asks *should you
+# build this agent* - of somebody who already has one that fails. This one is
+# asked by a person who has built nothing yet.
+#
+# The content of this file was written first, in prose, as
+# `docs/ledgers/HARNESS_DESIGN.md`, for the reason that document gives: THE
+# CONTENT IS THE PRODUCT AND THE YAML IS THE ENCODING. Read it beside this file;
+# every decision below has its argument there and its mechanism here.
+#
+# -----------------------------------------------------------------------------
+# WHY THIS IS NOT MORE NODES IN THE SECOND LEDGER
+#
+# Measured, not argued. `ai_engineering.yaml`'s first gate asks *"Are there real
+# failures written down that we can check against?"* with a floor of ten. Driven
+# on an empty sheet it answers `BLOCKED__NOTHING_TO_MEASURE_AGAINST` with G0
+# FAILED and every later gate NOT_REACHED.
+#
+# A person who has not built anything has no failures and never will. They are
+# not FAILING that gate, they are STANDING BEFORE IT. Widening G0 to admit them
+# would delete the thing that ledger is for: a ledger whose entry gate admits
+# everybody diagnoses nobody.
+#
+# So the two meet at a handoff. The moment something exists and fails ten times,
+# this ledger's answer is `HANDOFF__DIAGNOSE_THE_EXISTING_AGENT` - go and use
+# that one. That handoff is a TERMINAL VERDICT whose `say:` names the other file
+# and not a route, and `known_gaps` says so rather than implying otherwise.
+#
+# -----------------------------------------------------------------------------
+# THE DISJOINTNESS RULE, AND THE THREE NAMES IT COST
+#
+# The shipped ledgers share ZERO fact names, zero node ids and zero gate ids -
+# measured 2026-08-28 - and `app/tools/registry.py`'s domain adoption depends on
+# it: a fact declared by two ledgers stops naming a domain, so a tool that
+# measures it can no longer say which conversation it belongs to.
+#
+# That is a hard constraint on this file and it cost three obvious names.
+# `has_traces`, `tokens_per_run` and `run_terminates` are exactly the facts G5
+# wants and every one of them is already the AI ledger's. So this file declares
+# `harness_has_traces`, `harness_tokens_per_run` and `harness_run_terminates`,
+# and `app/tools/harness.py` reads the same OTLP spans through the same helpers
+# in `app/tools/agents.py` to stamp them.
+#
+# THAT DUPLICATION IS THE POINT AND NOT AN ACCIDENT. Two domains asking the same
+# question of the same file are still two domains, and one fact answering for
+# both would mean a person's traces opened a gate in a ledger they were never
+# diagnosed under.
+#
+# -----------------------------------------------------------------------------
+# `NO_TOOLING__`, NOT `NO_TOOLS__`, AND THE DRAFT SAID OTHERWISE
+#
+# `HARNESS_DESIGN.md` drafts these refusals under `NO_TOOLS__` and gives the
+# rule they are meant to satisfy in the same sentence: *prefixes, all spelled
+# unlike both shipped ledgers so a name leaking into Python shows up as a
+# failure rather than a coincidence.* `NO_TOOLS__` is already
+# `ai_engineering.yaml`'s. The draft's own reason beats the draft's own spelling,
+# so the prefix is `NO_TOOLING__` here and the design document is wrong on this
+# line rather than this file being wrong.
+# =============================================================================
+
+ledger_format: 3
+ledger_version: 1
+
+contract:
+  # -------------------------------------------------------------------------
+  # THE NAMES THE ENGINE MUST FIND.
+  roles:
+    entry_stage: stage_0_is_there_a_task
+    commit_stages: [stage_9_shape_selector]
+    gate_sweep_node: S9_SWEEP_EVERY_GATE
+    no_proposal: NOTHING_SHAPED
+
+  # -------------------------------------------------------------------------
+  # WHAT THE WORK OF EACH STAGE NEEDS. `app/tools/blocks.py` reads this, and it
+  # refuses a partial block: "this stage's work needs nothing extra" and
+  # "somebody forgot" are different states and the difference is the whole
+  # reason the block is closed. Every stage is named.
+  #
+  # Six of the eight name `harness`, which is this domain's own pack
+  # (`app/tools/harness.py`). The two that do not are the two that read facts
+  # already stamped rather than taking a measurement: stage_3 chooses a shape
+  # from numbers the stages above it produced, and stage_9 re-asks gates over
+  # facts already on the ledger. An empty list there is the first thing, not the
+  # second.
+  capabilities:
+    needs:
+      stage_0_is_there_a_task: [harness]
+      stage_1_the_task_set: [harness]
+      stage_2_the_model_alone: [harness]
+      stage_3_the_tool_layer: [harness]
+      stage_4_the_shape: []
+      stage_5_the_components: [harness]
+      stage_6_the_blast_radius: [harness]
+      stage_7_the_run: [harness]
+      stage_9_shape_selector: []
+
+  # -------------------------------------------------------------------------
+  # THE SIX GATES OF THIS DOMAIN, weakest first.
+  #
+  # Two have direct analogues in both shipped ledgers. G3 HAS NO ANALOGUE
+  # ANYWHERE AND IS THIS DOMAIN'S REASON TO EXIST.
+  #
+  # A harness is a pile of components, each encoding an assumption about what
+  # the model cannot do alone, and those assumptions ROT AS MODELS IMPROVE. The
+  # ML ledger has nothing like G3 because a trained model is one artifact; the
+  # AI ledger has nothing like it because it diagnoses a loop that already
+  # exists and is not asked which of its parts is carrying it.
+  required_gates:
+    - G0_THE_TASK_IS_CHECKABLE
+    - G1_TASKS_TO_MEASURE_ON
+    - G2_THE_MODEL_ALONE_WAS_SCORED
+    - G3_EVERY_COMPONENT_IS_LOAD_BEARING
+    - G4_THE_BLAST_RADIUS_IS_DECLARED
+    - G5_THE_RUN_IS_BOUNDED_AND_RECORDED
+
+  # -------------------------------------------------------------------------
+  # THE ESCALATION ORDER, WEAKEST FIRST. The engine does not read this -
+  # `row_key` knows only "a row for this class, or else `any`" - and that is
+  # exactly why it is written down.
+  #
+  # A class with no row of its own falls back to `any`, which is the WEAKEST
+  # question in the gate rather than the nearest one. So the moment a gate gives
+  # ANY class its own row, every STRONGER class needs one too, or the strongest
+  # method in the file gets asked the easiest question in the gate. That is not
+  # hypothetical: it is what happened to the second ledger's G4 the hour
+  # `multi_agent` landed, and SC3 was satisfied throughout, because SC3 asks
+  # only whether SOME row applies.
+  #
+  # This ladder is FOUR rungs where the second ledger's is three, and the extra
+  # rung is `pipeline`. That is the split this domain turns on: a fixed sequence
+  # that calls tools has no model-driven control flow, and almost everybody who
+  # asks for an agent wants one of these.
+  method_class_ladder: [tools, pipeline, agent, multi_agent]
+
+  what_the_gates_decide: >
+    WHETHER BUILDING THE HARNESS IS WORTH DOING. Every HARNESS__ outcome and
+    nothing else. The same sentence both shipped ledgers write, and it means the
+    same thing: these gates are not a general quality bar and they are not asked
+    of the cheap answers. A person who wants to know which model to point at
+    their pipeline, or whether their tool descriptions are the bug, is asking a
+    different question and must not be handed a gate as an answer.
+
+  outcome_prefixes:
+    NO_HARNESS__: {verdict: NO_BUILD, terminal: true,
+                   meaning: "do not build the harness; this cheaper thing is the answer"}
+    # `NO_HARNESS__A_PIPELINE_FIRST` and `NO_HARNESS__ONE_LOOP_FIRST` both live
+    # here and they are the two rungs of the ladder that people skip.
+    NO_TOOLING__: {verdict: NO_BUILD, terminal: true,
+                   meaning: "the shape is not the problem; the tool layer is"}
+    HANDOFF__:    {verdict: NO_BUILD, terminal: true,
+                   meaning: "this is a real question and it is another ledger's"}
+    SPEC__:       {verdict: BLOCKED,  terminal: true,
+                   meaning: "cheap real work; go and find this out and re-enter"}
+    BLOCKED__:    {verdict: BLOCKED,  terminal: true,
+                   meaning: "something is missing and no answer is honest yet"}
+    REROUTE:      {verdict: null,     terminal: false,
+                   meaning: "continue at another stage"}
+    ERROR__:      {verdict: null,     terminal: false,
+                   meaning: "engine bug. Raise, do not render."}
+
+    # THE EXPENSIVE IRREVERSIBLE OUTCOME OF THIS DOMAIN. `gated: all` is the role
+    # `TRAIN__` plays in the ML ledger and `BUILD__` in the AI one, declared
+    # rather than compiled in.
+    HARNESS__:    {verdict: BUILD,    terminal: true,
+                   gated: all,
+                   mintable_only_at: S9_MINT_HARNESS_VERDICT,
+                   meaning: "the expensive thing is the right thing"}
+
+  why_the_starter_eval_is_not_a_build: >
+    The same classification the second ledger had to make and for the same
+    reason. A prefix is a category of RISK, not of work. SPEC__BUILD_A_STARTER_EVAL
+    is real work and it is the INSTRUMENT the other five gates are measured
+    with - putting it behind them would demand you exhaust the cheap version
+    before you are allowed to build the thing that tells you whether the cheap
+    version worked. Circular, and the gate order is right.
+
+  path_semantics:
+    type: "list[PathEntry], append-only, in evaluation order, never sorted, never deduplicated"
+    PathEntry:
+      id:     {type: str, note: "a node id matching ^S[0-9]+_ or a gate id matching ^G[0-9]_"}
+      kind:   {enum: [node, gate]}
+      row:    {type: "str or null",
+               note: "Set only when kind == gate. The `method_class` key of the passes_when row that evaluated true - one of: any, pipeline, agent, multi_agent. Null on node entries."}
+      clause: {type: "str or null",
+               note: "The condition this entry was decided by, verbatim from this file, on BOTH kinds."}
+    entries:
+      node: {written_when: "a node's condition is evaluated, whether or not it fires"}
+      gate: {written_when: "a gate's `passes_when` row evaluates TRUE, and only then"}
+    telling_them_apart: >
+      `kind` is authoritative; a loader reads `kind` and does not pattern-match
+      the id. The namespaces also do not overlap and the engine refuses a spec
+      where they do, but that is belt-and-braces rather than the mechanism.
+    row_key: >
+      row_key(gate_id, method_class) is the `method_class` key of the single
+      `passes_when` row in gates[gate_id] that applies to that class: the row
+      named for the class if there is one, otherwise the row keyed `any`. G0,
+      G1, G3 and G5 are single-row and it is always "any". G2 carries all four
+      rungs of the ladder. G4 carries `any`, `agent` and `multi_agent`.
+    a_missing_row_falls_back_to_the_WEAKEST_question_not_the_nearest: >
+      READ THIS BEFORE ADDING A CLASS OR A ROW. G4 is the exposed one here. It
+      has rows for `any`, `agent` and `multi_agent` and NONE for `pipeline`,
+      which is correct because `pipeline` is WEAKER than `agent` on this ladder
+      and the `any` row is the honest question to ask it: a fixed sequence calls
+      a known set of tools in a known order, so its blast radius is a property
+      of the code. The moment somebody gives `pipeline` its own row, `agent` and
+      `multi_agent` already have theirs and nothing breaks - but the moment
+      somebody gives `agent` a row and forgets `multi_agent`, the hardest
+      outcome in this file gets asked the easiest question in the gate and
+      SC3 is satisfied throughout.
+    gates_passed_under: |
+      gates_passed_under(path, class) =
+        { e.id for e in path if e.kind == "gate" and e.row == row_key(e.id, class) }
+      This, not bare membership, is the set of gates a proposal of that class has
+      actually passed.
+    ordering_rule: >
+      A gate entry is always appended immediately after an entry for its own
+      node, with nothing between them, at EVERY occurrence and not only the
+      first. This is what stops a gate entry being written by anything other
+      than the gate.
+    latching: >
+      A gate is latched PER ROW, not per run. The walk down to a proposal is
+      class-agnostic - `NOTHING_SHAPED` is class `tools` - so a run passes G2
+      and G4 under their `any` rows on the way down. The moment a shape is
+      proposed, S9_SWEEP_EVERY_GATE re-asks both under that shape's own row.
+      Without the re-ask, "I ran the model once" would satisfy the gate whose
+      whole job is to ask whether the FIXED SEQUENCE was built before the loop.
+    gate_ledger_derivation: |
+      gate_ledger is a view over path, not a second source of truth. For each g
+      in required_gates, evaluated against the FINAL proposed_method:
+        PASSED      if g in gates_passed_under(path, method_class(proposed_method))
+        FAILED      if the run terminated at gates[g].node
+        NOT_REACHED otherwise
+    cycle_guard: >
+      REROUTE may return to a stage already visited. If any stage id would be
+      ENTERED a third time, stop with ERROR__CYCLE. That is an engine bug, not a
+      diagnosis, and it crashes rather than degrades. Re-evaluating a latched
+      gate at S9_SWEEP_EVERY_GATE is not a stage entry and does not count here.
+
+  diagnosis:
+    verdict: {enum: [NO_BUILD, BUILD, BLOCKED]}
+    primary_recommendation: node_id
+    path: [PathEntry]
+    gate_ledger: {gate_id: {status, node, clause}}
+    proposed_method: method
+    rejected: [{node_id, reason, evidence}]
+    next_action: {text, artifact, command}
+    exit_criterion: text
+    estimated_cost: {usd, hours}
+    cost_provenance: {enum: [MEASURED, UNKNOWN]}
+    confidence: {type: float, range: [0, 1]}
+    revisit_if: [condition]
+
+# ---------------------------------------------------------------------------
+# THE SHAPES THIS LEDGER CHOOSES BETWEEN. `methods` IS the build list, because
+# SC1 requires `emits == {prefix + m for m in methods}` minus the sentinel.
+#
+# Four classes, and the two splits are the two the domain actually turns on.
+#
+# SPLIT ONE IS TOOLS AGAINST ORCHESTRATION. A tool layer changes what the model
+# can reach and changes nothing about who decides the order. It is the cheapest
+# real thing on this list and it is what a great many people asking for an agent
+# actually need.
+#
+# SPLIT TWO IS MODEL-DRIVEN CONTROL FLOW, and it is the expensive one. A fixed
+# pipeline runs the steps somebody wrote in the order they wrote them; a loop
+# CHOOSES. That is the part that is slow, non-deterministic, hard to test and
+# hard to bound, and G2 and G4 both ask a stronger question of it.
+methods:
+  TOOL_LAYER:     {class: tools}
+  FIXED_PIPELINE: {class: pipeline}
+  AGENT_LOOP:     {class: agent}
+  AGENT_TEAM:     {class: multi_agent}
+
+  # The sentinel, class `tools` on purpose: nothing on the way down has
+  # committed to model-driven control flow, so the `any` rows are the honest
+  # question before a proposal exists, and the sweep re-asks under the real
+  # class if one arrives. Both shipped ledgers reached this independently.
+  NOTHING_SHAPED: {class: tools, provisional: true,
+                   note: "No shape yet. Every gate passed under this class is re-asked at S9_SWEEP_EVERY_GATE under the proposal's real class."}
+
+# ---------------------------------------------------------------------------
+facts:
+  # ---- is there a definition of success at all ---------------------------
+  #
+  # SETTLED CONSERVATIVELY, and `HARNESS_DESIGN.md` carries the argument. The
+  # tempting fact here was `success_check_runs` - the harness executes the
+  # person's own checker and reports pass / fail. That means RUNNING SOMEBODY
+  # ELSE'S PROGRAM, and `app/tools/blocks.py`'s rule is plain: never execute
+  # somebody else's system, read files.
+  #
+  # So the gate is denominated in something readable instead, which is the same
+  # move that turned `cost_per_run_usd` into `tokens_per_run` when a price
+  # turned out to be a fact about somebody's contract rather than about the
+  # work. Weaker than executing it, and enough for a FIRST gate whose job is to
+  # separate "there is a definition of success" from "there is not".
+  success_check_named:        {type: bool,  source: ask,     scope: thread, default: false}
+  # THE READING, AND THE FLAG THAT SUMMARISES IT - in that order, because the
+  # flag wall in `app/tools/evidence.py` refuses the flag on its own and it is
+  # right to. A boolean cannot carry the caller mark and `bool(anything
+  # non-zero)` is the value that opens the gate, so a lone True is a badge: what
+  # makes a flag mean anything is the reading standing next to it. `G1` in the
+  # ML ledger has asked for exactly this shape all along - `baseline_measured
+  # AND baseline_score is not null` - and G0 here now does too.
+  success_check_characters:   {type: int,   source: inspect, scope: thread, default: 0,
+                               measured_by: [harness.success_check.read]}
+  success_check_is_a_program: {type: bool,  source: inspect, scope: thread, default: false,
+                               measured_by: [harness.success_check.read]}
+  target_pass_rate:           {type: float, source: ask,     scope: thread}
+
+  # ---- what there is to measure on ---------------------------------------
+  #
+  # TWENTY, WHERE THE SECOND LEDGER ASKS FOR TEN, and the difference is not
+  # arbitrary. That ledger counts FAILURES of a thing that exists; this one
+  # counts TASKS a thing has never attempted. What a harness has to hold is
+  # reliability across repeated attempts rather than a rate on one pass, and
+  # twenty is where the smallest observable difference - one task - stops being
+  # ten points.
+  harness_tasks_n: {type: int,  source: inspect, scope: thread, default: 0,
+                    measured_by: [harness.tasks.count]}
+  can_rerun_tasks: {type: bool, source: inspect, scope: thread, default: false,
+                    measured_by: [harness.tasks.count]}
+
+  # ---- the ladder, every rung scored on the SAME task set ----------------
+  #
+  # THESE ARE `inspect` AND THAT LOOKED IMPOSSIBLE. Scoring a harness variant
+  # means running somebody else's system, which this harness will not do -
+  # `HARNESS_DESIGN.md` names it as the hard one.
+  #
+  # The way through is the shape `run_the_failures` already ships: the harness
+  # does not DRIVE anybody's system, it GRADES what they recorded. The person
+  # runs their own bare model over their own task set, exports the answers, and
+  # `score_a_recorded_run` grades them against the expected column. Nothing of
+  # theirs is executed and the number is still a measurement.
+  #
+  # Null means that rung was never run. It is not zero: a rate of zero is a
+  # thing somebody measured, and "nobody has tried this" is not.
+  solo_pass_rate:        {type: float, source: inspect, scope: thread,
+                          measured_by: [harness.variant.score]}
+  pipeline_pass_rate:    {type: float, source: inspect, scope: thread,
+                          measured_by: [harness.variant.score]}
+  single_loop_pass_rate: {type: float, source: inspect, scope: thread,
+                          measured_by: [harness.variant.score]}
+
+  # ---- G3, and it is this domain's whole reason to exist -----------------
+  #
+  # `components_proposed_n` is the person's - only they know what they intend to
+  # build, and nothing can read an intention. The other two are measured, by
+  # pairing two recorded runs over the same tasks: with the component, and
+  # without it. `evals.mcnemar` decides whether the difference is real, and it
+  # has a genuine NO EVIDENCE answer, which is what makes "this component earned
+  # its place" a claim rather than a preference.
+  components_proposed_n:              {type: int, source: ask,     scope: thread, default: 0}
+  components_ablated_n:               {type: int, source: inspect, scope: thread, default: 0,
+                                       measured_by: [harness.component.ablate]}
+  components_that_earned_their_place: {type: int, source: inspect, scope: thread, default: 0,
+                                       measured_by: [harness.component.ablate]}
+
+  # ---- G4, the blast radius ----------------------------------------------
+  harness_tools_n:            {type: int,  source: inspect, scope: thread, default: 0,
+                               measured_by: [harness.tools.risk]}
+  tools_risk_annotated_n:     {type: int,  source: inspect, scope: thread, default: 0,
+                               measured_by: [harness.tools.risk]}
+  approval_boundary_declared: {type: bool, source: ask,     scope: thread, default: false}
+
+  # ---- G5, and the three names the disjointness rule cost ----------------
+  #
+  # `harness_has_traces`, not `has_traces`. See the header. The instrument reads
+  # the same OTLP spans through the same helpers in `app/tools/agents.py`; what
+  # differs is which ledger's fact the reading is filed under, and that is
+  # exactly the thing that must not be shared.
+  #
+  # DENOMINATED IN TOKENS, NEVER DOLLARS. The second ledger fought this argument
+  # and won it: a price is a fact about somebody's contract on a Tuesday and a
+  # token count is a fact about the work. OpenTelemetry defines no cost
+  # attribute; a currency figure is a derived display over measured tokens times
+  # a price the person STATED, on a date, and never a fact here.
+  # THE READING BEHIND `harness_has_traces`, for the reason above: "there are
+  # traces" is a flag and "this many spans were read" is what makes it a claim.
+  harness_spans_read:     {type: int,   source: inspect, scope: thread, default: 0,
+                           measured_by: [harness.run.bound]}
+  harness_tokens_per_run: {type: float, source: inspect, scope: thread,
+                           measured_by: [harness.run.bound]}
+  harness_run_terminates: {type: bool,  source: inspect, scope: thread, default: false,
+                           measured_by: [harness.run.bound]}
+  harness_has_traces:     {type: bool,  source: inspect, scope: thread, default: false,
+                           measured_by: [harness.run.bound]}
+
+  # ---- what the person is the only witness to ----------------------------
+  #
+  # Every default here is the pessimistic reading of "nobody has said". No
+  # default may open a gate, so a default that guessed generously would only
+  # ever route somebody past a question they needed asked.
+  steps_depend_on_the_last:      {type: bool, source: ask, scope: thread, default: false}
+  # THE FACT THAT SEPARATES A SCRIPT FROM A TOOL LAYER, and it was added after
+  # driving the ledger rather than while writing it. Without it, `S4_TOOL_LAYER`
+  # was conditioned on `tools_risk_annotated_n < harness_tools_n` - which is
+  # EXACTLY what G4 refuses - so `HARNESS__TOOL_LAYER` was proposed only in the
+  # state that made it unmintable, and the only outcome it could ever reach was
+  # the gate's own remedy. A build that cannot mint is a build the coverage
+  # table would have claimed and the engine would never have produced.
+  the_model_must_reach_external_systems: {type: bool, source: ask, scope: thread, default: false}
+  one_context_cannot_hold_it:    {type: bool, source: ask, scope: thread, default: false}
+  an_existing_harness_does_this: {type: bool, source: ask, scope: thread, default: false}
+  the_failure_is_not_the_model:  {type: bool, source: ask, scope: thread, default: false}
+  the_loop_exists_and_fails:     {type: bool, source: ask, scope: thread, default: false}
+  the_answer_was_never_knowable: {type: bool, source: ask, scope: thread, default: false}
+  tool_choice_is_ambiguous:      {type: bool, source: ask, scope: thread, default: false}
+  boundaries_are_typed:          {type: bool, source: ask, scope: thread, default: false}
+
+# ---------------------------------------------------------------------------
+derived:
+  proposed_method: {means: "the shape a stage put forward; NOTHING_SHAPED until one does"}
+  method_class:    {means: "methods[proposed_method].class"}
+  struck_methods:  {means: "set, appended to by any node carrying `effect: strike ...`"}
+
+# ---------------------------------------------------------------------------
+# THE ORIGIN POLICY. Read straight across from both shipped ledgers, and that it
+# works unchanged for a third domain is itself the finding: the rule "a gate may
+# only be opened by an origin the fact's own `source:` admits" is not about
+# machine learning, and it is not about agents either.
+fact_origins:
+  vocabulary:
+    MEASURED: >
+      A tool ran and the engine watched it produce this value. The checker was
+      read, the tasks were counted, the recorded run was graded, the two
+      ablation arms were paired. This is the only origin that can open a gate
+      whose fact this ledger declares `source: inspect`, because "inspect" is a
+      promise that a tool looked.
+    STATED: >
+      The person said so, in their own person, answering a question the harness
+      asked them. It may be wrong and nothing checked it. But `source: ask` is
+      reserved for the facts there is nobody else to ask - no tool can read
+      whether one context can hold somebody's work, or whether they intend three
+      components or eight - and a product that will not take the person's answer
+      about their own intentions has no honest way to proceed.
+    ASSERTED: >
+      A model said so. Or nobody said where it came from, which is the same
+      state of knowledge. It may be carried, displayed and routed on. It may
+      never be the thing that opens a gate.
+    DEFAULTED: >
+      Nobody supplied it, so this file's own declared default applies, and where
+      none is declared the default is null. No default may open a gate.
+  origin_of_an_unattributed_value: ASSERTED
+  why_unattributed_is_asserted: >
+    A bare value carries no claim about where it came from and the engine does
+    not guess upward. The channel that matters is a JSON object straight from
+    the person's own model: every value in it is bare, every bare value is
+    therefore an assertion by the thing that typed it, and no boundary code has
+    to remember anything. Failing closed is the default; attributing is the
+    deliberate act.
+  admissible_for_gates:
+    inspect: [MEASURED]
+    ask:     [MEASURED, STATED]
+    derive:  [MEASURED]
+  why_inspect_is_measured_only: >
+    `source: inspect` is this file promising that the harness READS the fact.
+
+  # WHAT THE PERSON IS TOLD WHEN A CLAIM WAS ROUTED ON AND CANNOT OPEN A GATE.
+  # One sentence per `source:` this file uses, because the remedy is different
+  # for each and "substantiate it" is not a thing anybody can act on.
+  substantiation:
+    inspect: >
+      A tool has to run and this engine has to watch it. Point it at the file -
+      your checker, your task set, the answers your model actually gave, the
+      two arms of your ablation, your tool definitions, one run's trace - and
+      let it read for itself. Every `inspect` fact in this ledger has an
+      instrument (`app/tools/harness.py`), and not one of them runs anything of
+      yours: they read files and grade what you recorded.
+    ask: >
+      You have to say this one yourself. It was answered on your behalf, and a
+      model answering for you is not you answering - it is a guess at what you
+      would like to have been true. Whether one context can hold your work, and
+      how many components you intend to build, are things nobody else knows.
+    derive: >
+      This has to be computed from data the harness can read rather than
+      recited. Give it the recorded runs and let it do the arithmetic.
+
+  unsubstantiated_outcome: SPEC__SUBSTANTIATE_CLAIMED_FACTS
+
+fact_scopes:
+  vocabulary:
+    machine: "A fact about this computer. None of this ledger's facts are machine scope."
+    thread: >
+      A fact about one project, in one conversation. `harness_tasks_n` is the
+      sharpest case: "there are forty tasks" is true of one file somebody
+      pointed at in one conversation, and carrying it sideways opens G1 where
+      nobody counted anything.
+  scope_of_an_undeclared_fact: thread
+  why_undeclared_is_thread: >
+    The safe answer is the one you get by forgetting. Widening is the deliberate
+    act - somebody types `scope: machine` on a line a reviewer reads - and
+    forgetting can only ever narrow.
+
+# ---------------------------------------------------------------------------
+# THE SIX GATES. Defined once, here. Stages reference them with `gate_ref:`.
+#
+# EVERY `on_fail` CARRIES A RECIPE AND EVERY GATE CARRIES AN `on_unsubstantiated`
+# NOTE, and neither is decoration. The engine turns those into the sentence
+# `app/asking.py` puts on the card. Six of the second ledger's eighteen outcomes
+# once reached a person with an EMPTY say - among them the first refusal that
+# ledger exists to give. The refusals are the product and a refusal nobody can
+# read is not one.
+gates:
+
+  G0_THE_TASK_IS_CHECKABLE:
+    node: S0_NO_CHECKABLE_TASK
+    stage: stage_0_is_there_a_task
+    asks: "Is there a written task whose success a program can check?"
+    single_row: "The question is the same whatever gets built."
+    passes_when:
+      - {method_class: any,
+         requires: "success_check_named and success_check_characters > 0 and success_check_is_a_program"}
+    # IT ROUTES RATHER THAN ENDING, because "there is no definition of success"
+    # and "there is one and it is in your head" are not the same sentence and a
+    # gate has one on_fail outcome. Routing back into the stage hands the answer
+    # to nodes that can tell those apart. The gate still records FAILED, because
+    # that is written when the ROW fails and not when the walk stops.
+    on_fail:
+      route: stage_0_is_there_a_task
+      recipe: "A file this harness can read that decides, for one case, whether the answer was right."
+    on_unsubstantiated:
+      note: >
+        You have told me there is a checker and I have not seen it. Everything
+        downstream is measured by running it - the bare model's rate, whether a
+        component earns its place, whether the whole thing is worth building -
+        so a checker nobody has looked at is the one thing it cannot be. Point
+        me at the file. I will read it, not run it.
+    hard_gate: true
+
+  G1_TASKS_TO_MEASURE_ON:
+    node: S1_TOO_FEW_TASKS
+    stage: stage_1_the_task_set
+    asks: "Are there at least twenty real tasks with expected outcomes, re-runnable?"
+    single_row: "Reliability across attempts is what a harness has to hold, whatever its shape."
+    # `can_rerun_tasks` IS PART OF THE QUESTION AND NOT A SECOND ONE. A task set
+    # nobody can run again is a list with numbers beside it. Reading the fact
+    # HERE as well as at the node below is what makes an ASSERTED claim about
+    # re-runnability hit the origin policy instead of routing a build on it at a
+    # node, where assertions are admissible. A route is not a verdict; a gate is.
+    passes_when:
+      - {method_class: any, requires: "harness_tasks_n >= 20 and can_rerun_tasks"}
+    on_fail:
+      route: stage_1_the_task_set
+      recipe: "Twenty real tasks from what you actually want done, each with the outcome that would be right."
+    on_unsubstantiated:
+      note: >
+        You have told me how many tasks there are and nothing counted them.
+        `harness_tasks_n` is the denominator of every rate in this ledger, and a
+        count nobody took is the one thing it cannot be. Point me at the file
+        and let me count it - that is a minute of your time.
+    hard_gate: true
+
+  G2_THE_MODEL_ALONE_WAS_SCORED:
+    node: S2_MODEL_ALONE_UNSCORED
+    stage: stage_2_the_model_alone
+    asks: "Has the bare model been run on these tasks and scored - and each rung below the one you want?"
+    # THE LADDER GATE, AND THE ONE THAT WILL REFUSE THE MOST PEOPLE. Four rows,
+    # one per rung, each strictly stronger than the one above it. This is the
+    # second ledger's G2_SIMPLE_VERSION_TRIED generalised from one rung to a
+    # ladder, and it is what stops somebody asking for a team having never run
+    # one call.
+    #
+    # `tools` gets the `any` row on purpose: a tool layer does not change who
+    # decides the order, so the only thing it has to beat is the bare model.
+    passes_when:
+      - {method_class: any,
+         requires: "solo_pass_rate is not null"}
+      - {method_class: pipeline,
+         requires: "solo_pass_rate is not null"}
+      - {method_class: agent,
+         requires: "solo_pass_rate is not null and pipeline_pass_rate is not null"}
+      - {method_class: multi_agent,
+         requires: "solo_pass_rate is not null and pipeline_pass_rate is not null and single_loop_pass_rate is not null"}
+    on_fail:
+      route: stage_2_the_model_alone
+      recipe: "Run the rung below the one you want, on these tasks, and bring back the answers."
+    on_unsubstantiated:
+      note: >
+        A rate has been claimed for a rung nobody graded. The whole ladder is
+        the comparison - the harness is worth building exactly insofar as it
+        beats the thing below it - and a claimed rate makes that comparison
+        against a number instead of against a run. Export what your model
+        actually answered and let me grade it against your own expected column.
+    hard_gate: true
+
+  G3_EVERY_COMPONENT_IS_LOAD_BEARING:
+    node: S5_COMPONENTS_UNMEASURED
+    stage: stage_5_the_components
+    asks: "For each component you intend to build, is there a measured score with it and without it?"
+    single_row: >
+      The question does not get easier for a bigger system. If anything the
+      opposite - the more components, the more of them are there because
+      somebody assumed something about a model that has since changed.
+    # THE GATE WITH NO ANALOGUE IN EITHER SHIPPED LEDGER.
+    #
+    # `components_proposed_n > 0` IS PART OF THE ROW AND IT IS LOAD-BEARING.
+    # Without it, `components_ablated_n >= components_proposed_n` is 0 >= 0 on a
+    # fresh sheet and the gate this domain exists for passes by having nothing
+    # to ask about. Proposing nothing must not be the way through the gate about
+    # what you proposed.
+    #
+    # THE THIRD CLAUSE IS THE GATE. Without it, a run where every component was
+    # ablated and NONE of them changed the score would pass - the arithmetic
+    # would be satisfied and the finding ignored. "Every component is
+    # load-bearing" is the name of the gate and it has to be the question.
+    passes_when:
+      - {method_class: any,
+         requires: "components_proposed_n > 0 and components_ablated_n >= components_proposed_n and components_that_earned_their_place >= components_ablated_n"}
+    on_fail:
+      route: stage_5_the_components
+      recipe: "Name each component, then record one run with it and one without, over the same tasks."
+    on_unsubstantiated:
+      note: >
+        An ablation has been claimed and no pair of runs was graded. This is the
+        gate this whole ledger exists for: a component is worth building only if
+        removing it makes the score worse by more than noise, and `evals.mcnemar`
+        has a real NO EVIDENCE answer for the case where it does not. A claimed
+        ablation is the one thing it cannot check.
+    hard_gate: true
+
+  G4_THE_BLAST_RADIUS_IS_DECLARED:
+    node: S6_BLAST_RADIUS_UNDECLARED
+    stage: stage_6_the_blast_radius
+    asks: "Is every reachable tool classified by what it can destroy, with a human boundary on the destructive ones?"
+    # THE ROWS SPLIT AT MODEL-DRIVEN CONTROL FLOW AND THE SPLIT IS THE POINT.
+    # A fixed pipeline calls a known set in a known order, so its blast radius
+    # is a property of the code somebody wrote. A loop CHOOSES, so its blast
+    # radius is the union of everything it can reach - and `agent` and
+    # `multi_agent` therefore additionally require a declared human boundary.
+    #
+    # `pipeline` has NO ROW and falls back to `any`, which is correct here
+    # because `pipeline` is weaker than `agent` on this ladder. See
+    # `path_semantics.a_missing_row_falls_back_to_the_WEAKEST_question_not_the_nearest`
+    # before adding one.
+    passes_when:
+      - {method_class: any,
+         requires: "harness_tools_n == 0 or tools_risk_annotated_n >= harness_tools_n"}
+      - {method_class: agent,
+         requires: "(harness_tools_n == 0 or tools_risk_annotated_n >= harness_tools_n) and approval_boundary_declared"}
+      - {method_class: multi_agent,
+         requires: "(harness_tools_n == 0 or tools_risk_annotated_n >= harness_tools_n) and approval_boundary_declared"}
+    on_fail:
+      route: stage_6_the_blast_radius
+      recipe: "Annotate every tool with what it can destroy, and say where a person has to approve."
+    on_unsubstantiated:
+      note: >
+        A tool layer has been described and nothing read it. What a tool can
+        destroy is the one property of a harness that is not recoverable when it
+        turns out to be wrong, so it is read off the definitions rather than
+        taken on trust. Point me at the file - a tools JSON, an MCP manifest, or
+        the Python that declares them.
+    hard_gate: true
+
+  G5_THE_RUN_IS_BOUNDED_AND_RECORDED:
+    node: S7_RUN_UNBOUNDED
+    stage: stage_7_the_run
+    asks: "What does one run cost in tokens, does it provably stop, and is there a trace?"
+    single_row: >
+      A run nobody can bound is a run nobody can approve, and approval is a
+      contract rather than a formality. The question is the same for every shape
+      that has one.
+    passes_when:
+      - {method_class: any,
+         requires: "harness_spans_read > 0 and harness_has_traces and harness_tokens_per_run is not null and harness_run_terminates"}
+    on_fail:
+      route: stage_7_the_run
+      recipe: "Export one OTLP trace of one run, so its tokens can be totalled and its ending seen."
+    on_unsubstantiated:
+      note: >
+        You have told me what a run costs and no trace was read. A token figure
+        somebody remembers is the number that is always lower than the one the
+        spans add up to. Export one run's trace and it is settled in a second.
+    hard_gate: true
+
+# ---------------------------------------------------------------------------
+# STAGE 0 - IS THERE A TASK AT ALL?
+#
+# The gate is first and its `on_fail` routes back here. Evaluation resumes at
+# the first item that is not a gate_ref, so the gate never re-enters itself and
+# the nodes below are the answers it could not give with one outcome key.
+stage_0_is_there_a_task:
+  - gate_ref: G0_THE_TASK_IS_CHECKABLE     # node S0_NO_CHECKABLE_TASK
+
+  - node: S0_NO_DEFINITION_OF_RIGHT
+    condition: "not success_check_named"
+    outcome: BLOCKED__NO_SUCCESS_CRITERION
+    say: >
+      There is no definition of success, so there is nothing any of this could
+      be measured against and no answer here would be honest yet. This is the
+      cheapest thing on the whole path and it is the one people skip: write down
+      what a right answer looks like, for one real case, in a form something
+      other than you can check. Not "it should be helpful" - a string it has to
+      contain, a schema it has to satisfy, a number it has to match. Everything
+      after this is a comparison, and a comparison needs a fixed end.
+
+  - node: S0_NOT_A_PROGRAM
+    condition: "success_check_named and (success_check_characters == 0 or not success_check_is_a_program)"
+    outcome: SPEC__WRITE_THE_TASK
+    say: >
+      You have a definition of success and I could not read it as a program. It
+      may be prose, it may be at a path that is not there, or it may be in your
+      head with a name. What is needed is a FILE - a script, a function, a
+      schema - that takes one answer and returns whether it was right. I will
+      read it and I will not run it: running your code is your business. Once it
+      exists, everything below it is arithmetic.
+
+  - node: S0_NO_BAR_TO_CLEAR
+    condition: "target_pass_rate is null"
+    outcome: SPEC__SET_THE_BAR
+    say: >
+      Nobody else can say what good enough is. Without it there is no way to
+      tell "it improved" from "it is finished", and that difference is the whole
+      decision here - the bare model either clears your bar or it does not, and
+      a harness is worth building exactly insofar as it closes a gap you have
+      named. Pick a number you would actually ship at.
+
+  # ORDERING IS LOAD-BEARING and the condition is the negation of the three
+  # above rather than `always`. An `always` on a node that is not a fork cannot
+  # be told apart from a condition somebody deleted.
+  - node: S0_THE_TASK_IS_WRITTEN
+    condition: "success_check_is_a_program and target_pass_rate is not null"
+    outcome: REROUTE
+    route: stage_1_the_task_set
+
+# ---------------------------------------------------------------------------
+# STAGE 1 - IS THERE ENOUGH TO MEASURE ON?
+stage_1_the_task_set:
+  - gate_ref: G1_TASKS_TO_MEASURE_ON       # node S1_TOO_FEW_TASKS
+
+  - node: S1_NO_TASKS_AT_ALL
+    condition: "not (harness_tasks_n > 0)"
+    outcome: SPEC__BUILD_A_STARTER_EVAL
+    say: >
+      There is nothing to measure on. Twenty real tasks, each with the outcome
+      that would be right - taken out of what you actually want done rather than
+      out of your head, because the ones you can imagine are the ones you have
+      already thought about, and those are rarely the ones that will break this.
+      Twenty rather than ten because what a harness has to hold is reliability
+      across repeated attempts, and with fewer the smallest difference you can
+      observe is bigger than the difference you are trying to see.
+
+  - node: S1_SOME_BUT_NOT_TWENTY
+    condition: "harness_tasks_n > 0 and harness_tasks_n < 20"
+    outcome: SPEC__BUILD_A_STARTER_EVAL
+    say: >
+      You have real tasks written down and not enough of them. Keep every one -
+      they are the expensive part. The floor is twenty because below it a rate
+      is not a rate: with fifteen tasks the smallest observable difference is
+      one in fifteen, which is nearly seven points, so one lucky run reads as a
+      large improvement and nothing you build next can be told apart from noise.
+
+  - node: S1_CANNOT_RERUN
+    condition: "not can_rerun_tasks"
+    outcome: SPEC__MAKE_THE_TASKS_RERUNNABLE
+    say: >
+      There are tasks written down and no way to run them again. Everything
+      after this is a comparison between runs - the bare model against the
+      pipeline, the harness with a component against the harness without it - so
+      a task set that cannot be re-run turns every one of those into an opinion.
+      What is missing is usually the expected outcome beside each task, which is
+      the half people skip.
+
+  - node: S1_ENOUGH_TO_MEASURE_ON
+    condition: "harness_tasks_n >= 20 and can_rerun_tasks"
+    outcome: REROUTE
+    route: stage_2_the_model_alone
+
+# ---------------------------------------------------------------------------
+# STAGE 2 - WHAT DOES THE MODEL DO ON ITS OWN?
+#
+# THE STAGE THAT ENDS MOST CONVERSATIONS, AND THAT IS THE PRODUCT WORKING. Three
+# of its five nodes are terminal NO_BUILD answers and two of those hand the
+# person to a different ledger. Only the last one continues.
+stage_2_the_model_alone:
+  - gate_ref: G2_THE_MODEL_ALONE_WAS_SCORED   # node S2_MODEL_ALONE_UNSCORED
+
+  - node: S2_NEVER_RUN_ALONE
+    condition: "solo_pass_rate is null"
+    outcome: SPEC__RUN_THE_MODEL_ALONE
+    say: >
+      The bare model has never been run on these tasks, so there is no number
+      that any harness would have to beat. This is one afternoon and it decides
+      the rest: send each task to the model with nothing around it, save what
+      came back, and let me grade it against your own expected column. A
+      surprising share of harnesses are built to fix a problem the model stopped
+      having two releases ago, and this is the step that finds that out before
+      the money is spent.
+
+  - node: S2_THE_MODEL_ALREADY_CLEARS_THE_BAR
+    condition: "solo_pass_rate is not null and target_pass_rate is not null and solo_pass_rate >= target_pass_rate"
+    outcome: NO_HARNESS__ONE_CALL
+    say: >
+      The bare model, scored on your own tasks against your own bar, already
+      clears it. There is nothing here for a harness to add and a great deal for
+      it to subtract: every component you would build is a latency cost, a
+      failure mode and an assumption that will rot. Ship the one call. If the
+      rate drifts later, you have a task set to notice it with, which is the
+      thing you built today and it was the cheap one.
+
+  - node: S2_NOT_AN_AI_PROBLEM
+    condition: "the_failure_is_not_the_model"
+    outcome: NO_HARNESS__NOT_AN_AI_PROBLEM
+    say: >
+      What is failing is not the model. Data that is missing, a system that will
+      not let you in, or a permission nobody granted are not made better by
+      putting a loop in front of them - they are made harder to see. Fix the
+      thing that is actually broken and then ask this question again with a
+      number in hand.
+
+  - node: S2_THE_LOOP_ALREADY_EXISTS
+    condition: "the_loop_exists_and_fails"
+    outcome: HANDOFF__DIAGNOSE_THE_EXISTING_AGENT
+    say: >
+      You already have a loop and it fails. That is a different question from
+      the one this ledger asks, and there is a whole file for it -
+      docs/ledgers/ai_engineering.yaml diagnoses a system that exists, and it
+      opens on ten re-runnable failures with what should have happened beside
+      each. What you have here is more than enough to start it. Nothing you
+      measured on this side travels, and that is the honest state of it rather
+      than a promise: the two ledgers share no facts by design.
+
+  - node: S2_THE_KNOWLEDGE_IS_THE_PROBLEM
+    condition: "the_answer_was_never_knowable"
+    outcome: HANDOFF__THE_KNOWLEDGE_IS_THE_PROBLEM
+    say: >
+      The answer was never knowable from what the model was given. No shape of
+      harness fixes that - a loop that cannot know a thing will call more tools
+      and still not know it. What you have is a retrieval question or a training
+      question, and docs/diagnosis_engine.yaml is the file that asks it: it will
+      try retrieval before it lets anybody train, which is almost always the
+      right order.
+
+  # THE RUNG PEOPLE SKIP, AND ITS ABSENCE WAS A REAL DEFECT RATHER THAN A
+  # MISSING NICETY. Driven on 2026-08-28: a sheet asking for a team with the
+  # single loop measured and the FIXED SEQUENCE never run walked all the way to
+  # S9, failed G2's `multi_agent` row at the sweep, took that gate's `on_fail`
+  # back into this stage - and nothing here answered "the pipeline rung was
+  # never run", so S2_A_REAL_SHORTFALL fired again, the walk returned to the
+  # sweep, and the engine stopped it with ERROR__CYCLE.
+  #
+  # A GATE'S REMEDY STAGE MUST BE EXHAUSTIVE OVER EVERY ROW OF THAT GATE, not
+  # over the `any` row it was written against. G2 is the only gate here with a
+  # row per class, so it is the only one that could have had this hole, and the
+  # cycle guard is what turned a silent wrong answer into a crash - which is the
+  # right direction and is not the same as being caught.
+  - node: S2_THE_FIXED_SEQUENCE_WAS_NEVER_RUN
+    condition: "solo_pass_rate is not null and steps_depend_on_the_last and pipeline_pass_rate is null"
+    outcome: NO_HARNESS__A_PIPELINE_FIRST
+    say: >
+      The next step depends on the last one, and the version WITHOUT
+      model-driven control flow has never been run. That is the rung almost
+      everybody skips, and it is the one that most often ends the conversation:
+      write the steps out in the order you already believe they go, run your
+      tasks through them, and bring back the rate. If it clears your bar you
+      have a system you can read, test and bound, and you are finished. If it
+      does not, the gap between it and the bare model is the first honest
+      evidence that the ordering is doing anything at all - and everything above
+      it on the ladder is measured against this number rather than against the
+      bare model.
+
+  - node: S2_A_REAL_SHORTFALL
+    condition: "solo_pass_rate is not null and target_pass_rate is not null and solo_pass_rate < target_pass_rate and (pipeline_pass_rate is not null or not steps_depend_on_the_last)"
+    outcome: REROUTE
+    route: stage_3_the_tool_layer
+
+# ---------------------------------------------------------------------------
+# STAGE 3 - IS THE TOOL LAYER THE PROBLEM?
+#
+# BEFORE THE SHAPE QUESTION, AND THAT ORDER IS THE PRODUCT. Three of this
+# ledger's cheapest answers live here, and all three are things people reach for
+# an agent to fix. A model that cannot choose between twenty overlapping tools is
+# not short of a loop.
+#
+# It is a stage of its own rather than nodes inside the shape stage because it
+# runs on the way DOWN, before anything is proposed - where the blast-radius gate
+# below runs only after a shape exists, since what a tool can destroy is a
+# question about a shape.
+stage_3_the_tool_layer:
+
+  - node: S3_TOO_MANY_TOOLS
+    condition: "harness_tools_n > 20 and tool_choice_is_ambiguous"
+    outcome: NO_TOOLING__FEWER_TOOLS
+    say: >
+      There are more than twenty tools and the model cannot tell them apart.
+      That is not a prompt problem and it is not a model problem, it is a menu
+      problem: overlapping tools compete for the same call and the model picks
+      by wording rather than by fit. Merge the ones that overlap, delete the
+      ones nothing has called, and measure again before adding anything - a
+      harness built on top of this inherits the ambiguity and hides it behind
+      one more layer.
+
+  - node: S3_DESCRIPTIONS_ARE_THE_BUG
+    condition: "tool_choice_is_ambiguous and not (harness_tools_n > 20)"
+    outcome: NO_TOOLING__REWRITE_THE_DESCRIPTIONS
+    say: >
+      The tools exist, there are not many of them, and the right one is not
+      being chosen. The description is the entire interface - it is what the
+      model reads and all it reads - and a description written for a human
+      reviewer is usually the wrong one. Say what the tool DOES, when to reach
+      for it, and what it returns. This is an afternoon and it is free.
+
+  - node: S3_UNTYPED_BOUNDARIES
+    condition: "harness_tools_n > 0 and not boundaries_are_typed"
+    outcome: NO_TOOLING__TYPE_THE_BOUNDARY
+    say: >
+      The hand-offs are untyped, so an invalid message travels until something
+      far away fails in a way that names the wrong culprit. Type the boundary
+      and it fails at the boundary, with the argument that was wrong in the
+      error. This is worth more than it sounds: most of the debugging cost of a
+      harness is the distance between where a thing went wrong and where it was
+      noticed, and adding orchestration makes that distance longer.
+
+  # The negation of all three, written out rather than `always`, for the reason
+  # stage_0's exit gives.
+  - node: S3_THE_TOOL_LAYER_IS_NOT_THE_PROBLEM
+    condition: "not tool_choice_is_ambiguous and (harness_tools_n == 0 or boundaries_are_typed)"
+    outcome: REROUTE
+    route: stage_4_the_shape
+
+# ---------------------------------------------------------------------------
+# STAGE 4 - WHAT SHAPE, IF ANY?
+#
+# THE SHADOWING RULE BITES HARDEST HERE and the conditions are written to
+# survive a reorder. Four of the seven turn on `steps_depend_on_the_last`, and
+# the three that do not are ordered specific-before-general with the general
+# one's condition written as the negation.
+#
+# EVERY PROPOSING NODE ROUTES STRAIGHT TO THE COMMIT STAGE. SC2 is enforced by
+# the engine on the node itself and not on a chain of reroutes - which was this
+# file's first load error, and the engine was right: a proposal that reached the
+# commit stage through four intermediate stages would pass through gates in an
+# order that depends on the route rather than on the sweep, and the sweep is the
+# thing that makes the ladder unskippable.
+stage_4_the_shape:
+
+  - node: S4_ONE_ALREADY_EXISTS
+    condition: "an_existing_harness_does_this"
+    outcome: NO_HARNESS__USE_AN_EXISTING_ONE
+    say: >
+      Something already shipped does this. The build you are considering is not
+      the interesting part of your product and it is the part with the longest
+      tail - the retries, the timeouts, the tool schema that drifts, the trace
+      format nobody agrees on. Use the one that exists and spend the time on the
+      part only you can build. You still want the task set: it is how you find
+      out when the one you picked stops being enough.
+
+  - node: S4_A_SCRIPT_WOULD_DO
+    condition: "not steps_depend_on_the_last and not the_model_must_reach_external_systems"
+    outcome: NO_HARNESS__A_SCRIPT
+    say: >
+      The steps are known, they run in an order you already know, and none of
+      them depends on what the last one returned. That is a script. Putting a
+      model in the loop buys you latency, non-determinism and a debugging
+      problem, and buys the work nothing - the model is welcome inside a step,
+      deciding nothing about which step comes next.
+
+  - node: S4_TOOL_LAYER
+    condition: "not steps_depend_on_the_last and the_model_must_reach_external_systems and not (harness_tools_n > 0)"
+    propose: TOOL_LAYER
+    route: stage_9_shape_selector
+    say: >
+      The model needs to reach things it cannot reach, and nothing about the
+      ORDER of the work needs deciding at run time. That is a tool layer, and it
+      is the cheapest real build on this list: typed arguments, descriptions
+      written for the thing that reads them, and one line per tool saying what
+      it can destroy. No orchestration is being proposed here and that is
+      deliberate - changing what the model can reach and changing who decides
+      the order are two different projects, and doing them together is how
+      neither gets measured.
+
+  - node: S4_FIXED_PIPELINE
+    condition: "not steps_depend_on_the_last and the_model_must_reach_external_systems and harness_tools_n > 0"
+    propose: FIXED_PIPELINE
+    route: stage_9_shape_selector
+    say: >
+      The steps are known and ordered, the tools are in place and annotated, and
+      nothing here needs the model to decide what happens next. A fixed pipeline
+      is what that is, and it is worth being precise that this is NOT an agent:
+      the order is in your code where you can read it, test it and bound it.
+      Almost everybody who asks for an agent wants this.
+
+  - node: S4_A_TEAM_WITHOUT_A_LOOP
+    condition: "steps_depend_on_the_last and one_context_cannot_hold_it and single_loop_pass_rate is null"
+    outcome: NO_HARNESS__ONE_LOOP_FIRST
+    say: >
+      You have asked for more than one agent and you have never measured one.
+      "One context cannot hold this" is a diagnosis almost everybody makes
+      BEFORE building the single loop that would have tested it, and it is wrong
+      more often than it is right - most multi-agent systems are one agent with
+      a context problem, and the second agent hides the problem rather than
+      solving it. Build the one loop, run your tasks against it, and bring back
+      the rate. If it clears your bar you have saved yourself the hardest system
+      in this file to debug.
+
+  - node: S4_AGENT_TEAM
+    condition: "steps_depend_on_the_last and one_context_cannot_hold_it and single_loop_pass_rate is not null"
+    propose: AGENT_TEAM
+    route: stage_9_shape_selector
+    say: >
+      One context provably cannot hold the work, you built the single loop and
+      measured it, and it did not get you there. This bar is deliberately the
+      highest in the file: it is the only shape with its own method class and
+      its own row of the ladder gate, and it is reached only after every cheaper
+      shape above it has been tried and counted.
+
+  - node: S4_AGENT_LOOP
+    condition: "steps_depend_on_the_last and not one_context_cannot_hold_it"
+    propose: AGENT_LOOP
+    route: stage_9_shape_selector
+    say: >
+      The next step genuinely depends on what the last one returned, and one
+      context can hold the work. That is what a loop is for. Everything from
+      here is about making it something a person can approve: which of its parts
+      are actually carrying it, what it can destroy, and what one run costs.
+
+# ---------------------------------------------------------------------------
+# STAGE 5 - IS EVERY COMPONENT CARRYING ITS WEIGHT?
+#
+# THE STAGE THIS LEDGER EXISTS FOR. Neither shipped ledger has anything like it.
+#
+# IT IS REACHED ONLY FROM G3's `on_fail`, which is the shape the second ledger's
+# stage_0 already has: the gate is first, its on_fail routes into this stage,
+# evaluation resumes at the first item that is not a gate_ref, and the nodes
+# below are the answers one `outcome:` key could not give. They are exhaustive
+# over the three ways the gate's row can be false, in the order a person needs
+# to hear them.
+stage_5_the_components:
+  - gate_ref: G3_EVERY_COMPONENT_IS_LOAD_BEARING   # node S5_COMPONENTS_UNMEASURED
+
+  - node: S5_NOTHING_NAMED
+    condition: "not (components_proposed_n > 0)"
+    outcome: SPEC__NAME_THE_COMPONENTS
+    say: >
+      Nothing has been named, so there is nothing to test for whether it earns
+      its place. List the parts you intend to build - the reranker, the planner,
+      the summariser, the retry policy, the router - one line each. Every one of
+      them encodes an assumption about something the model cannot do alone, and
+      the next question is which of those assumptions is still true.
+
+  - node: S5_NOT_ABLATED
+    condition: "components_proposed_n > 0 and components_ablated_n < components_proposed_n"
+    outcome: SPEC__ABLATE_THE_HARNESS
+    say: >
+      Some of what you intend to build has never been tested for whether it
+      helps. For each one: run your tasks with it and run them without it, and
+      bring back both sets of answers. I will pair them and tell you whether the
+      difference is real or whether it is noise - and NO EVIDENCE is a real
+      answer here, not a failure to get one. Every component that survives this
+      is one you can defend; every one that does not is latency and a failure
+      mode you were about to pay for.
+
+  - node: S5_A_COMPONENT_IS_NOT_LOAD_BEARING
+    condition: "components_that_earned_their_place < components_ablated_n"
+    outcome: NO_HARNESS__STRIP_A_COMPONENT
+    say: >
+      At least one component did not change the score by more than noise. Take
+      it out and measure again. This is the most common finding in this whole
+      ledger and it is almost never welcome: a component that made sense against
+      an older model is the hardest kind of code to delete, because it was right
+      when it was written. The task set is what lets you delete it without
+      arguing about it.
+
+# ---------------------------------------------------------------------------
+# STAGE 6 - WHAT CAN IT DESTROY?
+#
+# Reached only from G4's `on_fail`, and its two nodes are exhaustive over that
+# gate's rows: either a reachable tool is unannotated, or every tool is
+# annotated and nothing says where a person has to say yes. The second is only
+# ever asked of `agent` and `multi_agent`, because the `any` row does not
+# require it - a fixed pipeline calls a known set in a known order.
+stage_6_the_blast_radius:
+  - gate_ref: G4_THE_BLAST_RADIUS_IS_DECLARED      # node S6_BLAST_RADIUS_UNDECLARED
+
+  - node: S6_TOOLS_NOT_ANNOTATED
+    condition: "harness_tools_n > tools_risk_annotated_n"
+    outcome: SPEC__DECLARE_THE_BLAST_RADIUS
+    say: >
+      Not every reachable tool says what it can destroy. For a fixed pipeline
+      that is a property of code somebody can read; for anything that CHOOSES,
+      the blast radius is the union of everything it can reach, and nobody can
+      approve a thing whose worst case has not been written down. One line per
+      tool: reads, writes, or destroys.
+
+  - node: S6_NO_APPROVAL_BOUNDARY
+    condition: "not approval_boundary_declared"
+    outcome: SPEC__DRAW_THE_APPROVAL_BOUNDARY
+    say: >
+      Every tool is annotated and nothing says where a person has to say yes.
+      For anything with model-driven control flow that is the whole safety
+      story - the model chooses, so the only thing between a bad choice and a
+      destroyed thing is a boundary somebody drew on purpose. Name the
+      destructive tools and say what has to happen before one of them fires.
+
+# ---------------------------------------------------------------------------
+# STAGE 7 - WHAT DOES ONE RUN COST, AND DOES IT STOP?
+#
+# Reached only from G5's `on_fail`. Two nodes, exhaustive over the row: no
+# traces at all, or traces that do not settle the two facts an approval is made
+# of.
+stage_7_the_run:
+  - gate_ref: G5_THE_RUN_IS_BOUNDED_AND_RECORDED   # node S7_RUN_UNBOUNDED
+
+  - node: S7_NO_TRACES
+    condition: "harness_spans_read == 0 or not harness_has_traces"
+    outcome: SPEC__INSTRUMENT_THE_LOOP
+    say: >
+      Nothing recorded what happened. Every question left - what a run costs,
+      whether it stops, which tool failed - is answered by reading one trace,
+      and none of them can be answered by remembering. OpenTelemetry spans from
+      one real run are enough; every framework worth using emits them and most
+      need one environment variable.
+
+  - node: S7_UNBOUNDED
+    condition: "harness_spans_read > 0 and (harness_tokens_per_run is null or not harness_run_terminates)"
+    outcome: SPEC__BOUND_THE_RUN
+    say: >
+      There are traces and they do not settle what one run costs or whether it
+      ends. Those are the two facts an approval is made of. A token total needs
+      usage attributes on every inference span - if one is missing the total is
+      a lower bound, and a lower bound is the number that is always smaller than
+      the bill. Termination needs a run that finished on its own rather than one
+      somebody stopped.
+
+# ---------------------------------------------------------------------------
+# STAGE 9 - THE SHAPE SELECTOR. The only stage that turns a candidate into a
+# verdict, and `contract.roles.commit_stages` is what says so.
+stage_9_shape_selector:
+
+  # THE SWEEP. Every required gate, re-asked under the PROPOSAL'S OWN class. A
+  # gate already passed under the row that applies to this class is skipped; one
+  # passed under a different row is asked again, because a different row is a
+  # different question.
+  - node: S9_SWEEP_EVERY_GATE
+    condition: always
+    order: "G0_THE_TASK_IS_CHECKABLE, G1_TASKS_TO_MEASURE_ON, G2_THE_MODEL_ALONE_WAS_SCORED, G3_EVERY_COMPONENT_IS_LOAD_BEARING, G4_THE_BLAST_RADIUS_IS_DECLARED, G5_THE_RUN_IS_BOUNDED_AND_RECORDED"
+    rule: >
+      Let c = method_class(proposed_method). For each gate g in that order,
+      compute r = row_key(g, c). If `path` already holds a gate entry for g whose
+      `row` == r, skip it - that exact question has been asked and answered on
+      the way here. Otherwise evaluate row r. If it is true, append the gate's
+      node entry and then the gate entry. If it is false, stop: the run
+      terminates at the gate's `on_fail`, the proposal goes into rejected[] with
+      the gate id as the reason, and the person is told the cheaper thing.
+    note: >
+      THIS IS WHERE THE LADDER IS PAID FOR. Every shape is proposed in stage_3,
+      which is upstream of G3, G4 and G5 - so a proposal reaches here having
+      passed G2 under whatever row applied on the way down, which for the
+      class-agnostic spine is `any`. An AGENT_TEAM proposed at S3_AGENT_TEAM has
+      passed G2's `any` row, meaning "the bare model was scored"; the sweep
+      re-asks it under `multi_agent`, which additionally demands the pipeline
+      AND the single loop. That re-ask is the only structural reason the ladder
+      cannot be skipped by proposing early.
+
+  - node: S9_NO_GATE_WAS_SKIPPED
+    condition: "not all(g in gates_passed_under(path, method_class(proposed_method)) for g in contract.required_gates)"
+    outcome: ERROR__GATE_SKIPPED
+    say: "A harness recommendation was reached without exhausting the gates. This is a bug, not a diagnosis."
+
+  - node: S9_THE_SHAPE_HAS_A_CLASS
+    condition: "proposed_method not in methods"
+    outcome: ERROR__UNCLASSIFIED_METHOD
+    say: "A shape was proposed that has no entry in `methods`, so no gate knows which row to apply."
+
+  - node: S9_MINT_HARNESS_VERDICT
+    condition: "all(g in gates_passed_under(path, method_class(proposed_method)) for g in contract.required_gates) and proposed_method != NOTHING_SHAPED and proposed_method not in struck_methods"
+    outcome: "HARNESS__{proposed_method}"
+    verdict: BUILD
+    emits: [HARNESS__TOOL_LAYER, HARNESS__FIXED_PIPELINE, HARNESS__AGENT_LOOP, HARNESS__AGENT_TEAM]
+    row_note: >
+      gates_passed_under, not bare membership in `path`. A gate passed under a
+      row that does not apply to this proposal's class did not ask this
+      proposal's question and does not count towards the mint.
+    say: >
+      Every cheaper shape has been tried and measured, every component you
+      intend to build has been shown to carry its weight, every tool says what
+      it can destroy, and one run has a token count and a proof that it stops.
+      That is the whole bar and it is a high one on purpose. Here is what is
+      left to build, what one run of it costs, and how you will know if it
+      worked.
+
+  - node: S9_NOTHING_SHAPED
+    condition: "proposed_method == NOTHING_SHAPED"
+    outcome: ERROR__NO_PROPOSAL
+    say: "The shape selector was entered with no proposal. Every route into it proposes; this is a bug."
+
+# ---------------------------------------------------------------------------
+shadowing_rule:
+  rule: >
+    Within a stage, a node with a terminal `outcome:` kills every later node
+    whose condition implies its own. Test the specific case above the general
+    one, and write the general node's condition as the negation of the specific
+    one where that is short enough to read.
+  it_applies_to_every_prefix: >
+    A dead NO_HARNESS__ outcome is invisible to anything that only looks at
+    HARNESS__ ones, and the no-build answers ARE the product. Eight of this
+    file's outcomes are refusals or handoffs and they are the eight most likely
+    to be right.
+  where_it_bites_here: >
+    stage_4_the_shape is the exposed one: seven nodes, four of them conditioned
+    on `steps_depend_on_the_last`, and the three that are not partition on
+    `the_model_must_reach_external_systems` and then on `harness_tools_n`. Widen
+    S4_FIXED_PIPELINE by dropping its zero-tools counterpart's clause and
+    S4_TOOL_LAYER dies silently - the cheapest real build in the file, killed by
+    the expensive one below it.
+    stage_2_the_model_alone is exposed in the OTHER direction and it cost a real
+    defect: its nodes have to be exhaustive over every ROW of G2, not over the
+    `any` row they were written against, because a gate's on_fail routes here
+    from the sweep under whatever class was proposed. A rung with no node is not
+    a shadow, it is a hole, and the walk returns to the sweep and cycles.
+    stage_3_the_tool_layer is exposed differently: its two
+    `tool_choice_is_ambiguous` nodes partition on a count, so changing the twenty
+    in either one without the other opens a hole or a shadow, and neither shows
+    up as a diff to a condition somebody reads.
+
+static_checks:
+  - id: SC1_ONE_MINT
+    rule: "No node may carry an `outcome:` starting with HARNESS__ except S9_MINT_HARNESS_VERDICT, which contract.outcome_prefixes.HARNESS__.mintable_only_at names."
+    how: "enforced by the engine, parameterised by contract.roles and the gated prefix"
+  - id: SC2_EVERY_PROPOSAL_ROUTES_TO_A_COMMIT_STAGE
+    rule: "Every node carrying `propose:` routes to one of contract.roles.commit_stages, or is already inside one."
+    how: >
+      Enforced by the engine on the NODE, not on a chain of reroutes, and this
+      file learned that at its first load. The draft routed every proposal into
+      stage_5_the_components and let a chain of stages carry it to stage_9; the
+      engine refused, and it was right for a reason worth keeping written down.
+      G3, G4 and G5 all ask questions ABOUT A SHAPE - what a component costs,
+      what a tool can destroy, what one run spends - so there is nothing to ask
+      them of until one is on the table. Reaching them through a route would
+      mean the order they are asked in depends on which node proposed, where
+      reaching them through S9_SWEEP_EVERY_GATE means every shape is asked all
+      six under its own class, in one declared order. The sweep is the thing
+      that makes the ladder unskippable and a chain of reroutes would have been
+      a second, quieter path around it.
+  - id: SC3_EVERY_METHOD_HAS_A_ROW_IN_EVERY_GATE
+    rule: "For each method, each of the six gates has a matching passes_when row - either method_class: any, or a row for that method's class."
+
+known_gaps:
+
+  # DERIVED AND ASSERTED IN BOTH DIRECTIONS, never written by hand. The second
+  # ledger's prose version of this gap said FOUR for as long as it existed and
+  # the true number was nine, because a sentence cannot be recomputed and nobody
+  # recomputed it. The test derives this set from
+  # `{fact for spec in REGISTRY for fact in spec.measures}` - so shipping an
+  # instrument turns this file red until the line comes out, and declaring an
+  # `inspect` fact nothing measures turns it red until the name goes in.
+  no_instrument_measures: []
+
+  every_inspect_fact_is_on_that_list: >
+    EMPTY AS OF 2026-08-28, and the empty list is the headline, because
+    `docs/ledgers/HARNESS_DESIGN.md` predicted it would not be. That document
+    lists `solo_pass_rate`, `pipeline_pass_rate`, `single_loop_pass_rate`,
+    `components_proposed_n` and `components_ablated_n` as NEW - "and the hard
+    one, because scoring a harness variant means running somebody else's system,
+    which the `agent` pack forbids".
+
+    THE FORBIDDEN THING WAS NEVER THE MEASUREMENT. It was the DRIVING. The shape
+    `run_the_failures` already ships is the way through: the person runs their
+    own system and exports what it answered, and the harness GRADES that against
+    their own expected column. Nothing of theirs is executed, the number is a
+    real measurement, and the same trick makes the ablation gate implementable -
+    two recorded arms, paired by `evals.mcnemar`, with a genuine NO EVIDENCE
+    answer for the component that changed nothing.
+
+    So all thirteen `inspect` facts have instruments, in `app/tools/harness.py`
+    - eleven of them by design and two more that this product's own flag wall
+    demanded. `success_check_characters` and `harness_spans_read` were added
+    after `app/tools/evidence.py` refused a lone boolean stamp: "what makes a
+    flag mean anything is the reading standing next to it". G0 and G5 now ask
+    for both, which is the shape the ML ledger's G1 has always had.
+    `components_proposed_n` is `source: ask` rather than instrumented, which is
+    the honest classification: nothing can read an intention.
+
+  cross_ledger_handoff_has_no_mechanism: >
+    OPEN, AND THE TWO `HANDOFF__` OUTCOMES ARE HONEST ABOUT IT IN THEIR OWN
+    `say:`. They are terminal NO_BUILD verdicts whose text names another file. A
+    real handoff - moving the conversation and carrying what it already measured
+    - would need something the engine does not have, and the disjoint-fact rule
+    the domain router depends on means the facts could not travel anyway. What
+    exists today is a person being told, precisely, which file asks their
+    question and what it will open on. That is worth more than a route that
+    dropped their evidence silently.
+
+  the_system_prompt_was_single_ledger: >
+    CLOSED 2026-08-28, and it was worse than a stale paragraph. That fragment
+    opens with "you may not soften, skip, reorder or bargain with them" - the
+    strongest words the prompt uses - about a verdict two of the three ledgers
+    cannot reach. A person asking whether to build a harness was being told, in
+    the model's own instructions, that they needed thirty graded eval rows
+    first.
+
+    `app/instructions.gates_for` now renders THIS conversation's gates from
+    THIS ledger's own contract: the ids, the question each one asks, and the
+    sentence `what_the_gates_decide` already states. `app/conductor.py` resolves
+    the ledger through `evidence.ledger_for_thread`, the same door
+    `registry.py` and `journey_report.py` use, so there is no second opinion
+    about which ledger a conversation is on.
+
+    THE ML LEDGER KEEPS ITS FILE, byte for byte, and that is deliberate rather
+    than an exception. `02_five_gates.md` is argued prose - "if the trivial
+    baseline is within five points of the model, the task or the labels are
+    broken", "vibes do not count" - and nothing can regenerate that from an
+    `asks:` line. Deleting it so three ledgers look alike would lose the
+    best-written page in the prompt to gain a shape.
+
+    A ledger that cannot be read falls back to that file rather than to nothing:
+    a prompt with no gates section is a model told it may recommend the
+    expensive thing whenever it likes, which is the one failure worse than
+    being told another domain's gates.
+
+  the_twenty_task_floor_has_no_run_behind_it: >
+    OPEN AND DELIBERATE. Twenty is derived rather than measured: below it the
+    smallest observable difference on the task set is larger than the difference
+    a harness is being built to make. That is arithmetic and it is not evidence
+    about what real task sets look like. The second ledger carries the same debt
+    at ten. The first real run that disagrees has something written here to
+    disagree with.
+
+  the_tool_count_threshold_is_a_guess: >
+    OPEN. `harness_tools_n > 20` splits NO_TOOLING__FEWER_TOOLS from
+    NO_TOOLING__REWRITE_THE_DESCRIPTIONS and nothing measured that number. It is
+    a guess about where a menu stops being choosable, and it is written here
+    rather than left to look like a finding.

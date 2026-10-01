@@ -1,0 +1,26 @@
+{
+  "diverged": {
+    "README.md": "2026-09-07. Describes the named-span behaviour above, so the prose does not outlive the code. The USAGE BLOCK is upstream's, adopted verbatim along with tools/run_readme.py - the copy's own block named three variables that do not exist and could not run at all.",
+    "four_asserts/void_unless.py": "2026-09-07, deliberate and OURS TO SEND UPSTREAM. Three changes measured on 19 fabricated KEEP verdicts: the dropped-clause rule is held to the span the reason NAMES rather than to whether anything changed at all; the closed phrase list gained its gerunds (removing/dropping/omitting), which three of the nineteen reasons used and which came back as `no rule registered` - the answer that means nobody checked; and a rule may take the reason as a third argument, without which the named-span check could not be expressed. 19 of 19 now void by rule, up from 14, at 3 of 170 genuine degradations touched against a ceiling of 5 fixed beforehand."
+  },
+  "files": {
+    "CHANGELOG.md": "db92ad13811e90280e7e16380c1ea2eb1cbc41959a324c79d43403025226b339",
+    "LICENSE": "9d60870eedc26bd4584be4d44f7cf2be57846f5ae334f057593c1126663cc166",
+    "README.md": "0fad16bed3ef8bf4f36a92a98c390e018d857e71a986a16d912e2c52f6340674",
+    "four_asserts/__init__.py": "46a302420eed76b7c4c6029122716dc92e3893bd71708b76fe22ebc42707013f",
+    "four_asserts/assert_ran.py": "261e1fa5b5b8d1e4e7eab4705c1dbd9137d59c531302e8367cf05febca9b63e1",
+    "four_asserts/hold.py": "6280ccce4aec0826d192df8572cf7aa830c6b7c92590acd1a61ca7c89e439961",
+    "four_asserts/void_unless.py": "de357e473483801ec0e8aa2838856e3e678e45fa18e36bc84afbc93f0140ff49",
+    "four_asserts/witness.py": "a2ab22df1ca9ca613c1f889ace95a7de9ecdefd9b9b6e7be37a8308b10a76908",
+    "pyproject.toml": "0fc5b805a0e190a864b557c754a2a4f609bcd499c56a23f7aebd2ee88b65a837",
+    "tests/test_assert_ran.py": "176f5346a9636f13d09d5330fc3c347d342b9ef772c800c1f668b5bff29252f8",
+    "tests/test_hold.py": "9b015bb3a92a4f3e1b54268ba49187ce1589a567bd14b64d802d87bb7628bc22",
+    "tests/test_the_readme_still_describes_the_code.py": "f8a6384d079052abde68556cfdf1de330dbad2c311f54889aabc591d482efdc9",
+    "tests/test_void_unless.py": "9686a49e5872c9f09272691bea905eb3aeca1582e8bf0015729150137579d71c",
+    "tests/test_void_unless_reads_the_named_span.py": "30cb47e22d166651d2a36c78a0569ad5dbc4b73c763634fa8d0be908aa4259ce",
+    "tests/test_witness.py": "e624fbb0fdd76baa7fdadea8c4912c818bb925c1e68699ed86af8597c288b073",
+    "tools/run_readme.py": "5e5fcec7b6d2cabc3a2cb661b407933a1d033af410f37ff61079694de46ad7cc"
+  },
+  "source": "https://github.com/naidx0/four-asserts",
+  "upstream": "cc1c29d23c29078d381625bd8d3fc8895d649740"
+}

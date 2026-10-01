@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="c0" gradientUnits="userSpaceOnUse" x1="0" y1="20.48" x2="0" y2="407.52"><stop offset="0" stop-color="#C0D6FF"/><stop offset="1" stop-color="#899DD1"/></linearGradient>
+    <linearGradient id="c1" gradientUnits="userSpaceOnUse" x1="0" y1="86.45" x2="0" y2="179.92"><stop offset="0" stop-color="#687BB5"/><stop offset="1" stop-color="#27387F"/></linearGradient>
+    <linearGradient id="c2" gradientUnits="userSpaceOnUse" x1="0" y1="163.42" x2="0" y2="407.52"><stop offset="0" stop-color="#37498C"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c3" gradientUnits="userSpaceOnUse" x1="0" y1="239.33" x2="0" y2="503.22"><stop offset="0" stop-color="#C0D6FF"/><stop offset="1" stop-color="#8CA1D4"/></linearGradient>
+    <linearGradient id="c4" gradientUnits="userSpaceOnUse" x1="0" y1="239.33" x2="0" y2="734.13"><stop offset="0" stop-color="#91A5D7"/><stop offset="1" stop-color="#5062A1"/></linearGradient>
+    <linearGradient id="c5" gradientUnits="userSpaceOnUse" x1="0" y1="420.76" x2="0" y2="739.63"><stop offset="0" stop-color="#475999"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c6" gradientUnits="userSpaceOnUse" x1="0" y1="734.13" x2="0" y2="1003.52"><stop offset="0" stop-color="#304186"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c7" gradientUnits="userSpaceOnUse" x1="0" y1="734.13" x2="0" y2="1003.52"><stop offset="0" stop-color="#445697"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c8" gradientUnits="userSpaceOnUse" x1="0" y1="503.22" x2="0" y2="915.56"><stop offset="0" stop-color="#869BCF"/><stop offset="1" stop-color="#465898"/></linearGradient>
+    <linearGradient id="c9" gradientUnits="userSpaceOnUse" x1="0" y1="466.94" x2="0" y2="563.70"><stop offset="0" stop-color="#BAD0FA"/><stop offset="1" stop-color="#798DC4"/></linearGradient>
+    <radialGradient id="pool" gradientUnits="userSpaceOnUse" cx="454.21" cy="152.43" r="252.90"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+  </defs>
+  <polygon points="289.27,407.52 465.20,20.48 753.83,86.45 588.90,163.42" fill="url(#c0)" stroke="url(#c0)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="753.83,86.45 809.91,179.92 588.90,163.42" fill="url(#c1)" stroke="url(#c1)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="809.91,179.92 289.27,407.52 588.90,163.42" fill="url(#c2)" stroke="url(#c2)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="219.24,466.94 739.88,239.33 443.28,503.22" fill="url(#c3)" stroke="url(#c3)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="739.88,239.33 848.74,420.76 649.44,734.13 443.28,503.22" fill="url(#c4)" stroke="url(#c4)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="848.74,420.76 807.50,739.63 649.44,734.13" fill="url(#c5)" stroke="url(#c5)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="807.50,739.63 601.34,1003.52 649.44,734.13" fill="url(#c6)" stroke="url(#c6)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="601.34,1003.52 298.96,915.56 649.44,734.13" fill="url(#c7)" stroke="url(#c7)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="298.96,915.56 175.26,563.70 443.28,503.22 649.44,734.13" fill="url(#c8)" stroke="url(#c8)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="175.26,563.70 219.24,466.94 443.28,503.22" fill="url(#c9)" stroke="url(#c9)" stroke-width="18.43" stroke-linejoin="round"/>
+  <polygon points="289.27,407.52 465.20,20.48 753.83,86.45 809.91,179.92" fill="url(#pool)" stroke="url(#pool)" stroke-width="18.43" stroke-linejoin="round"/>
+</svg>

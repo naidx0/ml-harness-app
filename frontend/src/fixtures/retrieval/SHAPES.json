@@ -1,0 +1,147 @@
+{
+  "01-recall-recorded": {
+    "top_level_keys": 38,
+    "rows_a_flat_table_would_draw": 411,
+    "rows_the_payload_actually_holds": 411,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 30,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {
+      "rows[].returned": 24,
+      "misses[].returned": 6
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 3,
+    "longest_string_chars": 607,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "02-recall-refused-a-tie-decided-it": {
+    "top_level_keys": 36,
+    "rows_a_flat_table_would_draw": 77,
+    "rows_the_payload_actually_holds": 77,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 4,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {
+      "misses[].returned": 1,
+      "misses[].tie_decided_at_k": 1,
+      "rows[].returned": 1,
+      "rows[].tie_decided_at_k": 1
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 2,
+    "longest_string_chars": 877,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "03-sweep-no-evidence": {
+    "top_level_keys": 40,
+    "rows_a_flat_table_would_draw": 372,
+    "rows_the_payload_actually_holds": 559,
+    "max_nesting_depth": 6,
+    "containers_summarised_away_at_depth_3": 17,
+    "rows_hidden_behind_those_summaries": 187,
+    "what_is_summarised_away": {
+      "confirmation.confirm_curve[]": 4,
+      "per_setting[].own_run": 4,
+      "per_setting[].resolution": 4,
+      "levers.we_cannot_pull[]": 3,
+      "confirmation.rows[]": 2
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 18,
+    "longest_string_chars": 5900,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "04-sweep-a-set-and-not-a-winner": {
+    "top_level_keys": 40,
+    "rows_a_flat_table_would_draw": 586,
+    "rows_the_payload_actually_holds": 802,
+    "max_nesting_depth": 6,
+    "containers_summarised_away_at_depth_3": 24,
+    "rows_hidden_behind_those_summaries": 216,
+    "what_is_summarised_away": {
+      "confirmation.confirm_curve[]": 6,
+      "per_setting[].own_run": 6,
+      "per_setting[].resolution": 6,
+      "confirmation.rows[]": 3,
+      "levers.we_cannot_pull[]": 3
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 13,
+    "longest_string_chars": 5978,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "05-sweep-identical-cuts": {
+    "top_level_keys": 40,
+    "rows_a_flat_table_would_draw": 372,
+    "rows_the_payload_actually_holds": 553,
+    "max_nesting_depth": 6,
+    "containers_summarised_away_at_depth_3": 20,
+    "rows_hidden_behind_those_summaries": 181,
+    "what_is_summarised_away": {
+      "confirmation.confirm_curve[]": 4,
+      "confirmation.rows[]": 4,
+      "per_setting[].own_run": 4,
+      "per_setting[].resolution": 4,
+      "levers.we_cannot_pull[]": 3,
+      "cuts.identical_groups[]": 1
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 14,
+    "longest_string_chars": 6879,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "06-sweep-plan-only": {
+    "top_level_keys": 17,
+    "rows_a_flat_table_would_draw": 150,
+    "rows_the_payload_actually_holds": 159,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 3,
+    "rows_hidden_behind_those_summaries": 9,
+    "what_is_summarised_away": {
+      "levers.we_cannot_pull[]": 3
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 7,
+    "longest_string_chars": 2068,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "07-sweep-refused-passage-level-ground-truth": {
+    "top_level_keys": 29,
+    "rows_a_flat_table_would_draw": 142,
+    "rows_the_payload_actually_holds": 151,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 3,
+    "rows_hidden_behind_those_summaries": 9,
+    "what_is_summarised_away": {
+      "levers.we_cannot_pull[]": 3
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 8,
+    "longest_string_chars": 2068,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "08-sweep-twelve-settings": {
+    "top_level_keys": 40,
+    "rows_a_flat_table_would_draw": 1612,
+    "rows_the_payload_actually_holds": 2223,
+    "max_nesting_depth": 6,
+    "containers_summarised_away_at_depth_3": 49,
+    "rows_hidden_behind_those_summaries": 611,
+    "what_is_summarised_away": {
+      "confirmation.confirm_curve[]": 12,
+      "per_setting[].own_run": 12,
+      "per_setting[].resolution": 12,
+      "confirmation.rows[]": 10,
+      "levers.we_cannot_pull[]": 3
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 34,
+    "longest_string_chars": 7683,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "09-recall-refused-no-ground-truth": {
+    "top_level_keys": 35,
+    "rows_a_flat_table_would_draw": 38,
+    "rows_the_payload_actually_holds": 38,
+    "max_nesting_depth": 2,
+    "containers_summarised_away_at_depth_3": 0,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {},
+    "strings_past_320_chars_that_get_a_show_all_button": 2,
+    "longest_string_chars": 767,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  }
+}

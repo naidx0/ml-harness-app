@@ -1,0 +1,474 @@
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "tools": [
+      {
+        "name": "scan_repo",
+        "description": "Statically scan a repo into a real architecture graph (services, datastores, files, and the edges between them). Handles container-manifest repos (compose/k8s/helm) AND (v9) manifest-less code repos via their package manifests (package.json, pyproject, go.mod, Cargo.toml, \u2026). Returns node/edge counts and the FULL ArchGraph JSON. WARNING: the full graph is large \u2014 on a monorepo it runs to megabytes of JSON and can exceed a 200k context window on its own. Use `who_calls` for a specific question; reach for this only when you genuinely need the whole graph (writing it to a file, diffing, or feeding another tool).",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo to scan."
+            },
+            "cluster": {
+              "description": "Cluster services into communities (default true).",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 400000
+        }
+      },
+      {
+        "name": "who_calls",
+        "description": "Answer \"what calls X, and what does X call?\" from the grounded static scan, with file:line evidence on every edge. X can be a FILE (\"store.ts\"), a PATH suffix (\"web/src/state/store.ts\", to disambiguate a name several files share), a FUNCTION (\"scanRepo\", or \"scan.ts#scanRepo\"), a service, or a topic. Prefer this over grep when the question is about CALLS rather than text: it reads the call graph, so it never reports an identifier that only appears in a comment or a string, and never misses a caller that reaches the target through a re-export. Prefer it over scan_repo whenever the question is specific. Nothing is dropped silently: an ambiguous name lists the alternatives, and a capped answer says how many hits it withheld.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            },
+            "name": {
+              "type": "string",
+              "description": "What to ask about: a service, topic, module, file, repo-relative PATH or path suffix (e.g. \"web/src/state/store.ts\"), or a FUNCTION name (\"scanRepo\", or \"scan.ts#scanRepo\" to pin the file)."
+            },
+            "includeImports": {
+              "description": "Include file-level import edges (default TRUE). Pass false for the cross-service lens \u2014 http and queue traffic only \u2014 the right view for \"what talks to this service\".",
+              "type": "boolean"
+            },
+            "limit": {
+              "description": "Max hits per direction (default 200).",
+              "type": "number"
+            },
+            "depth": {
+              "description": "Hops to walk out from the target (default 1, max 5). Depth 4 on a central module returns its whole blast radius in ONE call, where reaching depth 2 by grep costs dozens of round trips. Every hit is labelled with the hop it was found at; each node appears once, at its shortest distance.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "repoPath",
+            "name"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "architecture_changed",
+        "description": "Answer \"what did this change do to the SHAPE of the system?\" by comparing two scans at the SERVICE level \u2014 which connections appeared, which went, which components arrived. Not a graph delta: a file-level diff of a rescan is mostly import churn, and the one edge that crossed a service boundary is lost in it. \"The architecture is unchanged\" is a real and common answer, and it is said plainly so that the times it DID change are worth reading. Point it at two checkouts, or a worktree and its base.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "beforePath": {
+              "type": "string",
+              "description": "The repo as it was \u2014 a path to the previous checkout or worktree."
+            },
+            "afterPath": {
+              "type": "string",
+              "description": "The repo as it is now."
+            }
+          },
+          "required": [
+            "beforePath",
+            "afterPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "coverage",
+        "description": "Report how much of a repository an answer built from this scan can actually SEE \u2014 the claim that separates a grounded tool from a confident one. Returns edges seen vs edges in the whole graph, and NAMES the components that contributed nothing. `edgesTotal` is the whole scanned graph and no cap can shrink it, so a low percentage is a real fact about what an answer was built from rather than a rounding of one. ALSO reports source the scanner could not read at all \u2014 it parses TypeScript, JavaScript, Python, Go and Java, and a repo whose payment service is C# yields a graph with no payment service in it. A 100% digest over a graph missing an entire service is the more reassuring number and the more wrong one. Call it before trusting a summary of a large repo.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "find_negatives",
+        "description": "Find what is in this repo that nothing uses, and what is missing that should not be \u2014 the four questions a static scan can answer and usually is not asked. (1) A TABLE read by a service that does not own it: the coupling nobody declared, and why a schema change breaks a service nobody mentioned. (2) A ROUTE with no caller \u2014 a dead endpoint, reported with its registration file:line. (3) A TOPIC published and never consumed. (4) A product FILE no test reaches anywhere in its import closure \u2014 stricter than a filename convention, because a file a test reaches transitively is covered. Absence is reported honestly: a graph with no route inventory says so rather than calling every route dead, and a repo with no tests says THAT rather than listing every file. An uncalled route is reported with the caveat that a caller OUTSIDE this repo \u2014 a health probe, a webhook, a mobile client \u2014 is invisible to a single-repo scan.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            },
+            "limit": {
+              "description": "Max rows per section (default 25). Whatever is cut is counted.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "path_between",
+        "description": "Answer \"how does A reach B?\" \u2014 the actual ROUTE through the architecture, not a set of neighbours. `who_calls` returns what touches a node and the impact engine returns closures; both leave you unable to say what runs in between. Endpoints take the same forms `who_calls` accepts (service, file, path suffix, topic). Returns every simple route, shortest first. Nothing is dropped silently: a name that does not resolve is reported as unresolved rather than as \"no route\", and a list cut by a bound says so and says which bound cut it.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            },
+            "from": {
+              "type": "string",
+              "description": "Start of the route: a service, file, path suffix, or topic."
+            },
+            "to": {
+              "type": "string",
+              "description": "End of the route, in the same forms as `from`."
+            },
+            "includeImports": {
+              "description": "Include file-level import edges (default TRUE). Pass false for the cross-service lens \u2014 http, grpc, queue and db traffic only.",
+              "type": "boolean"
+            },
+            "maxPaths": {
+              "description": "Most routes to return (default 20).",
+              "type": "number"
+            },
+            "maxDepth": {
+              "description": "Longest route to consider, in nodes (default 12).",
+              "type": "number"
+            }
+          },
+          "required": [
+            "repoPath",
+            "from",
+            "to"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "explain_repo",
+        "description": "Explain a repo as a plain-English, indented outline of its system (deterministic structural translation \u2014 no AI key needed). Returns { outline, mode }.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 400000
+        }
+      },
+      {
+        "name": "plain_tree",
+        "description": "Return the full PlainTree (expandable plain-English view-model) for a repo as JSON, built deterministically from real structure. No AI key needed.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 400000
+        }
+      },
+      {
+        "name": "classify_repo",
+        "description": "Deterministically classify a repo's PRODUCT TYPE (mobile / spa / microservices / monolith / server-web / cli / library / pipeline / ml / serverless / infra / generic) from its framework signals and graph shape. No AI, no key. Returns { type, matchedSignals, confidence }.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute or relative path to the repo."
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "design_suggest",
+        "description": "Propose plain-English building blocks for a NEW system from a natural-language description. These are PROPOSED (not detected). Requires an AI key; with no key it returns a connect-a-key message and never fabricates.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Plain-English description of the system to design."
+            },
+            "parentTitle": {
+              "description": "Existing block these proposals sit under.",
+              "type": "string"
+            },
+            "repoName": {
+              "description": "Name of the project being designed.",
+              "type": "string"
+            },
+            "apiKey": {
+              "description": "AI provider key (never logged or returned).",
+              "type": "string"
+            },
+            "provider": {
+              "type": "string",
+              "enum": [
+                "anthropic",
+                "openai-compatible"
+              ]
+            },
+            "model": {
+              "type": "string"
+            },
+            "baseUrl": {
+              "description": "Override host (required for openai-compatible).",
+              "type": "string"
+            }
+          },
+          "required": [
+            "description"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "validate_diagram",
+        "description": "Validate a SeqDiagram v1 JSON file (.seqd). Returns node/edge counts on success; lists schema problems on failure. Keyless.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "Path to a SeqDiagram v1 JSON file (.seqd / .seqd.json)."
+            }
+          },
+          "required": [
+            "filePath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "export_diagram",
+        "description": "Export a grounded SeqDiagram from a repo scan (repoPath) or ArchGraph JSON (graphPath). Formats: seqd, svg, mermaid. Returns content unless outPath is set (then writes file). Never auto-writes into .sequence/diagrams/. Keyless.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "description": "Repo directory to scan into an ArchGraph (mutually exclusive with graphPath).",
+              "type": "string"
+            },
+            "graphPath": {
+              "description": "Path to an ArchGraph JSON file (mutually exclusive with repoPath).",
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "seqd",
+                "svg",
+                "mermaid"
+              ],
+              "description": "Export format."
+            },
+            "outPath": {
+              "description": "When set, write export to this path. Otherwise return content in the tool result.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "format"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 400000
+        }
+      },
+      {
+        "name": "risks",
+        "description": "The logic engine's ranked structural risks for a repo, from the grounded scan: single points of failure, high-blast-radius hubs, dependency concentration. Every risk names its node and carries a score; nothing is inferred from prose. Keyless.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute path to the repository to scan (cached)."
+            },
+            "topN": {
+              "description": "How many risks (default 10).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "impact",
+        "description": "The blast radius of changing ONE named node, from the grounded scan: everything that transitively depends on it (what breaks) and everything it depends on (what it needs). An ambiguous name returns the candidate ids instead of guessing. Keyless.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute path to the repository to scan (cached)."
+            },
+            "node": {
+              "type": "string",
+              "description": "Node to assess: an exact node id, a unique label, or a unique id/label suffix."
+            }
+          },
+          "required": [
+            "repoPath",
+            "node"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      },
+      {
+        "name": "whiteboard",
+        "description": "Generate an INTERACTIVE system-design whiteboard for a repo and write it as ONE self-contained HTML file (default .sequence/whiteboard.html): the grounded service/datastore/queue graph with pan, zoom, search, and click-a-node evidence \u2014 no server, no network, no login; open the file in any browser. The same board the Sequence app draws, portable to any editor or workspace. Keyless.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "repoPath": {
+              "type": "string",
+              "description": "Absolute path to the repository to scan (cached)."
+            },
+            "outPath": {
+              "description": "Where to write the HTML (relative to the repo, or absolute). Default .sequence/whiteboard.html",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repoPath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        },
+        "_meta": {
+          "anthropic/maxResultSizeChars": 50000
+        }
+      }
+    ]
+  },
+  "_recorded": {
+    "what": "A real tools/list answer from Sequence's MCP server, spoken over stdio on 2026-09-02.",
+    "server": {
+      "name": "@sequence/mcp",
+      "version": "0.1.0"
+    },
+    "protocol": "2024-11-05",
+    "command": "node packages/mcp/dist/server.js  (initialize, then tools/list; never tools/call)",
+    "repository": "C:/Users/example/Projects/sequence",
+    "why_this_is_not_a_spawned_server": "The product never speaks to a live MCP server - app/tools/agents.py REFUSALS['mcp_server'] refuses exactly that. This document was produced once, by hand, by a script outside the repository, and is read here as a FILE. Reading a declaration is not running an agent."
+  }
+}

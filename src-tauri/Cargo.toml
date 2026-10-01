@@ -1,0 +1,49 @@
+[package]
+name = "ml-harness-shell"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.77"
+description = "The desktop shell. It starts the engine and answers two questions the browser cannot."
+
+# `_lib` and not `ml_harness_shell`, because a Windows target with a bin and a
+# lib of the same name collides on the .pdb. Tauri's own template uses this
+# suffix for the same reason.
+[lib]
+name = "ml_harness_shell_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# `protocol-asset` is NOT enabled and that is deliberate: this shell serves one
+# local page and reads one JSON file. A protocol that could hand arbitrary disk
+# paths to a WebView is a capability this product has no use for and would then
+# have to defend forever.
+# `tray-icon` and `image-ico` are what make `prevent_close` + hide honest.
+# Hiding a window with no way to bring it back is not "the engine outlives the
+# window", it is an application the person cannot reach and cannot quit. The
+# tray is the way back, and it is the reason the hide is allowed to exist.
+tauri = { version = "2", features = ["tray-icon", "image-ico"] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# ONLY FOR A TEST, and that test is the reason the signing path can be trusted
+# before there is a certificate to try it with. `.github/workflows/release.yml`
+# passes the thumbprint with `--config`, and `WindowsConfig` is
+# `deny_unknown_fields` - so a mistyped key is a hard error at RELEASE time,
+# with a certificate finally in hand and nothing to debug it against. The test
+# deserializes the workflow's own JSON into the real type, on every push.
+[dev-dependencies]
+tauri-utils = { version = "2", features = [] }
+
+# Release builds are what a person installs, so they are what gets optimised.
+# `panic = "abort"` because a panic in the shell means the window is in a state
+# nobody designed; unwinding to show a half-dead window is worse than stopping.
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

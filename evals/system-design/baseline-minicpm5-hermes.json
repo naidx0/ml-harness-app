@@ -1,0 +1,361 @@
+{
+ "model": "minicpm5-hermes",
+ "eval_sha256": "b882fe1eccd53c4523a8af049e4066d783522b6a29ee30820d732444de5fb517",
+ "eval_rows": 36,
+ "grader": "app.tools.evals.grade",
+ "errored_rows": 0,
+ "per_family": {
+  "components": {
+   "n": 12,
+   "exact_match": 0,
+   "contains": 0,
+   "set_f1": 7.452525252525252
+  },
+  "missing_component": {
+   "n": 8,
+   "exact_match": 5,
+   "contains": 6
+  },
+  "edge_direction": {
+   "n": 8,
+   "exact_match": 7,
+   "contains": 8
+  },
+  "pattern_name": {
+   "n": 8,
+   "exact_match": 7,
+   "contains": 7
+  }
+ },
+ "total": {
+  "n": 36,
+  "exact_match": 19,
+  "contains": 21
+ },
+ "records": [
+  {
+   "row_id": 0,
+   "family": "components",
+   "expected": "api,database,web page",
+   "answer": "postgres database, rest api, web page",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.3333333333333333
+  },
+  {
+   "row_id": 1,
+   "family": "components",
+   "expected": "mobile app,object storage,queue,upload service,worker",
+   "answer": "mobileapp, objectsstorage, queue, uploadservice, worker",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.4000000000000001
+  },
+  {
+   "row_id": 2,
+   "family": "components",
+   "expected": "browser,cdn,graphql gateway,identity provider,microservice",
+   "answer": "browser,cdn,identityprovider,graphqlgateway,microservices,singlepageapp",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.3636363636363636
+  },
+  {
+   "row_id": 3,
+   "family": "components",
+   "expected": "dashboard,mqtt broker,sensor,stream processor,time-series database",
+   "answer": "dashboard, mqtt broker, sensors, stream processor, time-series database",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.8000000000000002
+  },
+  {
+   "row_id": 4,
+   "family": "components",
+   "expected": "bi tool,data warehouse,scheduled job,source database",
+   "answer": "bi tool, data warehouse, scheduled job, source database, transform",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.888888888888889
+  },
+  {
+   "row_id": 5,
+   "family": "components",
+   "expected": "application server,database,load balancer,redis cache",
+   "answer": "application servers, load balancer, relational database, redis cache",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.5
+  },
+  {
+   "row_id": 6,
+   "family": "components",
+   "expected": "database,orders service,payment gateway,payment page",
+   "answer": "database, payment gateway, orders service, payment page",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 1.0
+  },
+  {
+   "row_id": 7,
+   "family": "components",
+   "expected": "ci runner,cluster,container registry,deployment controller,git",
+   "answer": "ci runner, deployment controller, registry",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.5
+  },
+  {
+   "row_id": 8,
+   "family": "components",
+   "expected": "chat client,fanout service,message bus,websocket gateway",
+   "answer": "chat client, fanout service, gateway, message bus, websocket",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.6666666666666665
+  },
+  {
+   "row_id": 9,
+   "family": "components",
+   "expected": "imap server,mailbox store,smtp receiver,spam filter",
+   "answer": "imap server, mailbox store, spam filter, smtp receiver",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 1.0
+  },
+  {
+   "row_id": 10,
+   "family": "components",
+   "expected": "crawler,indexer,inverted index,search box",
+   "answer": "crawler, inverted index, indexer, search box",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 1.0
+  },
+  {
+   "row_id": 11,
+   "family": "components",
+   "expected": "cdn,encoder,ingest service,player",
+   "answer": "cd, ingest, players, transcoding",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": 0.0
+  },
+  {
+   "row_id": 12,
+   "family": "missing_component",
+   "expected": "read replica",
+   "answer": "read replica",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 13,
+   "family": "missing_component",
+   "expected": "cache",
+   "answer": "cache",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 14,
+   "family": "missing_component",
+   "expected": "queue",
+   "answer": "Email Queue",
+   "exact_match": false,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 15,
+   "family": "missing_component",
+   "expected": "session store",
+   "answer": "session store",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 16,
+   "family": "missing_component",
+   "expected": "rate limiter",
+   "answer": "rate limiter",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 17,
+   "family": "missing_component",
+   "expected": "log aggregator",
+   "answer": "",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": null
+  },
+  {
+   "row_id": 18,
+   "family": "missing_component",
+   "expected": "load balancer",
+   "answer": "",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": null
+  },
+  {
+   "row_id": 19,
+   "family": "missing_component",
+   "expected": "cdn",
+   "answer": "CDN",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 20,
+   "family": "edge_direction",
+   "expected": "database",
+   "answer": "database",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 21,
+   "family": "edge_direction",
+   "expected": "web server",
+   "answer": "web server",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 22,
+   "family": "edge_direction",
+   "expected": "cdn",
+   "answer": "CDN",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 23,
+   "family": "edge_direction",
+   "expected": "reverse proxy",
+   "answer": "reverse proxy",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 24,
+   "family": "edge_direction",
+   "expected": "primary database",
+   "answer": "primary database",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 25,
+   "family": "edge_direction",
+   "expected": "publisher",
+   "answer": "publisher",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 26,
+   "family": "edge_direction",
+   "expected": "warehouse",
+   "answer": "warehouse",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 27,
+   "family": "edge_direction",
+   "expected": "sidecar",
+   "answer": "sidecar proxy",
+   "exact_match": false,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 28,
+   "family": "pattern_name",
+   "expected": "circuit breaker",
+   "answer": "Exponential Backoff",
+   "exact_match": false,
+   "contains": false,
+   "set_f1": null
+  },
+  {
+   "row_id": 29,
+   "family": "pattern_name",
+   "expected": "database per service",
+   "answer": "Database per Service",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 30,
+   "family": "pattern_name",
+   "expected": "blue-green deployment",
+   "answer": "Blue-Green Deployment",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 31,
+   "family": "pattern_name",
+   "expected": "event sourcing",
+   "answer": "Event Sourcing",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 32,
+   "family": "pattern_name",
+   "expected": "cqrs",
+   "answer": "CQRS",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 33,
+   "family": "pattern_name",
+   "expected": "api gateway",
+   "answer": "API gateway",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 34,
+   "family": "pattern_name",
+   "expected": "canary release",
+   "answer": "canary release",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  },
+  {
+   "row_id": 35,
+   "family": "pattern_name",
+   "expected": "exponential backoff with jitter",
+   "answer": "Exponential backoff with jitter",
+   "exact_match": true,
+   "contains": true,
+   "set_f1": null
+  }
+ ]
+}

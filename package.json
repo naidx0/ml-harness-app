@@ -1,0 +1,33 @@
+{
+  "name": "ml-harness",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Workspace root. Exists so that node_modules is an ancestor of both web/ and vendor/opencode/ - see the note below.",
+  "workspaces": [
+    "web"
+  ],
+  "//": [
+    "WHY THIS FILE EXISTS.",
+    "",
+    "The interface is vendored from OpenCode at vendor/opencode, byte-identical",
+    "to a pinned commit so that upstream diffs stay possible, and aliased to",
+    "source by Vite. But Node resolves a bare import like 'core-js/es/map/group-by'",
+    "by walking UP from the importing file looking for node_modules - and",
+    "vendor/opencode is not under web/, so web/node_modules is never on that",
+    "path. The build failed on exactly that, with the package present and",
+    "installed.",
+    "",
+    "Three fixes were possible. Moving the vendored tree under web/ would have",
+    "worked but buries a licence-bearing directory inside a build output folder.",
+    "A junction from vendor/ to web/node_modules would also have worked and is",
+    "forbidden here: a worktree removal once followed one and emptied the",
+    "target. Declaring a workspace is the idiomatic answer - npm hoists to the",
+    "root, and the root IS an ancestor of both trees.",
+    "",
+    "frontend/ is deliberately NOT a workspace member. It is the outgoing React",
+    "app and keeps its own install until the cutover in Phase 7."
+  ],
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.6"
+  }
+}

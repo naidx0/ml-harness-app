@@ -1,0 +1,856 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   FACT PROVENANCE — the interface half of the engine's fact-origin work.
+
+   One rule shapes every declaration below: an ASSERTED fact must never render
+   as a MEASURED one. Colour is the only thing on screen that can make that
+   mistake at a glance, so no rule here introduces a hue. Every token used is
+   already in tokens.css, transcribed from docs/brand/graphite.html: the six
+   greys, the verdict five, and the radius ramp. Nothing is invented, and the
+   two surfaces that could have taken a colour — the unverified gate row and
+   the block that names a claim — deliberately take grey, because an assertion
+   is not a lie and not an error and the interface must look neither alarmed
+   nor credulous.
+
+   Sizes are Graphite's compact scale and nothing else: 10 / 11 / 12px working
+   sizes, 26px ledger rows. Page 23.7 is the argument for the last of those and
+   it is a correctness argument, not a taste one — five gates at 26px is 130px
+   of card and the revisit line still fits above the fold; the same five at 38px
+   is 190px and it does not.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* A tag whose origin the engine did not name renders raw rather than borrowing
+   a colour it has not earned. Dashed, like the placeholder mark on .tag. */
+.tag--raw {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 6px;
+  border-radius: var(--r-full);
+  border: 1px dashed var(--edge-strong);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ══ THE DIAGNOSIS CARD ═════════════════════════════════════════════════ */
+
+/* Collapsed, the card is one row: "the badge never leaves the header, and
+   neither does the first clause — a collapsed diagnosis that showed only
+   'Diagnosis' would hide the one word the whole card exists to say." */
+.card__headright {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex: 0 0 auto;
+}
+.card__clip {
+  font-size: var(--t-11);
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* The engine's own identifier for the finding. Mono always sets one step down
+   from the sans beside it; the headline is --t-15, so this is --t-13. */
+.card__outcome {
+  font-size: var(--t-13);
+  color: var(--ink-3);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* A named absence. Never a bare dash: page 13.5 — "None of them is a zero, a
+   dash with no explanation, or a plausible figure in italics." */
+.card__absent {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  margin: 0 0 var(--sp-10);
+}
+.card__absent .mono {
+  font-size: var(--t-10);
+}
+
+/* A verdict word this surface has no treatment for prints itself, unbordered
+   and uncoloured. A confident hue on an unknown claim is the one dishonest
+   thing a badge can do. */
+.vpill--plain {
+  border-color: var(--edge);
+  background: transparent;
+  color: var(--ink-2);
+}
+
+/* The ledger's inline badge — page 23 draws it at 16px with 6px padding. */
+.vpill--sm {
+  height: 16px;
+  padding: 0 6px;
+}
+
+/* ══ THE GATE LEDGER, IN THE CARD ═══════════════════════════════════════ */
+
+.gates--card {
+  /* --sp-16: the ledger is a section of the card, not a row in it. */
+  margin-bottom: var(--sp-16);
+  background: var(--surface-2);
+}
+.gates__head--plain {
+  border-bottom: 0;
+  background: transparent;
+  padding-left: 0;
+}
+
+.gate--wrap {
+  display: block;
+  padding: 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+.gate--wrap:last-child {
+  border-bottom: 0;
+}
+.gate__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  height: 26px;
+  padding: 0 var(--sp-10);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.gate__head:hover {
+  background: var(--state-hover);
+}
+.gate__glyph {
+  display: flex;
+  flex: 0 0 auto;
+}
+.gate__chev {
+  color: var(--ink-3);
+  display: flex;
+  flex: 0 0 auto;
+}
+.gate--unlabelled {
+  color: var(--ink-3);
+}
+.gate__evidence {
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  text-align: right;
+}
+
+.gate__body {
+  padding: var(--sp-8) var(--sp-10) var(--sp-10) 32px;
+  border-top: 1px solid var(--edge-faint);
+  background: var(--surface-1);
+}
+
+/* The engine's own question, verbatim. Page 23: "The interface never
+   paraphrases a gate." */
+.gate__asks {
+  margin: 0 0 var(--sp-6);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.gate__clause {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-8);
+}
+.gate__clauselabel {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.gate__clause code {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  background: var(--surface-3);
+  border-radius: var(--r-4);
+  padding: 1px 5px;
+}
+.gate__row {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.gate__absent {
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.gate__challenge {
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+}
+.gate__challengetext {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+
+/* ══ A FACT, ITS VALUE, ITS ORIGIN, AND HOW ═════════════════════════════ */
+
+.factlist {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fact {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 20px;
+  font-size: var(--t-11);
+}
+.fact__name {
+  color: var(--ink-2);
+  font-size: var(--t-10);
+  flex: 0 0 auto;
+}
+.fact__value {
+  color: var(--ink-1);
+  font-size: var(--t-11);
+  font-variant-numeric: var(--num);
+  flex: 0 0 auto;
+}
+
+/* An absent value takes the disabled ink "because the number is absent rather
+   than bad", and it carries no tag at all — page 13.5 §2, and the grammar rule
+   "a tag never renders without a number". */
+.fact__value--absent {
+  color: var(--ink-4);
+}
+.fact[data-defaulted='true'] .fact__name {
+  color: var(--ink-3);
+}
+.fact__how {
+  color: var(--ink-3);
+  font-size: var(--t-10);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1 1 auto;
+}
+.fact .tag,
+.fact .tag--raw {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* ══ THE BLOCK THAT NAMES WHAT WAS ONLY CLAIMED ═════════════════════════ */
+
+/* No hue. This is not an error and not a warning: it is the harness saying it
+   has not seen something. A red panel would teach a person that answering was
+   a mistake, which is the failure mode page 23.1 spends its argument on. */
+.unsub {
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-1);
+  margin-bottom: var(--sp-16);
+  overflow: hidden;
+}
+.unsub__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 var(--sp-10);
+  border-bottom: 1px solid var(--edge-faint);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.unsub__row {
+  padding: var(--sp-8) var(--sp-10);
+  border-bottom: 1px solid var(--edge-faint);
+}
+.unsub__row:last-child {
+  border-bottom: 0;
+}
+.unsub__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-6);
+}
+.unsub__fact {
+  font-size: var(--t-12);
+  color: var(--ink-1);
+}
+.unsub__source {
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.unsub__source .mono {
+  font-size: var(--t-10);
+}
+.unsub__text {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+
+/* ══ THE NEXT STEP — A CONTROL, NEVER A PARAGRAPH ═══════════════════════ */
+
+.nextstep {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+.nextstep__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+}
+.nextstep__tool,
+.nextstep__door,
+.nextstep__how {
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.nextstep__also {
+  margin: 0;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.nextstep__also .mono {
+  font-size: var(--t-10);
+}
+.nextstep__none {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.nextstep__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding: var(--sp-8);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+}
+.nextstep__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.nextstep__label {
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.nextstep__actions {
+  display: flex;
+  gap: var(--sp-6);
+}
+
+/* What somebody claimed, shown BESIDE the empty field rather than inside it.
+   Pre-filling would push a model's assertion through the user's door and hand
+   it back stamped STATED. --ink-3, no hue: neither alarmed nor credulous. */
+.nextstep__claimed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 0 var(--sp-4);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+.nextstep__claimedvalue {
+  color: var(--ink-2);
+  font-variant-numeric: var(--num);
+}
+/* The glyph never wraps onto its own line. It did in the first cut, because
+   `flex-wrap: wrap` on a row whose text is a long sentence pushes the sentence
+   below the icon and leaves a tick sitting alone above a paragraph. The icon is
+   fixed, the text is the flexible child, and only the tag after it may wrap. */
+.nextstep__state {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+.nextstep__state > .i {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+.nextstep__state > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.nextstep__state .mono {
+  font-size: var(--t-10);
+}
+.nextstep__state--failed {
+  color: var(--wont);
+}
+.nextstep__minted {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+/* ══ THE REVISIT CONDITION ══════════════════════════════════════════════ */
+
+/* "It carries no hue. A hairline in --edge-faint, --ink-3 text, one 12px
+   glyph. It is the quietest thing on the card, and it is never dropped to save
+   space — something else goes first." */
+.revisit {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: var(--sp-16);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-11);
+  line-height: 15px;
+  color: var(--ink-3);
+}
+.revisit .i {
+  margin-top: 2px;
+  flex: 0 0 auto;
+}
+.revisit b {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.revisit__absent .mono {
+  font-size: var(--t-10);
+}
+
+/* ══ THE CLAIM ROWS IN A TOOL ROW ═══════════════════════════════════════ */
+
+/* A model asserting a fact is visible as an assertion without expanding
+   anything: the collapsed tool row carries the count and the tag. */
+.toolrow__supplied {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.toolrow__suppliednum {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  color: var(--ink-2);
+}
+.claims {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.claim {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 20px;
+}
+.claim__name {
+  font-size: var(--t-10);
+  color: var(--ink-2);
+  flex: 0 0 auto;
+}
+.claim__value {
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  font-variant-numeric: var(--num);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1 1 auto;
+}
+.claim .tag,
+.claim .tag--raw {
+  flex: 0 0 auto;
+}
+
+/* ══ THE EVIDENCE LEDGER, IN THE PANE ═══════════════════════════════════ */
+
+.evidence {
+  display: flex;
+  flex-direction: column;
+}
+.evrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+.evrow:last-child {
+  border-bottom: 0;
+}
+.evrow__fact {
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.evrow__value {
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  font-variant-numeric: var(--num);
+}
+.evrow__how {
+  grid-column: 1 / -1;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.evrow__who {
+  grid-column: 1 / -1;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.evrow__who .mono {
+  font-size: var(--t-10);
+}
+
+/* ══ THE ENGINE'S VERDICT, BESIDE THE REPLY ═════════════════════════════
+   Page 23 in its small form. Same chassis as the diagnosis card, one step
+   DOWN the radius ramp: --r-18 is reserved for the largest card in the
+   product, and this one carries a summary of what that one carries in full.
+
+   NO HUE EXCEPT THE BADGE. The card holds exactly one claim that gets a
+   colour — the engine's verdict — and everything else on it is grey, including
+   the half about the model. §12's first check counts the saturated objects in
+   a steady-state screenshot and expects the count to equal the number of
+   claims; a disagreement drawn in --wont would put a second hue on the card
+   and would also be a lie about what happened, because the harness did not
+   test the model and find it wanting. It read a sentence and formed a view,
+   and `app/conductor.py` records that reader being wrong in three of three
+   live catches. Grey is what an unverified reading looks like — the same
+   argument page 23.8 rule 3 makes about a gate nothing evaluated. */
+
+.card--verdict {
+  border-radius: var(--r-14);
+}
+/* The card's sections use the same two distances the diagnosis card settled
+   on after Max's "very clumped together": --sp-8 within a group, --sp-16
+   between sections. The last section carries no trailing gap — the card's own
+   padding is the bottom edge. */
+.card--verdict > .card__body > *:last-child {
+  margin-bottom: 0;
+}
+/* The engine's sentence is a SECTION of this card, not a row in it, so it takes
+   the between-sections step like everything else here. `.card__text`'s default
+   is --sp-12, which the diagnosis card also overrides, and the two cards
+   override it separately because they are two cards — a shared selector would
+   put the largest card in the product and its summary form on one rule. */
+.card--verdict > .card__body > .card__text {
+  margin-bottom: var(--sp-16);
+}
+
+/* WHOSE CLAIM THIS IS, printed rather than implied. It is the one thing on the
+   card a paragraph underneath it structurally cannot carry: the same sentence
+   from the engine and from the model are two different facts. */
+.vcard__by {
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  letter-spacing: 0;
+}
+
+/* The engine's sentence when a card above already printed it word for word.
+   Said in one line rather than repeated — and the card above is named, so the
+   reader knows where the sentence went rather than wondering whether the
+   engine had nothing to say. */
+.vcard__same {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0 0 var(--sp-16);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.vcard__same .i {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+/* The gate line, as `_gate_line` wrote it. One row, because the per-gate rows
+   are not on this event and a five-row ledger assembled here would be a second
+   copy of the product's central guarantee. */
+.vcard__gates {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-16);
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+.vcard__gates .i {
+  flex: 0 0 auto;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+/* The word in front of the glyph. WITHOUT IT THE GLYPH IS A CLAIM: a bare
+   check in front of "no gate was reached" reads as a pass, which is a status
+   the walk did not compute. Same label and same glyph as the full ledger's
+   header. */
+.vcard__gatelabel {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.vcard__gateline {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.vcard__gatenote {
+  flex: 1 1 100%;
+  padding-left: 18px;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.vcard__gatenote .mono {
+  font-size: var(--t-10);
+}
+
+/* ── The reply's half ────────────────────────────────────────────────────
+   What the model said and what the harness read it as, quoted against each
+   other. This block is the reason the card is not noise: it is the only thing
+   on screen that is neither the engine's answer nor the model's prose but the
+   relation between them. */
+
+.vread {
+  margin-bottom: var(--sp-16);
+}
+.vread__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+.vread__head .i {
+  flex: 0 0 auto;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+.vread__head strong {
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.vread__head em {
+  font-style: italic;
+}
+/* The reader's own token — TRAIN, NO_TRAIN — printed rather than paraphrased,
+   so the word on the card is the word in `app/conductor.py`. */
+.vread__verdict {
+  font-size: var(--t-11);
+  color: var(--ink-1);
+}
+
+/* THE SENTENCES, ATTRIBUTED. A <q> so the marks are the browser's and the
+   attribution is structural rather than a style choice: this is the model
+   speaking, inside a card the engine owns, and the one thing this card may
+   never do is let those two be confused.
+
+   ONLY EVER INSIDE THE DISAGREEMENT CONTAINER, since `TheReplysHalf` stopped
+   quoting a reply the harness agrees with — a sentence the reader finished
+   reading a moment ago, reprinted under it, was Max's "the verdict card and the
+   assistant prose say the same thing verbatim" arriving through this block. So
+   the rule below is written for that container and the second colour it used to
+   need is gone: a `[data-agrees='false']` override of an `--edge-strong` base
+   that nothing can now select is two rules describing one case. */
+.vread__list {
+  list-style: none;
+  margin: var(--sp-8) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+.vread__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  padding-left: var(--sp-10);
+  border-left: 2px solid var(--unknown-edge);
+}
+.vread__said {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-3);
+}
+.vread__as {
+  flex: 0 0 auto;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+/* `agrees` SETS THE TONE AND NEVER THE PRESENCE. Both cards are drawn; the
+   word and the glyph carry the difference, and the disagreement additionally
+   gets a container, because the disagreement is the interesting event and an
+   agreement that looked identical to it would make the reader stop reading
+   either. The container is grey — --unknown is #6C6D75, the ink-3 grey — so
+   the card still spends exactly one hue, on the badge.
+
+   It now also carries the evidence, and the two belong together: the container
+   is drawn exactly when the harness is contradicting the reply, which is
+   exactly when the sentence it read that way is worth printing. On agreement
+   `.vread` is one line and takes no box, because there is nothing to hold. */
+.card--verdict[data-agrees='false'] .vread {
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--unknown-edge);
+  border-radius: var(--r-10);
+  background: var(--unknown-wash);
+}
+
+/* The claims block, small form: it is the last thing in the card, so it drops
+   the section gap its full-size twin carries. */
+.unsub--small {
+  margin-bottom: 0;
+}
+/* Two facts one tool run settles, and they need a mark between them: at mono
+   12px with an 8px gap, `baseline_measured baseline_score` reads as one
+   identifier. A separator is punctuation and not a claim, which is why it is a
+   middot and not a word — a lead-in like "settles" would be this surface
+   promising something about a run it has not made. */
+.unsub--small .unsub__fact + .unsub__fact::before {
+  content: '·';
+  color: var(--ink-3);
+  margin-right: var(--sp-8);
+}
+
+/* ── The column's own rhythm, made deliberate ───────────────────────────────
+   THE VERDICT CARD BELONGS TO THE REPLY ABOVE IT. Every other card in the
+   transcript follows a tool row and gets --sp-24 both ways, "the largest gap
+   the column has"; this one follows the paragraph it annotates, and the whole
+   claim of the event is that it stands BESIDE that paragraph rather than
+   floating between two turns. So it takes --sp-8, the within-a-turn step, and
+   the --sp-24 below it is what separates the turn from the next question.
+
+   Written out rather than left to the cascade. `.column > .prose + .turnblock`
+   already produced 8px here by specificity alone (three classes against two),
+   which is the right number arrived at by accident — and an accident is not a
+   decision the next reader can check. Nothing changes on screen. */
+.column > .prose + .turnblock--card {
+  margin-top: var(--sp-8);
+}
+
+/* ══ THE APPROVAL CARD ═════════════════════════════════════════════════════
+   The model asked to do something that needs a yes. Amber, because it is a
+   state the person must resolve rather than an error — the same tone the
+   no-tools strip uses, and never --wont, which would read as "the harness
+   broke" about the harness working exactly as designed. */
+
+.card--approval {
+  border-color: var(--spills-edge);
+}
+.card--approval .card__head .i { color: var(--spills); }
+.card--approval .card__kicker { color: var(--spills); }
+
+.approval__why {
+  color: var(--ink-2);
+}
+
+/* The arguments, as data. A definition list rather than prose: a person
+   approving a run is approving THESE VALUES, and they are the ones the
+   button submits. */
+.approval__args {
+  margin: var(--sp-10) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-10);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+}
+.approval__arg {
+  display: grid;
+  grid-template-columns: minmax(80px, 22%) 1fr;
+  gap: var(--sp-10);
+  align-items: baseline;
+}
+.approval__arg dt {
+  color: var(--ink-3);
+  font-size: var(--t-10);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.approval__arg dd {
+  margin: 0;
+  color: var(--ink-1);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.approval__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  margin-top: var(--sp-12);
+}
+
+.approval__lands {
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}
+
+.approval__landed { margin-top: var(--sp-10); }
+
+.approval__state {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+.approval__state .i { color: var(--fits); flex: 0 0 auto; }
+.approval__state--failed .i { color: var(--wont); }

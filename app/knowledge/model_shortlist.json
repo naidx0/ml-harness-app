@@ -1,0 +1,140 @@
+{
+  "fetched_at": "2026-09-21T16:05:17+00:00",
+  "source": "huggingface.co/api/models/<repo_id>, one request per row",
+  "what_is_editorial": "the choice of repo ids, size_class and role; every other field is the API's answer verbatim",
+  "models": [
+    {
+      "repo_id": "HuggingFaceTB/SmolLM2-135M",
+      "size_class": "tiny",
+      "role": "experiments and pipeline proofs on any hardware",
+      "parameters_total": 134515008,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-02-06T10:34:41.000Z",
+      "downloads_30d": 1921558,
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M"
+    },
+    {
+      "repo_id": "HuggingFaceTB/SmolLM2-1.7B",
+      "size_class": "small",
+      "role": "the smallest model worth fine-tuning for real output",
+      "parameters_total": 1711376384,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-02-06T10:31:23.000Z",
+      "downloads_30d": 241489,
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B"
+    },
+    {
+      "repo_id": "Qwen/Qwen3.5-4B",
+      "size_class": "small",
+      "role": "current best small generalist; LoRA fits 8 GB cards",
+      "parameters_total": 4659865088,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2026-03-02T00:52:52.000Z",
+      "downloads_30d": 6855437,
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B"
+    },
+    {
+      "repo_id": "google/gemma-4-E4B-it",
+      "size_class": "mid",
+      "role": "strong 8B-class instruct, permissive license",
+      "parameters_total": 7996156490,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2026-07-20T16:42:03.000Z",
+      "downloads_30d": 4430057,
+      "url": "https://huggingface.co/google/gemma-4-E4B-it"
+    },
+    {
+      "repo_id": "Qwen/Qwen3.5-9B",
+      "size_class": "mid",
+      "role": "current best mid generalist; QLoRA on 12-16 GB",
+      "parameters_total": 9653104368,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2026-03-02T00:51:43.000Z",
+      "downloads_30d": 9307599,
+      "url": "https://huggingface.co/Qwen/Qwen3.5-9B"
+    },
+    {
+      "repo_id": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+      "size_class": "mid",
+      "role": "reasoning-distilled 8B when chains of thought matter",
+      "parameters_total": 8030261248,
+      "license": "mit",
+      "gated": false,
+      "last_modified": "2025-02-24T03:32:07.000Z",
+      "downloads_30d": 203232,
+      "url": "https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
+    },
+    {
+      "repo_id": "openai/gpt-oss-20b",
+      "size_class": "large",
+      "role": "open 20B MoE; strong quality per active param",
+      "parameters_total": 20914757184,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-08-26T17:25:47.000Z",
+      "downloads_30d": 6646564,
+      "url": "https://huggingface.co/openai/gpt-oss-20b"
+    },
+    {
+      "repo_id": "Qwen/Qwen3.5-35B-A3B",
+      "size_class": "large",
+      "role": "MoE with 3B active - large quality, small step cost",
+      "parameters_total": 35951822704,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2026-04-24T02:38:38.000Z",
+      "downloads_30d": 1807805,
+      "url": "https://huggingface.co/Qwen/Qwen3.5-35B-A3B"
+    },
+    {
+      "repo_id": "openai/gpt-oss-120b",
+      "size_class": "xl",
+      "role": "open frontier-class; rented multi-GPU territory",
+      "parameters_total": 116829156672,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-08-26T17:25:03.000Z",
+      "downloads_30d": 4948215,
+      "url": "https://huggingface.co/openai/gpt-oss-120b"
+    },
+    {
+      "repo_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "size_class": "mid",
+      "role": "the ecosystem default; most adapters and tools target it",
+      "parameters_total": 8030261248,
+      "license": "llama3.1",
+      "gated": "manual",
+      "last_modified": "2024-09-25T17:00:57.000Z",
+      "downloads_30d": 5992652,
+      "url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct"
+    },
+    {
+      "repo_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "size_class": "tiny",
+      "role": "embeddings for retrieval; the default index model",
+      "parameters_total": 22713728,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2026-06-01T06:29:13.000Z",
+      "downloads_30d": 251048129,
+      "url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
+    },
+    {
+      "repo_id": "BAAI/bge-reranker-v2-m3",
+      "size_class": "small",
+      "role": "reranking retrieved passages; pairs with the above",
+      "parameters_total": 567755777,
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2024-06-24T14:08:45.000Z",
+      "downloads_30d": 17385800,
+      "url": "https://huggingface.co/BAAI/bge-reranker-v2-m3"
+    }
+  ],
+  "dropped": []
+}

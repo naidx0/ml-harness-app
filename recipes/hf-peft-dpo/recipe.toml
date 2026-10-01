@@ -1,0 +1,153 @@
+# A recipe is a directory the harness owns. `docs/ARCHITECTURE.md` section 4.11.
+#
+# This one drives Hugging Face `transformers` + `peft` + `trl`'s `DPOTrainer`
+# and writes a LoRA adapter trained on PREFERENCE PAIRS rather than on
+# demonstrations. It is the second real trainer this harness ships, and it
+# exists because `TRAIN__DPO` was one of eight training outcomes whose only
+# refusal was "a training backend this harness does not ship".
+#
+# ## WHY A SECOND DIRECTORY RATHER THAN A KEY IN THE FIRST
+#
+# The requirements are byte-identical to `hf-peft-lora`'s - trl 0.24 carries
+# both trainers - so an `objective = "dpo"` key in that recipe's train config
+# would have cost no extra disk. It was still the wrong shape, and the reason is
+# the first paragraph of `hf-peft-lora/recipe.toml`: a recipe is **a named
+# backend the plan says out loud before anybody approves it**. `propose.py`
+# writes `THE_LORA_RECIPE` and `THE_DPO_RECIPE` into the build it draws, and
+# `app/tools/sandbox.py::pin` reports which one a sandbox holds. A plan that
+# named one backend and drove two would be a plan that is not what it says.
+#
+# The cost is real and it is 4.8 GB, not shared. That is the number to show
+# somebody before offering to build it, and `entrypoint.py` refuses to train
+# until it exists rather than using whatever happens to be importable.
+#
+# ## WHY THIS DECLARES `train` AND NOT `eval`
+#
+# `hf-peft-lora` declares both because the thing that scores an adapter has to
+# be the environment that made it. This one declares only `train`, on purpose:
+# `app/jobspec.py` refuses a kind a recipe did not declare, and
+# `tests/test_a_trained_adapter_is_measured_or_not_trained.py` asserts that
+# exactly one recipe can score an adapter. A recipe that declared `eval` and
+# implemented it would make that assertion false and would need the whole
+# scoring argument re-read; a recipe that declared it and did NOT implement it
+# would be worse than one that declared nothing. So the DPO build is the trial
+# shape - prove the card holds it, prove the split does not leak, measure the
+# cost - and the scored variant is a later step with its own argument.
+#
+# ### WHAT THE TRIAL SHAPE COSTS, WALKED END TO END 2026-09-04
+#
+# The paragraph above is a decision rather than an oversight, and the walk
+# narrows what is actually missing. Everything a scorer would need EXISTS after
+# a continued run; only the declared route to it does not.
+#
+# What the run produces and what was verified on it:
+#
+#   * the adapter is over SFT-MERGED weights, not the raw base - so
+#     `(base_model, adapter_dir)`, the pair `score_the_adapter` takes, is the
+#     WRONG pair and would describe a model nobody trained;
+#   * but this recipe merges explicitly and writes `merged_base/` beside the
+#     adapter for exactly that reason, and checks the file's own tensor keys
+#     before believing it. On the 2026-09-04 run it emitted
+#     `{"kind": "merged_base", "keys": 272, "adapter_keys": 0}` - zero adapter
+#     keys, so the merge really happened rather than leaving LoRA wrappers
+#     attached. That invariant, the subtlest thing in this file, held on real
+#     weights.
+#
+# So the pair a scorer needs is `(merged_base/, adapter/)` and both are on disk.
+#
+# AND THERE IS NO GAP AT ALL, WHICH TOOK THREE TRIES TO GET RIGHT. `app/tools/
+# training.py::score_the_adapter` takes `adapter_dir` as a PARAMETER; what must
+# declare `eval` is the recipe the SANDBOX pins, not the recipe that made the
+# adapter. `find_the_adapter` names this exact case - "a caller may name a
+# directory instead - an adapter from `start_training` lives under `runs/`
+# rather than in a sandbox" - and it does not refuse: it records
+# `made_in_this_sandbox: false`, "the difference between a reproducible
+# comparison and a plausible one".
+#
+# So a DPO adapter is scored in an `hf-peft-lora` sandbox, pointed at this
+# adapter, with the caveat recorded rather than hidden. `tests/
+# test_a_trained_adapter_is_measured_or_not_trained.py`'s "exactly one shipped
+# recipe can evaluate" stays TRUE and needs no change, because hf-peft-lora IS
+# the one doing the evaluating.
+#
+# WALKED, 2026-09-04, with no code change and no `base_model` override:
+#
+#     scoring 24 rows on cuda:
+#       base    runs/dpo-after-sft-2026-09-04/merged_base
+#       adapter runs/dpo-after-sft-2026-09-04/adapter
+#
+# The manifest correction above is what makes that resolve to the right weights.
+# Before it, the same call would have loaded the RAW base - and that, not a
+# missing kind, was the whole of the defect.
+#
+# The claims that were wrong on the way here, recorded so they are not made a
+# fourth time: "the product can train what it cannot score" (it can score it);
+# "the gap is one declared kind wide" (there is no gap, only a door with an
+# argument); and a design memo costing two day-long fixes for a capability that
+# already shipped.
+#
+# DO NOT CITE `dpo_trainer.py:578-580` FOR ANY OF THIS. That line is real and
+# does merge an already-loaded `PeftModel`, but the conclusion once drawn from
+# it was wrong and the citation was deliberately removed from
+# `tests/test_a_preference_run_continues_an_sft_pass.py:496`; the merge is this
+# recipe's now, so crediting trl credits the wrong code. Written down because
+# the stale citation was picked up and repeated twice on 2026-09-04 before
+# anybody read the line it points at.
+#
+# The three adapters, so nobody scores the wrong one:
+#
+#   runs/sft-real-2026-09-04       SFT on the 49 REAL rows, made by
+#                                  hf-peft-lora, which declares `eval`.
+#   runs/dpo-synthetic-2026-09-04  DPO from the base. Applies to base weights.
+#   runs/dpo-after-sft-2026-09-04  DPO continued. Applies to MERGED weights;
+#                                  its `merged_base/` is the model to pair it
+#                                  with, never `base_model`.
+#
+# The metrics, for whoever picks this up: 200 steps, mean loss 0.6855 from the
+# base and 0.6833 continued, against ln(2)=0.6931 - the value that means no
+# preference at all. Reward accuracy 0.700 and 0.715 on the pairs each was
+# shown, no held-out set, one run each and so no variance estimate. Do-not-ship
+# on the training curve alone, which is a weaker reading than this harness
+# accepts anywhere else - and being unable to strengthen it is the cost this
+# section is about.
+#
+# ## WHAT IT WILL NOT ACCEPT
+#
+# A file of demonstrations. DPO needs a prompt and two responses, one preferred
+# over the other, and a dataset that carries `text` or `prompt`/`completion` is
+# a supervised fine-tune's data pointed at the wrong trainer. `entrypoint.py`
+# refuses it loudly and names `hf-peft-lora` instead, because training happily
+# on the wrong objective is exactly the silent failure this harness exists to
+# refuse.
+
+name = "hf-peft-dpo"
+kinds = ["train"]
+entrypoint = "entrypoint.py"
+description = "Direct preference optimisation of a LoRA adapter through Hugging Face peft + trl, in this recipe's own pinned virtualenv, on prompt/chosen/rejected triples rather than demonstrations."
+
+# ## HOW THIS RECIPE'S ENVIRONMENT IS BUILT, DECLARED RATHER THAN DESCRIBED
+#
+# Every recipe used to carry these steps as prose in its `requirements.lock`
+# header, in three different phrasings, and a newcomer had to read a comment and
+# retype four commands per recipe. Nothing checked the prose, and one of the
+# three said python 3.12 for an environment that is 3.11.15.
+#
+# `scripts/build_recipe_env.py` executes what is below, so the instructions and
+# the thing that runs them cannot drift.
+#
+# `verify` is the part that matters and it is not decoration. PyPI's torch wheel
+# for Windows is CPU-only; the CUDA build only exists on download.pytorch.org.
+# A person who gets the wrong one COMPLETES EVERY SETUP STEP without an error
+# and then trains at a crawl - so the builder imports torch at the end and
+# refuses to call the environment ready unless CUDA is really there.
+[environment]
+python = "3.11"
+
+[[environment.before_lock]]
+requirement = "torch==2.6.0"
+index_url = "https://download.pytorch.org/whl/cu124"
+why = "the CUDA build of torch exists only on this index; PyPI's Windows wheel is CPU-only and fails silently by being slow"
+
+[environment.verify]
+import_module = "torch"
+expect_cuda = true

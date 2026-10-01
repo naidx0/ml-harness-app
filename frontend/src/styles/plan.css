@@ -1,0 +1,968 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE PROPOSAL LOOP — the diagram, the proposal, the approval.
+
+   EVERY VALUE BELOW IS A GRAPHITE TOKEN. No hex, no rgba, no px that is not
+   on the ramp, and no hue that is not already a claim this product makes. The
+   two new shapes on this sheet — a graph node and a wire — take their chassis
+   from components the book already draws: the node is page 26's run-row
+   radius (--r-10) on the card elevation (--e1), because a node IS a step and a
+   step is what a run row shows; the wire is --edge-strong, which is the same
+   hairline every other structural line in this product uses.
+
+   THE HUE COUNT, STATED, because every hue is a claim (DESIGN_DIRECTIVES §5):
+
+     --fits     green   a MEASURED cost. The instrument read it.
+     --info     blue    an INFERRED cost. Arithmetic on a reading, shown.
+     --unknown  grey    a cost nobody could price, and an unstarted node.
+                        Grey is deliberate: not knowing is an absence, not a
+                        problem (page 13.5).
+     --accent   indigo  the product asking for something — the approval's solid
+                        button, the "needs you" dot, the countdown line, and a
+                        selected node. Page 05 assigns it exactly that and
+                        forbids it from ever reading as a verdict.
+     --spills   amber   a sandbox that declared egress. An admission.
+     --wont     red     a denial that was recorded, and nothing else.
+
+   Six, each pointed at one claim, and none of them on a divider, a heading or
+   a piece of chrome.
+
+   COMPACT IS NOT CRAMPED. The ladder is the card's own, set by Max's
+   correction on the diagnosis card and reused here rather than re-invented:
+   WITHIN a group --sp-8, BETWEEN sections --sp-16. Rows are 26px and 28px.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ══ THE CARD ═══════════════════════════════════════════════════════════ */
+
+/* The proposal is the second-largest surface in the product after the
+   diagnosis card, and it is the one a person says yes on. Same radius, same
+   body padding. */
+.card--proposal { border-radius: var(--r-18); }
+.card--proposal > .card__body { padding: var(--sp-16); }
+.card--proposal .card__headline { margin-bottom: var(--sp-8); }
+.card--proposal > .card__body > .card__text { margin-bottom: var(--sp-16); }
+
+/* ══ SECTIONS ═══════════════════════════════════════════════════════════ */
+
+.plansec { margin-bottom: var(--sp-16); }
+.plansec:last-of-type { margin-bottom: 0; }
+.plansec__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+  color: var(--ink-3);
+}
+.plansec__head > .i { align-self: center; flex: 0 0 auto; }
+.plansec__title {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex: 0 0 auto;
+}
+.plansec__hint {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  min-width: 0;
+}
+
+/* ══ THE DIAGRAM ════════════════════════════════════════════════════════ */
+
+.plan__canvas {
+  /* A recessed well in both themes: --bg-base is below --surface-2 in light
+     and darker than it in dark, so the picture reads as sunk into the card
+     rather than floating on it, with no tone invented for either theme. */
+  background: var(--bg-base);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-10);
+  padding: var(--sp-16) var(--sp-12);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.plan__stage { position: relative; margin: 0 auto; }
+.plan__wires {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.plan__wire {
+  fill: none;
+  stroke: var(--edge-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+/* TWO STROKES BECAUSE THERE ARE TWO KINDS OF DEPENDENCY, and the difference is
+   form rather than colour: solid carries a named output into the next step's
+   argument, dashed is sequence the author asserted with no output behind it
+   (app/build.py). Colour would have made it a sixth claim; a dash does not. */
+.plan__wire[data-kind='order'] { stroke-dasharray: 3 4; }
+.plan__wire[data-lit='true'] { stroke: var(--accent); stroke-width: 1.5; }
+
+.plan__wirelabel {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  fill: var(--accent);
+  paint-order: stroke;
+  stroke: var(--bg-base);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* The wave ordinal. A row IS a wave — everything on it runs at once — so the
+   number is structure, not decoration. */
+.plan__wave {
+  position: absolute;
+  left: 0;
+  width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+}
+
+/* ── the node ── */
+
+.plannode {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-4);
+  padding: 0 var(--sp-8);
+  text-align: left;
+  background: var(--surface-3);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  box-shadow: var(--e1);
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease),
+    background var(--dur-1) var(--ease), opacity var(--dur-1) var(--ease);
+}
+.plannode:hover { background: var(--state-hover); }
+.plannode[data-selected='true'] {
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
+/* Not hidden — a node outside the selection's neighbourhood is still part of
+   the plan and must stay readable. .6 is --st-archived-opacity, the one
+   opacity this design system already uses for "still there, not the subject". */
+.plannode[data-dimmed='true'] { opacity: var(--st-archived-opacity); }
+
+.plannode__top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  min-width: 0;
+}
+.plannode__glyph { color: var(--ink-3); display: flex; flex: 0 0 auto; }
+.plannode__label {
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  font-weight: 500;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+/* A step some of whose cost nobody could price. Grey and a glyph, never a
+   hue: an unknown cost is an absence, not a problem. */
+.plannode__unpriced {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--edge-strong);
+  border-radius: var(--r-full);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  color: var(--ink-3);
+}
+
+.plannode__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  min-width: 0;
+}
+.plannode__state {
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+.plannode__id {
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* ── the legend ── */
+
+.plan__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4) var(--sp-16);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.plan__key { display: inline-flex; align-items: center; gap: var(--sp-6); }
+.plan__key--quiet { color: var(--ink-4); }
+.plan__keynum {
+  font-variant-numeric: var(--num);
+  color: var(--ink-2);
+}
+
+.plan__prompt {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+/* ══ THE STEP BEHIND A NODE ═════════════════════════════════════════════ */
+
+.stepdetail {
+  margin-top: var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-1);
+  padding: var(--sp-10);
+}
+.stepdetail__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  height: 26px;
+}
+.stepdetail__id {
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+  font-weight: 500;
+}
+.stepdetail__tool { font-size: var(--t-11); color: var(--ink-3); }
+.stepdetail__close {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.stepdetail__close:hover { color: var(--ink-1); }
+
+.stepdetail__why {
+  margin: var(--sp-4) 0 var(--sp-8);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+
+/* Two columns, and `display:contents` on a pair so a wrapper element does not
+   break the alignment: every key lands on the same 96px rail whether it came
+   from a bare pair of spans or from an argument row. */
+.stepdetail__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 96px) minmax(0, 1fr);
+  gap: var(--sp-4) var(--sp-8);
+  align-items: baseline;
+}
+/* `display: contents` on the pair is what lets this stack cleanly: the key and
+   the value are grid items in their own right, so one column puts the value
+   under its key rather than beside a squeezed one. */
+@container (max-width: 360px) {
+  .stepdetail__grid { grid-template-columns: minmax(0, 1fr); align-items: start; }
+}
+.stepdetail__pair { display: contents; }
+.stepdetail__k {
+  flex: 0 0 96px;
+  font-size: var(--t-10);
+  line-height: var(--lh-12);
+  color: var(--ink-3);
+}
+.stepdetail__v {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.stepdetail__reads { color: var(--ink-4); }
+.stepdetail__arg { font-size: var(--t-10); color: var(--ink-1); }
+.stepdetail__more,
+.stepdetail__jump {
+  border: 0;
+  background: transparent;
+  padding: 0 0 0 var(--sp-4);
+  font: inherit;
+  font-size: var(--t-10);
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.stepdetail__from { color: var(--ink-3); }
+.stepdetail__out {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  margin-right: var(--sp-8);
+}
+.stepdetail__type {
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-4);
+  padding: 0 var(--sp-4);
+}
+
+.stepdetail__exit,
+.stepdetail__risk {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+.stepdetail__exit > .i { color: var(--ink-3); flex: 0 0 auto; margin-top: 2px; }
+.stepdetail__risk > .i { color: var(--spills); flex: 0 0 auto; margin-top: 2px; }
+.stepdetail__exit b,
+.stepdetail__risk b { font-weight: 600; color: var(--ink-1); }
+.stepdetail__check { font-size: var(--t-10); color: var(--ink-4); }
+
+.stepdetail__contract {
+  display: flex;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}
+
+/* ══ COST ═══════════════════════════════════════════════════════════════ */
+
+.cost { display: flex; flex-direction: column; }
+/* MEASURED: 150 + 120 + two 8px gaps is 286px of hard minimum, and the card in
+   a pane at its 320px floor is 292px wide. The third column got six pixels and
+   its text ran under the second - Max, "some of the text starts stacking and
+   overlapping". Every track is a minmax(0, …) now so nothing can refuse to
+   shrink, and under 380px of CARD (not of window) the row is one column. */
+.cost__row {
+  display: grid;
+  grid-template-columns: minmax(0, 150px) minmax(0, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--sp-8);
+  min-height: 26px;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+@container (max-width: 380px) {
+  .cost__row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--sp-2);
+  }
+}
+.cost__row:last-child { border-bottom: 0; }
+.cost__dim {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+}
+/* The engine's own field name under the readable one. It is the name in the
+   tool schema, which is what makes the row checkable by somebody who does not
+   trust it. */
+.cost__field { font-size: var(--t-10); color: var(--ink-4); }
+.cost__value { display: flex; align-items: center; gap: var(--sp-6); flex-wrap: wrap; }
+.cost__num {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-12);
+  color: var(--ink-1);
+}
+/* §3.6: "Units always attached, always --ink-3, always one space… the unit is
+   never the same colour as the value." */
+.cost__unit { font-size: var(--t-10); color: var(--ink-3); }
+/* No tag, because there is no number for a tag to sit on. */
+.cost__unknown {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--unknown);
+  font-style: italic;
+}
+.cost__how {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cost__findout {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  color: var(--ink-2);
+}
+.cost__findout > .i { color: var(--accent); flex: 0 0 auto; }
+.cost__more {
+  align-self: flex-start;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: var(--t-10);
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.cost__from { grid-column: 1 / -1; margin-top: var(--sp-6); }
+
+.deriv {
+  border-left: 1px solid var(--edge);
+  padding: 0 0 0 var(--sp-8);
+  margin: 0 0 var(--sp-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-4) var(--sp-8);
+}
+.deriv[data-depth='1'] { margin-left: var(--sp-10); }
+.deriv[data-depth='2'] { margin-left: var(--sp-20); }
+.deriv__value { display: inline-flex; align-items: center; gap: var(--sp-6); }
+.deriv__how,
+.deriv__read {
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.deriv__read { color: var(--ink-4); }
+.deriv .deriv { flex-basis: 100%; }
+
+.perstep { margin-top: var(--sp-8); }
+.perstep__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  height: 26px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: var(--t-11);
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.perstep__toggle:hover { color: var(--ink-1); }
+.perstep__body { display: flex; flex-direction: column; gap: var(--sp-8); margin-top: var(--sp-4); }
+.perstep__step {
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  padding: var(--sp-6) var(--sp-8);
+}
+.perstep__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  width: 100%;
+  height: 26px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  cursor: pointer;
+  text-align: left;
+}
+.perstep__tool { color: var(--ink-3); font-size: var(--t-10); }
+
+/* ══ THE SANDBOX ════════════════════════════════════════════════════════ */
+
+.sandbox { display: flex; flex-direction: column; }
+/* Same fault as `.cost__row`: a fixed 150px key beside a 1fr value that holds
+   a path. At 292px of card the value had 134px and wrapped into the key. */
+.sandbox__row {
+  display: grid;
+  grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
+  gap: var(--sp-8);
+  align-items: baseline;
+  min-height: 26px;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+@container (max-width: 380px) {
+  .sandbox__row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--sp-2);
+  }
+}
+.sandbox__row:last-child { border-bottom: 0; }
+.sandbox__k { font-size: var(--t-10); line-height: var(--lh-11); color: var(--ink-3); }
+.sandbox__v {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+/* The one amber on this card. A sandbox with no egress cannot leak whatever
+   the model says; one that declared egress has given that guarantee away, and
+   an admission is what --spills is for. */
+.sandbox__egress { color: var(--spills); font-weight: 600; }
+.sandbox__data { padding: var(--sp-4) 0; display: flex; flex-direction: column; gap: var(--sp-4); }
+.snapshot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-4) var(--sp-8);
+  padding: var(--sp-4) 0 0;
+}
+.snapshot__path { font-size: var(--t-11); color: var(--ink-1); overflow-wrap: anywhere; }
+.snapshot__size { display: inline-flex; align-items: center; gap: var(--sp-6); }
+.snapshot__how {
+  flex-basis: 100%;
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-4);
+}
+
+/* ══ RISKS AND QUESTIONS ════════════════════════════════════════════════ */
+
+.risk {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-8);
+  margin: 0 0 var(--sp-6);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+.risk:last-child { margin-bottom: 0; }
+.risk__what { color: var(--ink-1); }
+/* "a risk names what could go wrong AND what the harness does about it. Half
+   of one is a disclaimer." Two columns, so the second half is never skipped. */
+.risk__do { color: var(--ink-3); }
+
+.question {
+  border-left: 2px solid var(--accent-edge);
+  padding-left: var(--sp-8);
+  margin-bottom: var(--sp-8);
+}
+.question:last-child { margin-bottom: 0; }
+.question__ask {
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+}
+.question__why {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.question__fact {
+  display: flex;
+  gap: var(--sp-6);
+  margin: var(--sp-4) 0 0;
+  font-size: var(--t-10);
+  color: var(--ink-4);
+}
+
+.planexit {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin-top: var(--sp-16);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.planexit > .i { color: var(--ink-3); flex: 0 0 auto; margin-top: 3px; }
+.planexit b { font-weight: 600; color: var(--ink-1); }
+
+/* ══ THE REFUSAL ════════════════════════════════════════════════════════ */
+
+.refusal__needs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+}
+.refusal__needslabel {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.refusal__need {
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--sp-6);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-full);
+  font-size: var(--t-10);
+  color: var(--ink-1);
+}
+.refusal__more {
+  display: inline-block;
+  margin: 0 0 var(--sp-8);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-11);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.refusal__more:hover { color: var(--ink-1); }
+.refusal__covered { margin-top: var(--sp-4); }
+
+/* ══ THE APPROVAL CARD — Graphite page 15 ═══════════════════════════════ */
+
+/* Page 15.1: the approval card is `.card` unchanged, and the page adds no new
+   token. The one thing it does take from the book's own list is --surface-4,
+   "dialogs, the approval card", used sparingly — "if everything interrupts,
+   nothing does". */
+.card--approval {
+  margin-top: var(--sp-16);
+  background: var(--surface-4);
+  border-radius: var(--r-14);
+}
+.approval__head { position: relative; overflow: hidden; }
+.approval__head > .i { color: var(--st-attention); }
+/* Page 15.3: "the countdown is a 2px line on the header's top edge in
+   --st-attention, which is the accent — the product asking for something…
+   It is not a verdict colour, because a running clock is not a claim about the
+   world." */
+.approval__clockline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  background: var(--st-attention);
+  border-radius: var(--r-full);
+}
+.approval__needs {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  color: var(--st-attention);
+  font-size: var(--t-10);
+}
+.approval__left {
+  font-size: var(--t-10);
+  font-variant-numeric: var(--num);
+  color: var(--st-attention);
+}
+
+.approval__asks {
+  font-size: var(--t-13);
+  line-height: 18px;
+  color: var(--ink-1);
+  margin-bottom: var(--sp-10);
+}
+.approval__facts { display: flex; flex-direction: column; gap: var(--sp-2); }
+.approval__fact {
+  display: grid;
+  grid-template-columns: minmax(0, 96px) minmax(0, 1fr);
+  gap: var(--sp-8);
+  align-items: baseline;
+  min-height: 26px;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+@container (max-width: 360px) {
+  .approval__fact {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--sp-2);
+  }
+}
+.approval__fact:last-child { border-bottom: 0; }
+.approval__k { font-size: var(--t-10); color: var(--ink-3); }
+.approval__v {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.approval__warn { color: var(--spills); }
+
+.approval__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin-top: var(--sp-12);
+}
+.approval__grant { font-size: var(--t-11); color: var(--ink-3); }
+.approval__note {
+  margin-left: auto;
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+.approval__foot {
+  margin: var(--sp-10) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.approval__foot b { color: var(--ink-2); }
+
+/* ── the record it becomes ── */
+
+.approvalrec {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-8);
+  margin-top: var(--sp-16);
+  min-height: 28px;
+  padding: var(--sp-4) var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-1);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+.approvalrec__glyph { display: flex; flex: 0 0 auto; color: var(--fits); }
+.approvalrec[data-answer='denied'] .approvalrec__glyph { color: var(--wont); }
+.approvalrec__word { color: var(--ink-1); }
+.approvalrec__fp { font-size: var(--t-10); color: var(--ink-4); }
+.approvalrec__when { font-size: var(--t-10); color: var(--ink-3); }
+.approvalrec__note { flex-basis: 100%; font-size: var(--t-10); color: var(--ink-3); }
+.approvalrec__again {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.approvalrec__again:hover { color: var(--ink-1); }
+
+/* ── the deviation ── */
+
+.deviation {
+  margin: var(--sp-8) 0 0;
+  border: 1px solid var(--spills-edge);
+  background: var(--spills-wash);
+  border-radius: var(--r-10);
+  padding: var(--sp-6) var(--sp-10);
+}
+.deviation__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--spills);
+  font-weight: 600;
+}
+.deviation__list {
+  margin: var(--sp-4) 0 0;
+  padding-left: var(--sp-16);
+  font-size: var(--t-11);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+
+/* ══ THE ECHO NOTE ══════════════════════════════════════════════════════ */
+
+/* When the model's whole reply was the card's own sentence repeated word for
+   word, the transcript shows the card once and says so in one 10px line
+   rather than printing the paragraph twice. See Transcript.tsx for the cause
+   and for what would actually fix it. */
+.echoed {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-4);
+}
+.echoed > .i { flex: 0 0 auto; }
+
+/* ══ THE STORM, ONCE A PLAN HAS BECOME ONE ══════════════════════════════ */
+
+/* The record the approval card becomes (page 15.2). Same chassis as the
+   approval it replaces, so the block does not move under the reader when they
+   answer — only its contents change. */
+.storm {
+  margin-top: var(--sp-16);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-1);
+  padding: var(--sp-10) var(--sp-12);
+}
+.storm__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 28px;
+  flex-wrap: wrap;
+}
+.storm__state { font-size: var(--t-12); line-height: var(--lh-12); font-weight: 600; }
+/* n of m, never a percentage. Four of six steps is not 67% of a build. */
+.storm__count { font-size: var(--t-11); color: var(--ink-3); }
+.storm__id { margin-left: auto; font-size: var(--t-10); color: var(--ink-4); }
+
+.storm__contract,
+.storm__stalled,
+.storm__verified {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.storm__contract > .i { color: var(--ink-3); flex: 0 0 auto; margin-top: 2px; }
+.storm__stalled { color: var(--ink-2); }
+.storm__stalled > .i { color: var(--st-stalled); flex: 0 0 auto; margin-top: 2px; }
+.storm__verified > .i { color: var(--fits); flex: 0 0 auto; margin-top: 2px; }
+.storm__verified[data-ok='false'] > .i { color: var(--wont); }
+.storm__verified b { color: var(--ink-1); font-weight: 600; }
+
+/* ── the live state of one node, in the step panel ── */
+
+.stepdetail__live {
+  margin: var(--sp-8) 0;
+  padding: var(--sp-6) var(--sp-8);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+}
+.stepdetail__livehead {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  font-weight: 600;
+}
+.stepdetail__attempts { font-weight: 400; color: var(--ink-3); font-size: var(--t-10); }
+.stepdetail__because {
+  margin: var(--sp-4) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.stepdetail__verified {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-4) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.stepdetail__verified > .i { color: var(--fits); flex: 0 0 auto; margin-top: 1px; }
+.stepdetail__verified[data-ok='false'] > .i { color: var(--wont); }
+.stepdetail__outputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4) var(--sp-10);
+  margin-top: var(--sp-6);
+}
+.stepdetail__output {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.stepdetail__outvalue { color: var(--ink-1); }
+
+/* A node that failed carries the failure on its own edge, because the picture
+   is the thing a person scans. The word is on the node too — colour is never
+   the only carrier. */
+.plannode[data-state='failed'] { border-color: var(--wont-edge); }
+.plannode[data-state='stalled'] { border-color: var(--spills-edge); }
+.plannode[data-state='waiting_approval'],
+.plannode[data-state='waiting_input'] { border-color: var(--accent-edge); }
+.plannode[data-state='done'] { border-color: var(--fits-edge); }
+
+/* ── what the deviation means, under the list of what changed ── */
+
+.deviation__what {
+  margin: var(--sp-6) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.deviation__what--refused {
+  margin-top: var(--sp-8);
+  padding: var(--sp-6) var(--sp-10);
+  border: 1px solid var(--wont-edge);
+  background: var(--wont-wash);
+  border-radius: var(--r-10);
+  color: var(--wont);
+}
+
+/* The four dimensions on one line, inside the approval card's fact list.
+   FOUND BY LOOKING: without these the row set as
+   "tokensunknownrequests3requestsINFERREDtimeunknowndiskunknown" — every word
+   touching the next, which is the one way a cost line can be worse than not
+   showing the cost. Inline-flex with the gap ladder, so a dimension and its
+   figure stay together and the four groups stay apart. */
+.costline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-4) var(--sp-12);
+}
+.costline__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+}
+.costline__dim { color: var(--ink-3); font-size: var(--t-10); }

@@ -1,0 +1,41 @@
+{
+  "upstream": "https://github.com/anomalyco/opencode",
+  "branch": "v2",
+  "commit": "ad1a4a653958da4e62be20bb34a3a3aed3089db3",
+  "commit_date": "2026-09-22T11:47:07-04:00",
+  "licence": "MIT",
+  "vendored": [
+    "packages/app",
+    "packages/session-ui"
+  ],
+  "from_npm": [
+    "@opencode/ui",
+    "@opencode/client",
+    "@opencode/schema",
+    "@opencode/util",
+    "@opencode/sdk",
+    "@opencode/protocol"
+  ],
+  "why_split": "packages/ui and its siblings are published to npm under MIT, so they upgrade with a version bump. packages/session-ui is marked private and packages/app has never been published despite not being marked private, so those two are copied and tracked against this commit.",
+  "patched": [
+    "packages/app/src/composer/suggestions/machine.ts",
+    "packages/app/src/index.css",
+    "packages/app/src/new-session/view.tsx",
+    "packages/app/src/providers/credentials/dialog.tsx",
+    "packages/app/src/session/commands/use-session-commands.tsx",
+    "packages/app/src/session/composer/region.tsx",
+    "packages/app/src/session/files/session-side-panel.tsx",
+    "packages/app/src/session/helpers.ts",
+    "packages/app/src/settings/general/general.tsx",
+    "packages/app/src/settings/keybinds/keybinds.tsx",
+    "packages/app/src/settings/notifications/notifications.tsx",
+    "packages/app/src/settings/shell.tsx",
+    "packages/app/src/settings/surface.tsx",
+    "packages/app/src/settings/workspaces/project.tsx",
+    "packages/app/src/shell/errors/error.tsx",
+    "packages/app/src/shell/titlebar/titlebar.tsx",
+    "packages/app/src/shell/updates/highlights.tsx",
+    "packages/app/src/workspaces/paths.ts",
+    "packages/session-ui/src/message/message-content.tsx"
+  ]
+}

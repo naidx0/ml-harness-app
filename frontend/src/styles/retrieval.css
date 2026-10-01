@@ -1,0 +1,1165 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE RETRIEVAL BENCH.
+
+   Every value below is a token from `tokens.css`, which is Graphite
+   transcribed. There are no literal hexes, no literal spacing values outside
+   the ones the book itself fixes as component geometry — the mono 9px chart
+   axis label (page 27.1), the 3px legend key on `--r-bar` (page 27.1, the one
+   place a radius below 4px survives), the 1.5px dashed baseline at dash 4 3
+   (page 27.1) and the 1.5px icon stroke — and no radius off the six-step ramp.
+
+   ══ THE HUE BUDGET, COUNTED ═══════════════════════════════════════════════
+
+   Every hue on screen is a claim about the world, and there are never more
+   hues than there are claims. These two cards spend three:
+
+     --unknown   EVERY VERDICT THIS BENCH REACHES. "No evidence", "nothing
+                 crowned", "nothing compared", "nothing built", "nothing
+                 recorded", "not recall". Page 22.2's rule for UNKNOWN is why
+                 they are one grey and not four colours: none of them is a bad
+                 answer on the fits-to-won't scale, they are all refusals to be
+                 on that scale without a measurement.
+     --fits      ONE claim, and only through `ProvenanceTag MEASURED`: the
+                 ledger took a row. It appears on the recall card's header when
+                 and only when `measured` is non-empty, and on the sections of
+                 the sweep whose numbers really are readings.
+     --viz-1     the data series. Bars on the recall curve and on the pairwise
+                 grid. Page 06 exists precisely so that a chart with several
+                 quantities in it does not spend the verdict budget.
+
+   NOTHING ELSE IS COLOURED. No setting's marker, no row background, no
+   heading, no divider, no chrome, and above all no ordering: a highlighted
+   row in the curve would re-crown what `compare_chunkings` refuses to crown.
+
+   ══ AND NOTHING ON EITHER CARD IS --ink-4 ═════════════════════════════════
+
+   Page 03.3 is a rule and not a preference: --ink-4 measures 2.70:1 dark and
+   2.56:1 light, misses both floors, and its entire permitted use is disabled
+   controls — "if a reader is meant to get any information out of a piece of
+   text, it cannot be ink 4. Not a timestamp, not a unit, not a placeholder,
+   NOT A COUNT, not a log line number, not a '0 results' message."
+
+   The first cut of this sheet had eighteen of them: the `/40` denominator
+   beside every recall, the row indexes of the dropped questions, the "0" in
+   the denominator block, the WHO CAN and WHAT THE SPLIT ASSUMES labels, the
+   `decides_nothing` sentence, and the tick and cross that say which of the
+   four levers this harness owns. Every one of those is information, and half
+   of them are counts by name. They are all --ink-3 now, which clears the text
+   floor in both themes on every surface up to --surface-3. Nothing on either
+   card is a disabled control, so nothing on either card is --ink-4.
+
+   ══ THE TWO DISTANCES ═════════════════════════════════════════════════════
+
+   `shell.css`'s correction, which `evals.css` and `plan.css` both already
+   follow: within a group --sp-8, between sections --sp-16, and no third.
+   Rows are 26px and 28px. Compact is not cramped; the ladder of gaps is what
+   makes a card with eight sections read as eight things rather than a form.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ══ THE CARDS ═════════════════════════════════════════════════════════════
+   Both are large multi-section surfaces — the same class of thing as the
+   diagnosis and the eval card — so they take page 08's --sp-16 panel padding
+   and the top of the radius ramp. */
+
+.card--sweep,
+.card--recall { border-radius: var(--r-18); }
+.card--sweep > .card__body,
+.card--recall > .card__body { padding: var(--sp-16); }
+
+/* MEASURED AT 380px: the section head is a flex row of a nowrap mono title, a
+   hint and a MEASURED tag, and `plan.css` does not let it wrap — so on a card
+   308px wide the tag sat 52px past the right edge of the viewport and the whole
+   page scrolled sideways. `.plansec__head` is shared with the proposal card, so
+   the wrap is scoped to these two cards rather than changed underneath a
+   surface this lane has not looked at. */
+.card--sweep .plansec__head,
+.card--recall .plansec__head { flex-wrap: wrap; }
+
+/* ══ THE HEAD RIDES ALONG ══════════════════════════════════════════════════
+
+   THE VERDICT SURVIVED COLLAPSE AND DID NOT SURVIVE SCROLL, and on the worst
+   payload that is the same thing as not existing.
+
+   Measured in the running product, not reasoned about: a scratch engine, a
+   scratch database, the real `compare_chunkings` over twelve settings, driven
+   into a thread of its own, photographed at 1280x800. `App.tsx:283` is
+   `el.scrollTop = el.scrollHeight` on every change to `chat.items`, so the
+   screen a reader is handed WHEN THE CARD LANDS is the BOTTOM of the card.
+   The card is 3,374px tall in a 609px thread — 5.5 screens. The verdict word
+   sat 2,679px above the top of the thread (4.4 screens of scrolling UP) and
+   the header pill 2,757px above it. What was on the landing screen instead:
+   the re-measuring ledger and the four levers. Nothing on that screen said
+   NO EVIDENCE. Measured again after this rule: the pill is at y=59 in a
+   thread whose top edge is y=44, on the same payload at the same size.
+
+   So the pill is pinned to the top of the scrollport for as long as any part
+   of the card is on screen. It is the same object that already survives
+   collapse, doing the same job against the other axis, and it adds no word
+   and no number the engine did not write: `sweepPill` reads `state` and
+   `verdict` and nothing else.
+
+   `background` IS LOAD-BEARING. `.card__head` inherits the card's surface by
+   having none of its own, and a sticky element with no background lets the
+   body scroll through it. The two top corners are re-cut because that opaque
+   background would otherwise square off the card's own --r-18.
+
+   NOT WIDENED TO `.card__head`. Every tall card in this product has this
+   defect — the eval card and the diagnosis card are both taller than a
+   thread — but those are surfaces this lane has not driven, and a change to
+   the shared class would land on all of them unlooked at. Reported instead. */
+.card--sweep > .card__head,
+.card--recall > .card__head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-2);
+  border-radius: var(--r-18) var(--r-18) 0 0;
+}
+
+/* ══ THE VERDICT ═══════════════════════════════════════════════════════════
+
+   The largest type on either card, and on the sweep it is NEVER A RECALL.
+   `EvalCompareCard`'s rule — "a +19.2% set in 26px is a result, whatever is
+   written under it" — is worse here than there: the largest recall in a sweep
+   is a maximum selected on the same questions it would be reported against, so
+   putting it in this slot would be the card crowning what the engine would
+   not. What takes the slot is the word, or the count of pairs that separated. */
+
+.rverdict {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-8) var(--sp-10);
+  margin-bottom: var(--sp-16);
+}
+.rverdict__word {
+  font-size: var(--t-26);
+  line-height: var(--lh-26);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  /* GREY, AND DELIBERATELY. Page 22.2: not knowing is an absence, not a
+     problem, and amber would rank it between fits and won't fit. */
+  color: var(--unknown);
+}
+.rverdict__figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-26);
+  line-height: var(--lh-26);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink-1);
+}
+.rverdict__unit {
+  font-size: var(--t-13);
+  line-height: var(--lh-13);
+  color: var(--ink-2);
+  margin-left: calc(var(--sp-6) * -1);
+}
+.rverdict__line {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+  min-width: 0;
+}
+.rverdict__line > .i { flex: 0 0 auto; color: var(--ink-3); }
+.rverdict__line .mono {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+
+/* ══ THE STACK — one ScoreScale per setting, on one axis ═══════════════════
+
+   Four columns, and the axis row lives in the same grid so 0% and 100% land
+   exactly under the ends of every track. `display: contents` on the row is
+   what keeps that true without hard-coding a label width: a sweep can carry a
+   `5000/200` label beside a `120/20` one and both columns still line up.
+
+   THE ROWS ARE IN THE CALLER'S ORDER AND NOTHING SORTS THEM. There is no
+   rule in this file that emphasises a row, and that is the point rather than
+   an omission — `crowned` is null on every path the engine has. */
+
+.rstack {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  column-gap: var(--sp-8);
+}
+/* A FIFTH COLUMN, AND ONLY ON THE SETTINGS STACK. The curve's rows carry no
+   interval — `score_recall` computes one, for the run, and it is drawn once
+   above — so the curve keeps four columns and this rule is keyed off the
+   stack's own `data-kind` rather than off which component happened to
+   render it. */
+.rstack[data-kind='settings'] {
+  grid-template-columns: auto 1fr auto auto auto;
+}
+.rrow { display: contents; }
+
+.rrow__label {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-2);
+  white-space: nowrap;
+  padding: var(--sp-4) 0;
+}
+.rrow__track {
+  position: relative;
+  height: 18px;
+  border-radius: var(--r-4);
+  background: var(--bg-base);
+  border: 1px solid var(--edge-faint);
+  margin: var(--sp-4) 0;
+}
+/* THE INTERVAL, DRAWN TO SCALE, and it is the whole reason the stack is a
+   stack. Eight of these overlapping is visible before a word is read.
+
+   THE ENDS ARE --viz-1 AND NOT --viz-axis, and that is a correction of this
+   file rather than a preference. Measured off the running product, on the
+   twelve-setting sweep, by compositing each layer's alpha over the track it
+   sits on and taking the WCAG ratio:
+
+     the 95% interval's fill   --viz-band  rgba(142,138,242,.10)   1.12 : 1
+     the 95% interval's ends   --viz-axis  rgba(255,255,255,.14)   1.45 : 1
+     the point estimate's dot  --ink-1     #F5F5F7                17.83 : 1
+
+   A picture that draws the reading at 17.8 and its uncertainty at 1.1 is
+   MORE CERTAIN THAN THE DATA, which is the one thing this card exists not to
+   be — and `--viz-axis` is the token for the axis, chrome, while an interval
+   is the series. So the ends take --viz-1, the series ink, at the 1.5px the
+   book gives a measured rule. The wash stays --viz-band: it is the overlap
+   that has to read at a glance, and a fill loud enough to clear 3:1 twelve
+   rows deep would be a wall of bars.
+
+   NOT CHANGED IN `evals.css`. `.scale__band` has the same fill and the same
+   hairline and almost certainly the same defect; that card is a surface this
+   lane has not driven. Reported, not edited. */
+.rrow__band {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: var(--viz-band);
+  border-left: 1.5px solid var(--viz-1);
+  border-right: 1.5px solid var(--viz-1);
+  min-width: 1px;
+}
+/* INSET BY ITS OWN RADIUS PLUS ITS RING, so a recall of 0 or 1 sits fully
+   inside the track instead of half outside it. `--p` is the fraction; the
+   plot range is the track minus one marker width. The sweep this was drawn
+   against has three settings at exactly 1.0, so this is the ordinary case and
+   not a corner. --ink-1 AND NOT A VERDICT HUE: no claim is being made about
+   any one setting, and a colour would be one. */
+.rrow__marker {
+  position: absolute;
+  top: 50%;
+  left: calc(6.5px + (100% - 13px) * var(--p, 0));
+  width: 9px; height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: var(--r-full);
+  background: var(--ink-1);
+  box-shadow: 0 0 0 2px var(--surface-2);
+}
+/* The curve's rows carry a FILL and no band: `score_recall` computes one
+   interval, for the run, and it is drawn once above. A per-k interval here
+   would be the interface computing a statistic the instrument did not. */
+.rrow__fill {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  border-radius: var(--r-4);
+  background: var(--viz-1);
+  opacity: .55;
+  min-width: 1px;
+}
+.rstack[data-kind='curve'] .rrow[data-reported='true'] .rrow__fill { opacity: 1; }
+.rstack[data-kind='curve'] .rrow[data-reported='true'] .rrow__label,
+.rstack[data-kind='curve'] .rrow[data-reported='true'] .rrow__pct { color: var(--ink-1); }
+
+.rrow__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-2);
+  white-space: nowrap;
+  text-align: right;
+}
+.rrow__of { color: var(--ink-3); }
+.rrow__pct {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  font-weight: 600;
+  color: var(--ink-1);
+  white-space: nowrap;
+  text-align: right;
+  min-width: var(--sp-40);
+}
+/* THE HALF-WIDTH, BESIDE THE SCORE IT QUALIFIES. --ink-2 and not --ink-3:
+   page 03.3 permits --ink-3 for a denominator or an index, and this is
+   neither — it is the reading's own uncertainty, and the file this card was
+   written against says it may never be a footnote. One step under the score
+   in size, one step under it in ink, and on the same line. */
+.rrow__ci {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-2);
+  white-space: nowrap;
+  text-align: right;
+  min-width: var(--sp-40);
+}
+/* A SETTING WITH NO INTERVAL SAYS SO. The band is not drawn when `ci_95` is
+   absent — see the note in the component — and a blank cell here would read
+   as a tight one. */
+.rrow__cinone { color: var(--ink-3); }
+.rrow__ciunit {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: 9px;              /* page 27: chart axis labels are mono 9px */
+  color: var(--ink-3);
+  white-space: nowrap;
+  text-align: right;
+  margin-top: var(--sp-2);
+}
+
+.rstack__axis {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-8);
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: 9px;              /* page 27: chart axis labels are mono 9px */
+  color: var(--ink-3);
+}
+.rstack__label {
+  font-family: var(--font-sans);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  text-align: center;
+  min-width: 0;
+}
+.rstack__note,
+.rstack__ties {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.rstack__note > .i,
+.rstack__ties > .i { flex: 0 0 auto; margin-top: 1px; color: var(--ink-3); }
+.rstack__note b { color: var(--ink-2); font-weight: 600; }
+
+/* ══ THE PAIRWISE GRID ═════════════════════════════════════════════════════
+
+   The lower triangle, because a pair is unordered and the upper half would be
+   the same twenty-eight tests drawn twice.
+
+   THE BAR IS THE COUNT McNEMAR ACTUALLY READS. Rows the two settings agree on
+   carry no information about the difference and are absent from the test, so
+   the picture is the CHANGED count against the floor the family imposes — and
+   a grid where every bar stops short of the dashed rule is a sweep that could
+   not have concluded anything, seen before a number is read. That rule is
+   page 27.1's measured baseline, moved from a loss chart onto a matrix. */
+
+.pgrid__scroll { overflow-x: auto; }
+.pgrid {
+  display: grid;
+  align-items: center;
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-2);
+  min-width: min-content;
+}
+.pgrid__corner { }
+.pgrid__col,
+.pgrid__row {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.pgrid__col { text-align: center; padding-bottom: var(--sp-2); }
+.pgrid__row { text-align: right; padding-right: var(--sp-2); }
+.pgrid__empty { }
+
+.pcell {
+  position: relative;
+  height: var(--row-h-thread);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  padding: 0 var(--sp-4);
+}
+/* SEPARATED IS CARRIED BY FORM AND BY THE WORD IN THE KEY, NOT BY A HUE.
+   "These two settings differ" is a real finding and it is not on the
+   fits-to-won't scale; page 05.1's rule is that colour is the second channel
+   and the word and the number are the first. Spending --fits here would also
+   read as "this pair is good", which is not a claim anybody made. */
+.pcell[data-separated='true'] {
+  border-color: var(--edge-strong);
+  background: var(--surface-3);
+}
+.pcell__n {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+.pcell[data-separated='true'] .pcell__n { color: var(--ink-1); font-weight: 600; }
+/* PAGE 22.3's BUDGET-BAR GEOMETRY, AND ITS ARGUMENT: "the track is a SCALE,
+   not a container". 8px tall, --r-full track, --r-bar fill, which is the spec
+   table on page 22.1 line for line.
+
+   IT WAS 3px, WHICH IS THE LEGEND-KEY HEIGHT, AND THAT WAS THE WRONG SHAPE.
+   Looked at 1:1 on the twelve-setting sweep — 66 cells, the worst case the
+   tool allows — a 3px track in --viz-grid is invisible in dark, so a bar that
+   stops short of the rule had nothing to be short OF: the fill and the rule
+   read as one small mark rather than as a distance. The emptiness is the
+   message here, so the track has to be a track. */
+.pcell__bar {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--viz-grid);
+  overflow: visible;
+}
+.pcell__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--r-bar); /* the one radius below 4px the book allows */
+  background: var(--viz-1);
+  min-width: 1px;
+}
+/* The floor, as page 27.1 draws a measured baseline: dashed --viz-baseline,
+   1.5px, dash 4 3. Vertical here because the axis is a count and not time.
+
+   AND IT IS A GRADIENT BECAUSE `border-style: dashed` CANNOT BE 4 3.
+   `docs/DESIGN_SYSTEM.md` line 325 says --viz-baseline is "Always dashed 4 3",
+   and CSS gives an author no control at all over a dashed border's rhythm:
+   every engine picks its own, Chrome's scales with the border width. This
+   rule and the comment above it both claimed 4 3 while drawing whatever the
+   browser felt like — a claim about a picture that the picture did not keep,
+   in a file whose whole argument is that claims are checkable. A repeating
+   gradient states the two lengths in the stylesheet, where they can be read.
+
+   `evals.css` line 221 draws its trivial-difference baseline the same wrong
+   way and says "the dash pattern is the book's 4 3" beside it. Same defect,
+   different card, and that one is not this lane's to edit. Reported. */
+.pcell__rule {
+  position: absolute;
+  top: -2px; bottom: -2px;
+  width: 1.5px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--viz-baseline) 0 4px,
+    transparent 4px 7px
+  );
+}
+
+.pgrid__key {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-8);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.pgrid__key b { color: var(--ink-2); font-weight: 600; }
+.pgrid__key .mono { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+
+/* The sentence the whole section exists for. Not coloured: "this sweep could
+   not have concluded anything" is arithmetic about the family size, which is
+   a shape and not a failure. */
+.pgrid__floor {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 var(--sp-8);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.pgrid__floor > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-3); }
+.pgrid__floor b { font-weight: 600; color: var(--ink-1); }
+
+.sweep__method {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.sweep__method > .i { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── the same tests as rows, for a family too small to be a matrix ── */
+
+.prows { display: flex; flex-direction: column; gap: var(--sp-8); }
+.prow {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-10);
+  background: var(--surface-1);
+}
+.prow[data-separated='true'] { border-color: var(--edge-strong); }
+.prow__pair {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  font-weight: 600;
+}
+.prow__v { color: var(--ink-3); font-weight: 400; }
+.prow__changed {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+}
+.prow__of { color: var(--ink-3); }
+.prow__label,
+.prow__thr { font-size: var(--t-11); color: var(--ink-3); }
+.prow__p {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+  margin-left: auto;
+}
+.prow__thr { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+.prow__says {
+  flex: 1 0 100%;
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+/* ══ NOTHING IS CROWNED ════════════════════════════════════════════════════
+
+   The one place the best recall in the sweep is named, and the number and the
+   engine's own "AND THAT IS NOT A WINNER" are one block for the reason
+   `EvalCard`'s self-graded disclosure is one block: the figure cannot be
+   rendered without it. Grey, not red — nothing failed and nobody did anything
+   wrong; what happened is that a maximum was selected on the same questions it
+   would be reported against. */
+
+.crownless,
+.collapse,
+.stamp,
+.proxy,
+.remeasure {
+  margin: 0 0 var(--sp-16);
+  padding: var(--sp-10) var(--sp-12);
+  border: 1px solid var(--unknown-edge);
+  border-radius: var(--r-10);
+  background: var(--unknown-wash);
+}
+.crownless__head,
+.collapse__head,
+.stamp__head,
+.proxy__head,
+.remeasure__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.crownless__head > .i,
+.collapse__head > .i,
+.stamp__head > .i,
+.proxy__head > .i,
+.remeasure__head > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-3); }
+.crownless__title,
+.stamp__title,
+.proxy__title { min-width: 0; }
+.crownless__title b,
+.collapse__head b,
+.proxy__title b { color: var(--ink-1); font-weight: 600; }
+.crownless__head > .vpill,
+.stamp__head > .vpill,
+.stamp__head > .tag,
+.proxy__head > .vpill { margin-left: auto; flex: 0 0 auto; }
+
+.crownless__set {
+  margin: 0 0 var(--sp-8);
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+  word-break: break-word;
+}
+.crownless__beaten {
+  margin: 0 0 var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+}
+.crownless__row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  margin: 0 0 var(--sp-4);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.crownless__who,
+.crownless__whom {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  color: var(--ink-2);
+}
+.crownless__unbeaten {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+.crownless__unbeatenk {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.crownless__unbeaten .mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  color: var(--ink-1);
+}
+.crownless__why,
+.collapse__says,
+.proxy__says {
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+/* ── settings that are one experiment under several names ── */
+
+.collapse__group {
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+  word-break: break-word;
+}
+.collapse__says { margin-top: var(--sp-8); }
+
+/* ══ THE STAMP ═════════════════════════════════════════════════════════════
+
+   "Nothing was recorded" is one of the two answers this product exists to
+   give, so the block is never absent and never behind a chevron. When the
+   ledger DID take a row the same block turns into the record, and then it
+   carries the MEASURED tag — which is the only place --fits is spent on
+   either card. */
+
+.stamp[data-took='true'] {
+  border-color: var(--edge);
+  background: var(--surface-1);
+}
+.stamp__fact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-4);
+}
+.stamp__k {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+}
+.stamp__v {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-13);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.stamp__how,
+.stamp__why,
+.stamp__recorded {
+  flex: 1 0 100%;
+  margin: var(--sp-4) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.stamp__recorded {
+  font-family: var(--font-mono);
+  color: var(--ink-2);
+}
+
+/* ══ THE DENOMINATOR ═══════════════════════════════════════════════════════
+
+   The rows that are in no number above, and why. It renders even when every
+   figure is zero, because a reader who never sees this block is a reader who
+   does not know it is checked. */
+
+.denom { display: flex; flex-direction: column; }
+.denom__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  min-height: var(--row-h-thread);
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--edge-faint);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.denom__row:last-child { border-bottom: 0; }
+.denom__v {
+  flex: 0 0 auto;
+  min-width: var(--sp-32);
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-13);
+  color: var(--ink-3);
+}
+/* A count that is not zero is a count that changed the denominator, and it
+   stops being furniture. No hue: dropping a row is the tool working. */
+.denom__row[data-dropped='true'] .denom__v { color: var(--ink-1); font-weight: 600; }
+.denom__row[data-dropped='true'] { color: var(--ink-2); }
+.denom__row[data-role='kept'] .denom__v { color: var(--ink-1); font-weight: 600; }
+.denom__row[data-role='kept'] { color: var(--ink-2); }
+.denom__k { min-width: 0; }
+.denom__k .mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  color: var(--ink-2);
+}
+.denom__rows {
+  display: block;
+  margin-top: var(--sp-2);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  word-break: break-word;
+}
+.denom__why {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.denom__why .mono { font-family: var(--font-mono); color: var(--ink-2); }
+.denom__cols {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  word-break: break-word;
+}
+
+/* ══ THE SPLIT-HALF CONFIRMATION ═══════════════════════════════════════════ */
+
+.confirm { display: flex; flex-direction: column; }
+.confirm__row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  min-height: var(--row-h-thread);
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+.confirm__row:last-child { border-bottom: 0; }
+.confirm__row > .i { align-self: center; color: var(--ink-3); }
+.confirm__setting {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  min-width: var(--sp-56);
+}
+.confirm__pair {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-12);
+  color: var(--ink-1);
+}
+.confirm__label { font-size: var(--t-10); color: var(--ink-3); }
+.confirm__gap {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+}
+.confirm__reading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-3);
+}
+.confirm__reading > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-3); }
+.confirm__reading b { color: var(--ink-1); font-weight: 600; }
+.confirm__reading .mono { font-family: var(--font-mono); color: var(--ink-2); }
+.confirm__reading[data-selection='true'] { color: var(--ink-2); }
+.confirm__assumes {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.confirm__assumesk {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ══ THE FOUR LEVERS ═══════════════════════════════════════════════════════
+
+   On the card, not dropped as prose. The four names and which side each is on
+   are in the primary reading at full size; only the paragraph on why each is
+   impossible and who can pull it is a click away — and page 14.6's rule holds,
+   because each of them is named twice over. */
+
+.levers { display: flex; flex-direction: column; gap: var(--sp-4); }
+.lever {
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-10);
+  background: var(--surface-1);
+  overflow: hidden;
+}
+.lever[data-open='true'] { border-color: var(--edge); }
+.lever__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  min-height: var(--row-h-thread);
+  padding: var(--sp-4) var(--sp-10);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink-3);
+}
+.lever__head:hover { background: var(--state-hover); }
+.lever__head > .i { flex: 0 0 auto; color: var(--ink-3); }
+/* THE ONE ASYMMETRY THAT IS ALLOWED TO SHOW: a tick on the lever this harness
+   owns and a cross on the three it does not. Both in --ink-3 like every other
+   icon here, because "we cannot pull this" is a fact about the harness and not
+   a failure of the person reading. */
+.lever__name {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  flex: 0 0 auto;
+}
+.lever__role { font-size: var(--t-11); color: var(--ink-3); min-width: 0; }
+.lever__head > .i:last-child { margin-left: auto; }
+.lever__body {
+  padding: 0 var(--sp-10) var(--sp-8) var(--sp-32);
+  border-top: 1px solid var(--edge-faint);
+}
+.lever__why,
+.lever__who,
+.levers__says {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.lever__whok {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ══ THE PLAN, AND WHAT A STOPPED SWEEP LEFT BEHIND ════════════════════════ */
+
+.plan__nodur {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.plan__nodur > .i { flex: 0 0 auto; margin-top: 1px; color: var(--ink-3); }
+
+.remeasure__how {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.remeasure .reso__row { margin-bottom: 0; }
+
+/* ══ ONE INDEX — the headline ══════════════════════════════════════════════ */
+
+/* More air between a recall card's stacked sections - the owner liked the
+   scored-retriever composition and asked for room between its parts. Direct
+   children of the card body space out as blocks; the first stays put. */
+.card--recall > .card__body > * + *,
+.card--sweep > .card__body > * + * { margin-top: var(--sp-16); }
+
+.rhead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-10);
+  margin-bottom: var(--sp-12);
+}
+.rhead__score {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-26);
+  line-height: var(--lh-26);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink-1);
+}
+/* A REAL COUNT THE LEDGER REFUSED. It keeps the slot, because it is what was
+   asked for and hiding a measurement is its own dishonesty, and it loses the
+   authority — the same treatment `EvalCard` gives a partial score and a
+   judge's opinion. The header pill says which of the seven refusals it hit. */
+.rhead__score[data-recorded='false'] { color: var(--ink-2); }
+.rhead__of {
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-3);
+  min-width: 0;
+}
+.rhead__of b { color: var(--ink-2); font-weight: 600; }
+.rhead__of .mono { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+
+/* ── the missed questions ── */
+
+.qrow {
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--surface-1);
+  overflow: hidden;
+}
+.qrow + .qrow { margin-top: var(--sp-4); }
+.qrow[data-open='true'] { border-color: var(--edge); }
+.qrow__truth {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40%;
+}
+
+/* ── the ink-4 that came in with the borrowed classes ────────────────────
+
+   MEASURED, in the running harness, by walking every element inside these two
+   cards and collecting its computed colour: five distinct inks came out, and
+   one of them was --ink-4 (#56575E). It was not from this sheet — it arrives
+   with `.frow__index`, `.frow__by`, `.frow__foot` and `.runfacts__sum`, which
+   are `evals.css`'s and which this card borrows so a failing eval row and a
+   missed retrieval row are one shape.
+
+   Every one of those carries information: a row index, the rank a passage came
+   back at, which field matched, and what is behind a chevron. Page 03.3 names
+   a count and a timestamp explicitly. They are moved to --ink-3 HERE and not
+   in `evals.css`, because the same rules paint the eval card and this lane has
+   not looked at that surface — the defect there is reported rather than
+   changed underneath somebody. */
+
+.card--recall .frow__index,
+.card--recall .frow__by,
+.card--recall .frow__foot,
+.card--sweep .runfacts__sum,
+.card--recall .runfacts__sum { color: var(--ink-3); }
+
+/* AND THE CHEVRON, which is the only thing on a folded row that says the row
+   opens. A control glyph at --ink-4 is the book's own "Do" case when the thing
+   is switched off; these rows are live and clickable, and eleven of them on a
+   sweep card are the whole navigation of it. */
+.card--sweep .runfacts__toggle > .i,
+.card--recall .runfacts__toggle > .i,
+.card--recall .rows__all > .i,
+.card--recall .frow__head > .i { color: var(--ink-3); }
+
+/* ── the weaker proxy ── */
+
+.proxy__figure {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-8);
+}
+.proxy__v {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-17);
+  line-height: var(--lh-17);
+  font-weight: 600;
+  /* ONE STEP DOWN FROM THE RECALL ABOVE IT, in size AND in ink, and it has to
+     be true on both paths. It was --ink-2, and on a run that recorded nothing
+     the headline is --ink-2 as well — so on exactly the card where the reader
+     most needs to know which number is which, the weaker reading and the
+     measurement were the same colour and only 9px apart. --ink-3 is one step
+     below both. */
+  color: var(--ink-3);
+}
+.proxy__k {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+.proxy__on { font-size: var(--t-11); color: var(--ink-3); min-width: 0; }
+.proxy__on .mono { font-family: var(--font-mono); color: var(--ink-2); }
+.proxy__prov {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+/* ── the reproducibility block's trailing sentences ── */
+
+.runfacts__note {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+}
+
+/* A PATH IS ONE WORD AND WINDOWS PATHS ARE LONG ONES. Every sentence these
+   tools write quotes the eval file, the index name or a Python list of
+   settings, and none of those has a break opportunity in it — measured at
+   380px, the engine's own summary ran 14px past the card. `anywhere` rather
+   than `break-word` so the break is taken before the line overflows rather
+   than after, and scoped to these two cards so no other surface's prose
+   changes how it wraps. */
+.card--sweep .compare__saysv,
+.card--recall .compare__saysv,
+.card--sweep .stamp__how,
+.card--recall .stamp__how,
+.card--sweep .stamp__why,
+.card--recall .stamp__why,
+.card--sweep .stamp__recorded,
+.card--recall .stamp__recorded,
+.card--sweep .runfacts__v,
+.card--recall .runfacts__v,
+.card--sweep .levers__says,
+.card--recall .levers__says { overflow-wrap: anywhere; }
+
+/* ══ NARROW ════════════════════════════════════════════════════════════════
+
+   A CONTAINER QUERY AND NOT A MEDIA QUERY, because the viewport is not what
+   these cards are inside. `--col-min` clamps the chat column at 420px and both
+   the rail and the inspector pane are drag-resizable, so a 1600px window can
+   leave the card 420px wide — and a viewport media query would happily draw
+   26px type into it. The card is the container; what it asks about is its own
+   width.
+
+   The stack keeps all five of its columns at every size. The track absorbs the
+   loss, which is the right thing to give up: the setting's label, its count and
+   its interval are the things that stop meaning anything the moment they wrap,
+   and the track is a picture that is still a picture at 120px. */
+
+.card--sweep,
+.card--recall { container-type: inline-size; }
+
+@container (max-width: 460px) {
+  .card--sweep > .card__body,
+  .card--recall > .card__body { padding: var(--sp-12); }
+  .rverdict__word,
+  .rverdict__figure,
+  .rhead__score { font-size: var(--t-20); line-height: var(--lh-20); }
+  .rrow__pct { min-width: var(--sp-32); }
+  .qrow__truth { max-width: 30%; }
+  /* The axis label stops competing with 0% and 100% for one line and takes
+     its own, centred, under them. */
+  .rstack__axis { flex-wrap: wrap; }
+  .rstack__label { order: 1; flex: 1 0 100%; margin-top: var(--sp-2); }
+}
+
+/* ══ §4.4: MONO IN A MIXED LINE SETS ONE STEP DOWN ═════════════════════════
+
+   `docs/DESIGN_SYSTEM.md` §4.4: "Mono in a mixed line always sets one step
+   down from the sans beside it, because monospace renders visually larger at
+   the same px. A run row whose title is --t-12 sans sets its badge at --t-11
+   mono and the two read as the same size."
+
+   MEASURED IN THE RUNNING PRODUCT, both cards, every disclosure open: 56 mono
+   runs sat inside a sans line on the sweep and 8 on the recall run, and 52 of
+   the 56 and 8 of the 8 were set at the SAME px as the sans around them. Four
+   were right (`.confirm__assumes` and `.lever__who`, 11 -> 10), which is worse
+   than none: the file disagreed with itself line to line.
+
+   The two remaining exceptions are named rather than quietly kept:
+   `.scale__label` and `.frow__by` are --t-10 sans, and --t-10 is the bottom of
+   the ramp — there is no step below it to take, and 9px is a chart-axis
+   exception the book grants to axis ticks and not to a mono run in prose. So
+   those stay level and this comment is the record of why.
+
+   `.rverdict__line .mono` is already 12 -> 11 in its own rule above and is not
+   repeated here. */
+
+.card--sweep .crownless__title .mono,
+.card--sweep .confirm__reading .mono,
+.card--recall .rhead__of .mono { font-size: var(--t-11); }
+
+.card--sweep .denom__k .mono,
+.card--sweep .denom__why .mono,
+.card--sweep .pgrid__key .mono,
+.card--recall .denom__k .mono,
+.card--recall .denom__why .mono { font-size: var(--t-10); }
+
+/* ══ AND THE RECALL CARD'S OWN INTERVAL, FOR THE SAME REASON ═══════════════
+
+   `RecallScale` reuses `evals.css`'s `.scale` chassis, so the single 95%
+   interval on a recall run was drawn with the same rgba(...,.10) fill and the
+   same --viz-axis hairline as the sweep's stack: 1.12:1 dark and 1.13:1 light
+   against the track, beside an --ink-1 marker at 17.8:1. Same correction, same
+   token, scoped to this card so `EvalCard`'s scale is not changed underneath a
+   surface this lane has not driven. That one is reported. */
+.card--recall .scale__band {
+  border-left-width: 1.5px;
+  border-right-width: 1.5px;
+  border-left-color: var(--viz-1);
+  border-right-color: var(--viz-1);
+}

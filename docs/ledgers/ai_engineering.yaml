@@ -1,0 +1,1272 @@
+# AI ENGINEERING - the second ledger. IT LOADS AND IT DIAGNOSES.
+#
+# This file is the Phase 0a experiment from docs/PHASES.md: can the engine that
+# runs the machine-learning ledger run a second domain with NO CODE OF ITS OWN?
+#
+# THE ANSWER IS YES, and there is no Python anywhere that names anything in this
+# file. Not a stage, not a node, not a gate, not a prefix, not a sentinel. The
+# engine finds every one of them through `contract.roles` and
+# `contract.outcome_prefixes` below, and this file deliberately spells all of
+# them DIFFERENTLY from the ML ledger so that a name leaking back into the engine
+# would show up as a failure rather than as a coincidence:
+#
+#   entry_stage       stage_0_can_we_answer      (ML: stage_0_admissibility)
+#   commit_stages     [stage_9_shape_selector]   (ML: stage_9_method_selector)
+#   gate_sweep_node   S9_SWEEP_THE_GATES         (ML: S9_GATE_SWEEP)
+#   no_proposal       NOTHING_PROPOSED           (ML: UNSET)
+#   gated prefix      BUILD__                    (ML: TRAIN__)
+#
+# WHAT THE PREVIOUS HEADER SAID WAS IN THE WAY, AND WHAT WAS ACTUALLY IN THE WAY.
+# The list written here on 2026-08-22 named three blockers. Measured again while
+# fixing them:
+#
+#   1. "stage_9_method_selector is required BY THAT NAME."  TRUE, and
+#      understated - `stage_0_admissibility` was a constant too, and it was read
+#      by the walk itself rather than only by the loader. Both are gone; see
+#      `contract.roles`.
+#   2. "Stage-9 nodes require a `route` key whose shape is not documented."
+#      TRUE, and much larger than a documentation gap. A fork was a `routes:`
+#      mapping in the YAML PLUS a Python function registered against a node id,
+#      and only two node ids had one. No second ledger could have a fork at all.
+#      See `contract.roles` and the `fork:` block at S1_FORK_BY_FAILURE_BUCKET.
+#   3. "Several top-level keys are required that a small ledger has no use for:
+#      escalation_ladder, shadowing_rule, helpers, uninspectable_facts,
+#      static_checks, runtime_checks, sources_policy, sources."  FALSE. Not one
+#      of those was ever required by the loader, and not one of them is read by
+#      the engine. The blocker list was written from memory rather than measured,
+#      and this file's earlier draft carried all eight for nothing. They are gone
+#      from here; the ones that are real knowledge rather than ML furniture are
+#      kept and are written about THIS domain.
+#
+#   AND THE LARGEST BLOCKER WAS NOT ON THE LIST. `SC1` hard-coded the string
+#   "TRAIN__". So did the engine's exit check, and so did the origin policy's
+#   refusal. No second ledger could ever have satisfied them, and none should
+#   have had to spell its verdicts TRAIN__.
+#
+# WHAT THIS LEDGER IS HONEST ABOUT NOT HAVING YET, AND THE NUMBER THIS PARAGRAPH
+# USED TO CARRY WAS WRONG BY FIVE, IN THE DIRECTION THAT FLATTERED US.
+#
+# Nine of its seventeen facts are `source: inspect`, which is this file promising
+# the harness READS them rather than asking. This header said FOUR of those nine
+# had no instrument - naming `has_traces`, `tool_call_success_rate`,
+# `cost_per_run_usd` and `run_terminates` - and so claimed, by omission, that the
+# other five were measured by something. Measured on 2026-08-24 with the
+# expression this file already prescribes forty lines below:
+#
+#   {fact for spec in REGISTRY for fact in spec.measures} & set(this ledger)
+#     -> set()          (40 tools, 12 facts measured between them, 0 of them here)
+#
+# so the true count was NINE OF NINE, and `known_gaps.no_instrument_measures`
+# carried that list as a LIST rather than as a sentence, with a test that
+# recomputes it - because a sentence is exactly what drifted.
+#
+# UPDATE, AND THE LIST DID WHAT A LIST DOES. Shipping an instrument takes a name
+# OFF it: docs/PHASES.md Phase 1's four instruments now exist
+# (`app/tools/agents.py` - read_agent_traces, read_tool_definitions,
+# run_the_failures, bound_the_loop) and they measure EIGHT of this ledger's nine
+# `inspect` facts. One name remains, and it remains ON PURPOSE:
+# `cost_per_run_usd`. No instrument can read US dollars out of a trace file -
+# OpenTelemetry defines no cost attribute, and OpenInference's `llm.cost.*` is
+# somebody else's arithmetic against an undated price table, which is ASSERTED
+# and never MEASURED (`docs/AGENT_INSTRUMENTS.md` Â§5.3 measures this and argues
+# the way out: denominate the gate in tokens, which is a change to G4's rows
+# that has deliberately NOT been made here yet). A currency figure stays
+# available as a DERIVED display over measured tokens times a STATED price;
+# nothing here will stamp one MEASURED.
+#
+# THAT IS NOT A HOLE IN THE HONESTY TEST - it is the opposite. A fact the harness
+# cannot measure arrives ASSERTED, an assertion may not open a gate, and a run
+# that leans on one gets ACTION__SUBSTANTIATE_CLAIMED_FACTS instead of a build.
+# The ledger refusing to build on a claim about cost is the correct behaviour
+# and is measurable today.
+#
+# SECOND UPDATE, SAME DAY - THE GATE WAS DENOMINATED IN WHAT AN INSTRUMENT CAN
+# READ. `cost_per_run_usd` is GONE, not unmeasured: no instrument can read US
+# dollars out of a trace, so the fact left the ledger rather than squatting in
+# it as a gate nobody could honestly pay. G4 now asks `tokens_per_run`, which
+# bound_the_loop measures off OTLP usage attributes and refuses to total when
+# any inference span lacks them. All nine `inspect` facts are measured;
+# `known_gaps.no_instrument_measures` is an EMPTY LIST and stays in the file
+# anyway, because its test recomputes it in both directions and a list that
+# could not be empty could not be trusted to fill up either.
+
+ledger_format: 3
+ledger_version: 1
+
+contract:
+  # -------------------------------------------------------------------------
+  # THE NAMES THE ENGINE MUST FIND. Every one of them is this file's choice.
+  roles:
+    entry_stage: stage_0_can_we_answer
+    commit_stages: [stage_9_shape_selector]
+    gate_sweep_node: S9_SWEEP_THE_GATES
+    no_proposal: NOTHING_PROPOSED
+
+  # -------------------------------------------------------------------------
+  # WHAT THE WORK OF EACH STAGE NEEDS. FILLED ON THE DAY THE INSTRUMENTS SHIPPED.
+  #
+  # `app/tools/blocks.py` reads this. Every stage is named because the engine
+  # refuses a partial block: "this stage's work needs nothing extra" and
+  # "somebody forgot" are different, and the difference is the whole reason the
+  # block is closed.
+  #
+  # THIS BLOCK WAS SIX EMPTY LISTS UNTIL THE FOUR INSTRUMENTS EXISTED, and the
+  # empty lists were the debt made visible - not one tool in this harness
+  # measured one of this ledger's facts, and borrowing the ML packs would have
+  # put tools in the model's hands whose success writes the OTHER ledger's fact
+  # ids. `docs/PHASES.md` Phase 1 shipped them as the `agent` pack
+  # (`app/tools/agents.py`), so every stage whose work reads an
+  # instrument-measured fact now names it: stage_0 counts the failures,
+  # stage_1 reads the traces and buckets, stage_3 counts the tools and their
+  # call rate, stage_5 bounds the loop. stage_2 answers from buckets already
+  # computed and stage_9 re-asks gates over facts already stamped, so their
+  # work needs no instrument at the moment the walk stands in them - an empty
+  # list there is the first thing, not the second.
+  capabilities:
+    needs:
+      stage_0_can_we_answer: [agent]
+      stage_1_reproduce: [agent]
+      stage_2_not_the_loop: []
+      stage_3_tools: [agent]
+      stage_5_control_flow: [agent]
+      stage_9_shape_selector: []
+
+  # WHERE THIS LEDGER'S KNOWLEDGE LIVES, NAMED RATHER THAN GUESSED.
+  # `app/tools/evals.py::routable_modes` used to find a failure-bucket
+  # vocabulary by looking up ONE HARD-CODED node name - the first ledger's -
+  # and returned () here, which was correct and also meant this ledger could
+  # not publish the five buckets its own fork routes on. The declaration below
+  # is the general mechanism: a knowledge consumer asks this block by NAME,
+  # gets the node that owns the answer, and reads the answer off it. A third
+  # ledger adds a line; nobody edits evals.py again.
+  knowledge:
+    failure.buckets: S1_FORK_BY_FAILURE_BUCKET
+
+  # -------------------------------------------------------------------------
+  # THE FIVE GATES OF THIS DOMAIN. Three have direct ML analogues and two do
+  # not, and the two that do not are the ones this domain needs most.
+  #
+  # G3_FAILURE_REPRODUCES has no ML analogue. Agent failures are intermittent by
+  # nature - the same input takes a different path twice - and a failure you
+  # cannot reproduce cannot be fixed, only COINCIDED WITH. Every "it got better"
+  # measured against a failure that comes and goes is a story.
+  #
+  # G4_COST_AND_TERMINATION_BOUNDED has no ML analogue either. A training run
+  # has a known end: the epochs finish. A loop does not. It can spend unbounded
+  # tokens, call a tool a thousand times, and recurse. A build that cannot say
+  # what one run costs and cannot show that it stops is a build nobody can
+  # approve - and approval is a contract, not a formality.
+  required_gates:
+    - G0_SOMETHING_TO_MEASURE
+    - G1_FAILURE_RATE_MEASURED
+    - G2_SIMPLE_VERSION_TRIED
+    - G3_FAILURE_REPRODUCES
+    - G4_COST_AND_TERMINATION_BOUNDED
+
+  # -------------------------------------------------------------------------
+  # THE ESCALATION ORDER OF THIS DOMAIN'S METHOD CLASSES, WEAKEST FIRST. The
+  # engine does not read this - `row_key` knows only "a row for this class, or
+  # else `any`" - and that is exactly why it is written down.
+  #
+  # A class with no row of its own falls back to `any`, which is the WEAKEST
+  # question in the gate rather than the nearest one. So the moment a gate gives
+  # ANY class its own row, every stronger class needs one too, or the strongest
+  # method in the file gets asked the easiest question in the gate. That is not
+  # hypothetical: it is what happened to G4 the hour MULTI_AGENT was given its
+  # own class, and nothing in the engine would have said so - SC3 is satisfied by
+  # "some row applies".
+  #
+  # The invariant this list makes checkable, asserted in
+  # tests/test_the_ai_ledger_refuses_before_it_builds.py: for every gate, if a
+  # class here has its own passes_when row, so does every class after it.
+  method_class_ladder: [tools, agent, multi_agent]
+
+  what_the_gates_decide: >
+    WHETHER BUILDING THE AGENT IS WORTH DOING. Every BUILD__ outcome and nothing
+    else. The same sentence the ML ledger writes about training, and it means the
+    same thing: these gates are not a general quality bar and they are not asked
+    of the cheap answers. A person who wants to know what an agent framework
+    costs, or which model to point at their loop, is asking a different question
+    and must not be handed a gate as an answer.
+
+  outcome_prefixes:
+    NO_AGENT__:  {verdict: NO_BUILD, terminal: true,
+                  meaning: "do not build an agent; do this cheaper thing instead"}
+    NO_TOOLS__:  {verdict: NO_BUILD, terminal: true,
+                  meaning: "the loop and the tools are not the problem"}
+    ACTION__:    {verdict: BLOCKED,  terminal: true,
+                  meaning: "we cannot answer until you do this and re-enter"}
+    BLOCKED__:   {verdict: BLOCKED,  terminal: true,
+                  meaning: "something is missing and no answer is honest yet"}
+    REROUTE:     {verdict: null,     terminal: false,
+                  meaning: "continue at another stage"}
+    ERROR__:     {verdict: null,     terminal: false,
+                  meaning: "engine bug. Raise, do not render."}
+
+    # THE EXPENSIVE IRREVERSIBLE OUTCOME OF THIS DOMAIN. `gated: all` is the role
+    # `TRAIN__` plays in the ML ledger, declared rather than compiled in. It
+    # means every gate in `required_gates`, re-evaluated under the proposal's own
+    # method class at S9_SWEEP_THE_GATES before anything mints.
+    BUILD__:     {verdict: BUILD,    terminal: true,
+                  gated: all,
+                  mintable_only_at: S9_MINT_BUILD_VERDICT,
+                  meaning: "the expensive thing is the right thing"}
+
+  # WHY BUILDING AN EVAL HARNESS IS AN `ACTION__` AND NOT A `BUILD__`, which is a
+  # departure from docs/ledgers/AI_ENGINEERING_DESIGN.md and is deliberate. That
+  # document lists BUILD__EVAL_HARNESS among the builds. Under `gated: all` that
+  # would put an eval harness behind G2_SIMPLE_VERSION_TRIED - it would demand
+  # you exhaust the simple version before you are allowed to build the thing that
+  # tells you whether the simple version worked. The gate order is right and the
+  # classification was wrong: an eval harness is the CHEAP FIRST MOVE, so it is
+  # ACTION__BUILD_AN_EVAL_HARNESS, it is real work the harness does, and it is
+  # not behind the gates that guard the expensive answer.
+  why_the_eval_harness_is_not_a_build: >
+    A prefix is not a category of work, it is a category of RISK. BUILD__ means
+    "expensive, irreversible, and only after everything cheaper has been tried
+    and measured". An eval harness is none of those things; it is the instrument
+    the other four gates are measured with. Putting it behind them would be
+    circular.
+
+  path_semantics:
+    type: "list[PathEntry], append-only, in evaluation order, never sorted, never deduplicated"
+    PathEntry:
+      id:     {type: str, note: "a node id matching ^S[0-9]+_ or a gate id matching ^G[0-9]_"}
+      kind:   {enum: [node, gate]}
+      row:    {type: "str or null",
+               note: "Set only when kind == gate. The `method_class` key of the passes_when row that evaluated true - one of: any, agent, multi_agent. Null on node entries."}
+      clause: {type: "str or null",
+               note: "The condition this entry was decided by, verbatim from this file, on BOTH kinds."}
+    entries:
+      node: {written_when: "a node's condition is evaluated, whether or not it fires"}
+      gate: {written_when: "a gate's `passes_when` row evaluates TRUE, and only then"}
+    telling_them_apart: >
+      `kind` is authoritative; a loader reads `kind` and does not pattern-match
+      the id. The namespaces also do not overlap, and must not be allowed to, but
+      that is a belt-and-braces check rather than the mechanism.
+    row_key: >
+      row_key(gate_id, method_class) is the `method_class` key of the single
+      `passes_when` row in gates[gate_id] that applies to that class: the row
+      named for the class if there is one, otherwise the row keyed `any`. For G0,
+      G1 and G3 it is always "any". G2 and G4 each carry three rows - any, agent,
+      multi_agent - and each is at least as strong as the one above it.
+    a_missing_row_falls_back_to_the_WEAKEST_question_not_the_nearest: >
+      READ THIS BEFORE ADDING A CLASS. The fallback above is `any`, not "the
+      nearest stronger class". So a class with no row of its own is asked the
+      WEAKEST question in the gate, and a static check that only asks "does some
+      row apply" is satisfied by that. When MULTI_AGENT was given its own class
+      on 2026-08-24, G4 had rows for `any` and `agent` only - and the class
+      created to make multi-agent HARDER would have been asked
+      `tokens_per_run is not null` where AGENT_WITH_TOOLS is asked
+      `tokens_per_run is not null and run_terminates`. The hardest outcome in
+      the file would have skipped the termination proof. G4's `multi_agent` row
+      is therefore written out in full rather than inherited, and
+      `tests/test_the_ai_ledger_refuses_before_it_builds.py` asserts that no
+      class ever falls back past a row a weaker class has.
+    gates_passed_under: |
+      gates_passed_under(path, class) =
+        { e.id for e in path if e.kind == "gate" and e.row == row_key(e.id, class) }
+      This, not bare membership, is the set of gates a proposal of that class has
+      actually passed.
+    ordering_rule: >
+      A gate entry is always appended immediately after an entry for its own
+      node, with nothing between them, at EVERY occurrence and not only the
+      first. This is what stops a gate entry being written by anything other than
+      the gate.
+    latching: >
+      A gate is latched PER ROW, not per run. This domain leans on that harder
+      than the ML one does, because the walk down to a proposal is deliberately
+      class-agnostic: `NOTHING_PROPOSED` is class `tools`, so a run passes G2 and
+      G4 under their `any` rows on the way down. The moment an AGENT is proposed,
+      S9_SWEEP_THE_GATES re-asks both under the `agent` row - which is strictly
+      stronger, because it asks whether the fixed-sequence version was tried and
+      whether the loop provably terminates. Without the re-ask, "I tried one API
+      call" would silently satisfy the gate that exists to ask "did you try it
+      without model-driven control flow", and a loop nobody has bounded would
+      pass the gate that exists to bound it.
+    gate_ledger_derivation: |
+      gate_ledger is a view over path, not a second source of truth. For each g
+      in required_gates, evaluated against the FINAL proposed_method:
+        PASSED      if g in gates_passed_under(path, method_class(proposed_method))
+        FAILED      if the run terminated at gates[g].node
+        NOT_REACHED otherwise
+    cycle_guard: >
+      REROUTE may return to a stage already visited. If any stage id would be
+      ENTERED a third time, stop with ERROR__CYCLE. That is an engine bug, not a
+      diagnosis, and it crashes rather than degrades. Re-evaluating a latched
+      gate at S9_SWEEP_THE_GATES is not a stage entry and does not count here.
+
+  diagnosis:
+    verdict: {enum: [NO_BUILD, BUILD, BLOCKED]}
+    primary_recommendation: node_id
+    path: [PathEntry]
+    gate_ledger: {gate_id: {status, node, clause}}
+    proposed_method: method
+    rejected: [{node_id, reason, evidence}]
+    next_action: {text, artifact, command}
+    exit_criterion: text
+    estimated_cost: {usd, hours}
+    cost_provenance: {enum: [MEASURED, UNKNOWN]}
+    confidence: {type: float, range: [0, 1]}
+    revisit_if: [condition]
+
+# ---------------------------------------------------------------------------
+# THE EXPENSIVE OPTIONS THIS LEDGER CHOOSES BETWEEN. `methods` is not an ML
+# concept once you see what it is for: gates declare `passes_when` rows per
+# method class, so a method is a thing a gate has to have a question for.
+#
+# method_class is what selects the row. THREE classes here, and the two splits
+# are the two the domain actually turns on.
+#
+# The first split is MODEL-DRIVEN CONTROL FLOW. Adding tools to a fixed sequence
+# does not have it; an agent does. That is the part that is slow,
+# non-deterministic, hard to test and hard to bound, and it is what G2 and G4 ask
+# a stronger question of.
+#
+# THE SECOND SPLIT EXISTS BECAUSE MULTI_AGENT WAS NOT THE HARDEST OUTCOME IN THIS
+# FILE AND IT IS SUPPOSED TO BE. Until 2026-08-24 MULTI_AGENT carried
+# `class: agent`, so it answered exactly the same rows of exactly the same gates
+# as AGENT_WITH_TOOLS and differed from it by the sign of ONE user-stated
+# boolean, `one_context_is_insufficient`, read at a node where an assertion is
+# admissible. `docs/ledgers/AI_ENGINEERING_DESIGN.md` says the bar is
+# deliberately the highest in the ledger, for the reason TRAIN__FROM_SCRATCH's is
+# in the ML one - and in the ML ledger that bar is a four-clause conjunction with
+# three measured numbers in it, not a sign.
+#
+# So MULTI_AGENT gets its own class and G2 gets a third row for it. The ladder in
+# this domain is one call -> a fixed sequence -> ONE agent -> more than one, and
+# G2 is the gate that enforces the ladder. It asked about the first two rungs and
+# had nothing to say about the third, which is the rung people skip: "one context
+# cannot hold this" is a diagnosis almost everybody makes BEFORE building the
+# single agent that would have measured it.
+methods:
+  TOOLS_FOR_AN_EXISTING_LOOP: {class: tools}
+  AGENT_WITH_TOOLS:           {class: agent}
+  MULTI_AGENT:                {class: multi_agent}
+
+  # The sentinel. It carries class `tools` on purpose: the pre-proposal walk in
+  # this ledger is NOT an agent walk - nothing on the way down has committed to
+  # model-driven control flow - so the `any` rows are the honest question to ask
+  # before a proposal exists, and the sweep re-asks under `agent` if one arrives.
+  # This is the same argument the ML ledger makes for UNSET, reached
+  # independently: the sentinel's class is PROVISIONAL, never "strictest", and
+  # the mechanism replaces the claim.
+  NOTHING_PROPOSED:           {class: tools, provisional: true,
+                               note: "No proposal yet. Every gate passed under this class is re-asked at S9_SWEEP_THE_GATES under the proposal's real class."}
+
+# ---------------------------------------------------------------------------
+facts:
+  # ---- what there is to measure against ----------------------------------
+  failing_cases_n:         {type: int,   source: inspect, scope: thread, default: 0,
+                            measured_by: [agent.failures.run]}
+  can_rerun_failures:      {type: bool,  source: inspect, scope: thread, default: false,
+                            measured_by: [agent.failures.run]}
+  failure_rate_measured:       {type: bool,  source: inspect, scope: thread, default: false,
+                            measured_by: [agent.failures.run]}
+  baseline_success_rate:   {type: float, source: inspect, scope: thread,
+                            measured_by: [agent.failures.run]}
+  target_success_rate:     {type: float, source: ask,     scope: thread}
+
+  # ---- what the person is the only witness to ----------------------------
+  #
+  # THE FIRST THREE ARE THE LADDER AND THEY ARE ORDERED. One call, then a fixed
+  # sequence, then ONE agent. Each is the simple version of the rung above it,
+  # each is a thing only the person who built it can report, and each is a clause
+  # in a G2 row that the rung above it does not get to skip.
+  failure_reproduces:      {type: bool,  source: ask, scope: thread, default: false}
+  simple_version_tried:    {type: bool,  source: ask, scope: thread, default: false}
+  workflow_tried:          {type: bool,  source: ask, scope: thread, default: false}
+  single_agent_tried:      {type: bool,  source: ask, scope: thread, default: false}
+  control_flow_is_dynamic: {type: bool,  source: ask, scope: thread, default: false}
+  one_context_is_insufficient: {type: bool, source: ask, scope: thread, default: false}
+
+  # ---- what a trace reader has to read -----------------------------------
+  # ALL NINE OF THESE HAVE INSTRUMENTS - see the header and
+  # `known_gaps.no_instrument_measures`, which carries the recomputed list.
+  # Declaring them `inspect` is the ledger promising the harness READS them, and
+  # the promise is enforced against us rather than against the user: a value for
+  # one of these that arrives ASSERTED cannot open a gate, whatever else has
+  # been measured. The unit of the cost question is TOKENS, deliberately:
+  # nothing can read US dollars out of a trace file (OpenTelemetry defines no
+  # cost attribute, and OpenInference's llm.cost.* is somebody else's
+  # arithmetic), so G4 is denominated in what an instrument can actually read.
+  # A currency figure stays available as a DERIVED display over measured tokens
+  # times a price STATED by the user - never as a fact here.
+  has_traces:              {type: bool,  source: inspect, scope: thread, default: false,
+                            measured_by: [agent.traces.read]}
+  tool_count:              {type: int,   source: inspect, scope: thread, default: 0,
+                            measured_by: [agent.tools.read]}
+  tool_call_success_rate:  {type: float, source: inspect, scope: thread,
+                            measured_by: [agent.traces.read]}
+  tokens_per_run:          {type: float, source: inspect, scope: thread,
+                            measured_by: [agent.loop.bound]}
+  run_terminates:          {type: bool,  source: inspect, scope: thread, default: false,
+                            measured_by: [agent.loop.bound]}
+
+  # ---- what a judge computes over the failures ---------------------------
+  # The hinge of the whole ledger, exactly as the failure histogram is in the ML
+  # one. Until failures are bucketed, every remedy is a guess.
+  failure_buckets:
+    type: "map[str,int]"
+    source: derive
+    scope: thread
+    default: {}
+    measured_by: [agent.failures.run]
+    note: >
+      Bucket counts over real failures. The five buckets are the five routes of
+      S1_FORK_BY_FAILURE_BUCKET and they are the same five: tool_choice (the
+      wrong tool was called, or none was), tool_execution (the right tool was
+      called and it failed or returned junk), reasoning (the tools worked and the
+      conclusion was wrong), context (the answer was not knowable from what the
+      model was given), format (the answer was right and unusable).
+
+# ---------------------------------------------------------------------------
+# `derived:` is optional and this ledger computes nothing beyond what the engine
+# already supplies, so it says so rather than being absent. Three of the names
+# below are read by conditions in this file.
+derived:
+  proposed_method: {means: "the method a stage put forward; NOTHING_PROPOSED until one does"}
+  method_class:    {means: "methods[proposed_method].class"}
+  struck_methods:  {means: "set, appended to by any node carrying `effect: strike ...`"}
+
+# ---------------------------------------------------------------------------
+# THE ORIGIN POLICY. Read straight across from the ML ledger, and that it works
+# unchanged here is itself a finding: the rule "a gate may only be opened by an
+# origin the fact's own `source:` admits" is not about machine learning at all.
+fact_origins:
+  vocabulary:
+    MEASURED: >
+      A tool ran and the engine watched it produce this value. The failures were
+      counted, the traces were read, the loop was run to a stop. This is the only
+      origin that can open a gate whose fact this ledger declares `source:
+      inspect`, because "inspect" is a promise that a tool looked.
+    STATED: >
+      The user said so, in their own person, answering a question the harness
+      asked them. It may be wrong. Nothing checked it. But the facts tagged
+      `source: ask` are the ones there is nobody else to ask - no tool can check
+      whether somebody tried the version without a loop - and a product that will
+      not take the user's own answer about their own history has no honest way to
+      proceed. A STATED value is accountable to somebody.
+    ASSERTED: >
+      A model said so. Or nobody said where it came from, which is the same state
+      of knowledge. It may be carried, displayed and routed on. It may never be
+      the thing that opens a gate.
+    DEFAULTED: >
+      Nobody supplied it, so this file's own declared default applies, and where
+      none is declared the default is null. Every default here is the pessimistic
+      reading of "nobody has done this yet". No default may open a gate.
+  origin_of_an_unattributed_value: ASSERTED
+  why_unattributed_is_asserted: >
+    A bare value carries no claim about where it came from, and the engine does
+    not guess upward. The channel that matters is a JSON object straight from the
+    user's own model: every value in it is bare, every bare value is therefore an
+    assertion by the thing that typed it, and no boundary code has to remember
+    anything. Failing closed is the default and attributing is the deliberate act.
+  admissible_for_gates:
+    inspect: [MEASURED]
+    ask:     [MEASURED, STATED]
+    derive:  [MEASURED]
+  why_inspect_is_measured_only: >
+    `source: inspect` is this file promising that the harness READS the fact.
+    `failing_cases_n` and `failure_rate_measured` are the two the gates lean hardest
+    on. If an assertion satisfied them, G0 and G1 would be decoration and every
+    later gate would only ever be reached down a path that had already lied.
+  why_derive_is_measured_only: >
+    A derived fact is by definition the output of a computation over data the
+    harness can read - the failure histogram from a judge run over real failures.
+    If nobody computed it, nobody has it, and the user cannot state it because it
+    is not a fact about them.
+  rule: >
+    A gate passes only if its row passes on the real values AND passes again with
+    every inadmissibly-originated fact it reads masked back to its unsupplied
+    reading. Otherwise the gate does not pass.
+  scope: >
+    ORIGINS ARE CHECKED AT GATES AND NOWHERE ELSE, and that is a decision rather
+    than an oversight. An asserted number is still a number and nodes may still
+    route on it, because a route is not a verdict. What an assertion may never do
+    is be the reason a BUILD__ outcome was minted, and every BUILD__ outcome is
+    downstream of five gates.
+  unsubstantiated_outcome: ACTION__SUBSTANTIATE_CLAIMED_FACTS
+  why_a_distinct_outcome_and_not_a_silent_failure: >
+    Silently failing the gate tells the user something false. "Write down ten
+    failures" is the wrong sentence to say to somebody who has just told you they
+    have forty; it reads as the product not listening. The honest sentence is
+    "you told me there are forty - show them to me, and here is how".
+  substantiation:
+    inspect: >
+      A tool has to run and the engine has to watch it. Point this harness at
+      your trace files, your tool-definition file or your failure set and let
+      it count for itself - ALL NINE of this ledger's `inspect` facts have an
+      instrument today (`app/tools/agents.py`; docs/PHASES.md Phase 1). The
+      unit of the cost-and-termination question is TOKENS, because that is the
+      only thing a trace carries that anybody measured; if you want dollars,
+      state a price yourself and the display will derive it, marked as yours.
+    ask: >
+      You have to say this one yourself. It was answered on your behalf, and a
+      model answering for you is not you answering - it is a guess at what you
+      would like to have been true.
+    derive: >
+      This has to be computed from data the harness can read, not recited. Give
+      the harness the failures and let it bucket them.
+
+  # AND WHICH TOOL, NOT MERELY THAT SOME TOOL. Every fact above that an
+  # instrument can read carries `measured_by:` beside its `source:`, naming the
+  # capability whose tools may stamp it - `agent.traces.read` for `has_traces`,
+  # `agent.failures.run` for the four this ledger's rate rests on. The
+  # argument is written out in the ML ledger under
+  # `fact_origins.a_fact_names_the_instrument_that_can_read_it`, and it is one
+  # sentence: every other check in this product asks where a number came from,
+  # and a tool of the wrong KIND passes all of them honestly.
+  #
+  # IT MATTERS MORE HERE THAN THERE, and the reason is this ledger's own shape.
+  # These ten facts are about SOMEBODY ELSE'S AGENT - a system this harness has
+  # never run and cannot see - so every one of them is read out of a file the
+  # person exported. A trace reader and a failure runner both open files full
+  # of the person's rows, and without this declaration either could stamp the
+  # other's facts off a file that has nothing to do with them.
+  a_fact_names_the_instrument_that_can_read_it: >
+    See fact_origins.a_fact_names_the_instrument_that_can_read_it in
+    docs/diagnosis_engine.yaml for the declaration, the rule and what enforces
+    it. This ledger binds ten facts; the two shipped ledgers are held to the
+    same ratchet, in tests/test_a_fact_names_its_instrument.py.
+
+# ---------------------------------------------------------------------------
+fact_scopes:
+  vocabulary:
+    machine: "A fact about this computer. None of this ledger's facts are machine scope."
+    thread: >
+      A fact about one project, in one conversation. Every fact in this file is
+      thread scope, and `failing_cases_n` is the sharpest example: "there are
+      forty failures" is true of one file somebody pointed at in one
+      conversation, and carrying it sideways opens G0 where nobody counted
+      anything.
+  scope_of_an_undeclared_fact: thread
+  why_undeclared_is_thread: >
+    The safe answer is the one you get by forgetting. Widening is the deliberate
+    act - somebody types `scope: machine` on a line in this file where a reviewer
+    reads it - and forgetting can only ever narrow.
+
+# ---------------------------------------------------------------------------
+# THE FIVE GATES. Defined once, here. Stages reference them with `gate_ref:`.
+#
+# EVERY `on_fail` CARRIES A `note:` AND THAT IS NOT DECORATION. The engine turns
+# a gate's `on_fail.note` into the diagnosis's `say`, which is the sentence
+# `app/asking.py` puts on the card. Until 2026-08-24 not one gate in this file
+# had one, so SIX of eighteen declared outcomes reached a person with an EMPTY
+# say - among them NO_AGENT__ONE_API_CALL, which is the first refusal in
+# docs/ledgers/AI_ENGINEERING_DESIGN.md and the one this ledger exists to give.
+# The refusals are the product and a refusal nobody can read is not one.
+# `on_unsubstantiated.note` is the same sentence for the other door: the gate
+# would have passed on a claim, and the person is owed the reason it did not.
+gates:
+
+  G0_SOMETHING_TO_MEASURE:
+    node: S0_NOTHING_TO_MEASURE
+    stage: stage_0_can_we_answer
+    asks: "Are there real failures written down that we can check against?"
+    single_row: "The question is the same whatever gets built."
+    # `can_rerun_failures` IS PART OF THE QUESTION AND NOT A SECOND ONE. "Written
+    # down that we can check against" is the whole ask: a failure set nobody can
+    # run again is a story with numbers in it, and S0_CANNOT_RERUN - which is
+    # where this gate routes when the row fails - already says so. Reading the
+    # fact HERE as well as at that node is what makes an ASSERTED claim about
+    # re-runnability hit the origin policy instead of routing a build on it at a
+    # node, where assertions are admissible. A route is not a verdict; a gate is.
+    passes_when:
+      - {method_class: any, requires: "failing_cases_n >= 10 and can_rerun_failures"}
+    # IT ROUTES RATHER THAN ENDING, AND THE REASON IS THAT ZERO AND FOUR ARE NOT
+    # THE SAME SENTENCE. A gate has one `on_fail.outcome`, so telling somebody who
+    # has written down four real failures that there is "nothing to measure
+    # against" was the product not listening - the same defect the engine's own
+    # `_unsubstantiated` docstring refuses in the other direction. Routing back
+    # into this stage hands the answer to nodes that can tell the cases apart.
+    # The gate still records FAILED in the gate ledger, because `failed_gates` is
+    # written when the row fails and not when the walk stops.
+    on_fail:
+      route: stage_0_can_we_answer     # its first two nodes are the remedies
+      recipe: "Ten real failures from actual use, with what should have happened instead."
+    on_unsubstantiated:
+      note: >
+        You have told me how many failures there are and I have not seen one of
+        them. `failing_cases_n` is the number every other number in this ledger
+        is measured against, and a count nobody took is the one thing it cannot
+        be. Point me at the file, the ticket export or the log directory and let
+        me count it myself - that is a minute of your time and it is the
+        difference between a diagnosis and a conversation.
+    hard_gate: true
+
+  G1_FAILURE_RATE_MEASURED:
+    node: S1_RATE_UNMEASURED
+    stage: stage_1_reproduce
+    asks: "Do we know how often the current thing actually fails?"
+    # THE ROWS SPLIT BECAUSE THE RATE DOES. For anything without model-driven
+    # control flow the system-level rate is the whole question. An agent's rate
+    # is the SUM of a prompt half and a tool half, and a build proposed over an
+    # agent whose tools were never counted and whose calls were never scored
+    # cannot attribute its own baseline afterwards - so neither can the
+    # improvement it goes on to claim. The added clauses demand the tool layer
+    # was OBSERVED, and an asserted rate or count dies HERE under the origin
+    # policy instead of routing a build at a node, where assertions are
+    # admissible. `tool_count > 0` is not decoration: class `agent` IS an agent
+    # with tools, and a success rate over zero tools is not a rate.
+    row_strength: >
+      `agent` and `multi_agent` are strictly stronger than `any`: they repeat
+      the system-level clauses and add the two tool-layer ones. A class with no
+      row would fall back to `any`, which is exactly the weakest-question trap
+      `contract.path_semantics` warns about, so the stronger classes are spelled
+      out even where they only repeat.
+    passes_when:
+      - {method_class: any,         requires: "failure_rate_measured and baseline_success_rate is not null"}
+      - {method_class: agent,       requires: "failure_rate_measured and baseline_success_rate is not null and tool_call_success_rate is not null and tool_count > 0"}
+      - {method_class: multi_agent, requires: "failure_rate_measured and baseline_success_rate is not null and tool_call_success_rate is not null and tool_count > 0"}
+    on_fail:
+      outcome: ACTION__MEASURE_THE_BASELINE
+      recipe: "Run the failing cases against what you have now and record the rate. 14 of 50, not 'it fails sometimes'."
+      note: >
+        "It fails sometimes" is not a baseline, and everything you do after this
+        is measured against it. Run the failures you have written down against
+        the system you have right now and count: 14 of 50. That number is what
+        every later "it got better" is subtracted from, and without it the next
+        change is something you will have an opinion about rather than a result.
+        It is also the cheapest work in this ledger - you already have the
+        failures, and running them is the same act as re-running them later.
+    on_unsubstantiated:
+      note: >
+        Somebody has said the failure rate is known. A rate is a thing a run
+        produces, not a thing a sentence produces, and a number nobody watched
+        arrive is a number this product will carry and route on but will not
+        build on. Run the failures against what you have and let the harness see
+        the count.
+    hard_gate: true
+
+  G2_SIMPLE_VERSION_TRIED:
+    node: S5_NOT_TRIED_SIMPLE
+    stage: stage_5_control_flow
+    asks: "Has the version without model-driven control flow been tried?"
+    row_strength: >
+      THREE ROWS AND EACH ADDS A CLAUSE TO THE ONE ABOVE IT, because this gate is
+      where the domain's ladder lives: one API call, then a FIXED SEQUENCE of
+      them, then ONE agent with tools, then more than one. `any` asks the first
+      rung. `agent` adds `workflow_tried` - a fixed sequence is the simple
+      version of an agent, and skipping it is the single most common reason an
+      agent exists at all. `multi_agent` adds `single_agent_tried`, which is the
+      rung nobody remembers is a rung: "one context cannot hold this" is a
+      diagnosis almost everybody makes before building the single agent that
+      would have measured it.
+    passes_when:
+      - {method_class: any,         requires: "simple_version_tried"}
+      - {method_class: agent,       requires: "simple_version_tried and workflow_tried"}
+      - {method_class: multi_agent, requires: "simple_version_tried and workflow_tried and single_agent_tried"}
+    on_fail:
+      outcome: NO_AGENT__ONE_API_CALL
+      recipe: "One API call with a good prompt, then a fixed sequence of them. Most agents are this and nobody tried it."
+      note: >
+        Before an agent: one call, with a good prompt, against the failures you
+        already have. Most of what gets built as an agent is one call somebody
+        never tried, and the loop is the expensive half of the idea - it is
+        slower, it is different every time, it is hard to test and it has no
+        natural end. Trying the one call costs an afternoon and cannot lose: if
+        it clears your failures you are finished today, and if it does not, you
+        now know exactly WHICH failures survive a good prompt, which is worth
+        more than the agent would have been.
+    on_unsubstantiated:
+      note: >
+        Whether you have tried the simple version is yours to say, and something
+        else said it for you. A model answering on your behalf is a guess at what
+        you would like to have been true. This is the gate that refuses the most
+        people and it refuses them for the best reason in the file, so it will
+        not open on somebody else's word - tell me in your own person and it
+        opens immediately.
+    hard_gate: true
+
+  G3_FAILURE_REPRODUCES:
+    node: S1_DOES_NOT_REPRODUCE
+    stage: stage_1_reproduce
+    asks: "Can you make it fail on demand?"
+    single_row: >
+      No ML analogue. An agent failure you cannot reproduce can only be coincided
+      with, and every claim of improvement measured against it is a story.
+    passes_when:
+      - {method_class: any, requires: "failure_reproduces"}
+    on_fail:
+      outcome: BLOCKED__CANNOT_REPRODUCE
+      recipe: "Pin the seed, the model, the tools and the inputs, and make it fail twice in a row before you change anything."
+      note: >
+        A failure that will not come back on demand cannot be fixed, only
+        coincided with. Pin the seed, the model and its version, the tool
+        definitions and the inputs, and make it fail TWICE IN A ROW before you
+        change a line - because the moment you change something, the next run
+        that happens to pass will be read as a fix, and the one after that will
+        not be read at all. This is the gate with no machine-learning analogue
+        and it is the one this domain needs most: a training run that fails fails
+        the same way twice, and an agent does not.
+    on_unsubstantiated:
+      note: >
+        Somebody has claimed the failure reproduces. Only the person who ran it
+        twice and watched it fail twice knows that, and it is the claim this
+        whole ledger's later arithmetic rests on. Say it in your own person and
+        this one opens.
+    hard_gate: true
+
+  G4_COST_AND_TERMINATION_BOUNDED:
+    node: S5_UNBOUNDED
+    stage: stage_5_control_flow
+    asks: "Do you know what one run costs, and can you show that it stops?"
+    row_strength: >
+      `agent` is STRICTLY STRONGER than `any`: it adds `run_terminates`. A fixed
+      sequence ends because the sequence ends; a loop whose next step the model
+      chooses has no such guarantee, and a build that cannot show it terminates
+      is a build nobody can approve. `multi_agent` REPEATS the `agent` clauses
+      rather than inheriting them, and that is not redundancy - see
+      `contract.path_semantics.a_missing_row_falls_back_to_the_WEAKEST_question_not_the_nearest`.
+      A class with no row here is asked the `any` row, so leaving multi_agent out
+      would have asked the hardest outcome in the file the EASIEST question in
+      the gate.
+    # EVERY ROW READS `has_traces`, AND THAT IS THE GATE DOING ITS OWN JOB.
+    # "Can you show that it stops" is a question about a RECORD of runs:
+    # bound_the_loop reads root spans out of OTLP traces, and there is no other
+    # door to run_terminates. S1_NO_TRACES already refuses upstream when nothing
+    # was recorded, so for a measured or defaulted value this clause changes no
+    # answer - what it changes is where an ASSERTED `has_traces: true` dies. It
+    # used to die nowhere: the assertion walked past S1_NO_TRACES at a node,
+    # nodes may route on assertions because a route is not a verdict, and the
+    # gates below never asked - so a claim about the record could carry a build
+    # to a mint without one gate ever reading it. Now the claim is asked under
+    # the origin policy like every other gate fact, which is the ledger keeping
+    # its own word in fact_origins.scope: an assertion may never be the reason a
+    # BUILD__ outcome was minted.
+    passes_when:
+      - {method_class: any,         requires: "tokens_per_run is not null and has_traces"}
+      - {method_class: agent,       requires: "tokens_per_run is not null and run_terminates and has_traces"}
+      - {method_class: multi_agent, requires: "tokens_per_run is not null and run_terminates and has_traces"}
+    on_fail:
+      outcome: ACTION__BOUND_THE_LOOP
+      recipe: "Cap the steps, cap the tokens, and run the failure set to a stop. Let bound_the_loop read what one run costs in tokens."
+      note: >
+        A training run ends when the epochs finish. A loop does not - it can call
+        a tool a thousand times, recurse, and spend until somebody notices the
+        bill. Cap the steps, cap the tokens, run your failure set to a stop, and
+        write down what one run cost. Both halves are needed and they are
+        different questions: a run that terminates at an unknown price cannot be
+        approved, and a known price for a run that might not stop is not a price.
+        Nobody can approve a build whose cost is unknown, and approval here is a
+        contract rather than a formality.
+    on_unsubstantiated:
+      note: >
+        The cost, the termination proof or the record they were read from was
+        claimed rather than measured. The instruments exist to read all three
+        now - point this harness at the traces - so a claim here was not a gap
+        in the product, it was somebody's model answering for you. Cap the steps
+        and the tokens, run the failures to a stop, and let the trace reader
+        stamp what one run costs in the only unit a trace can carry.
+    hard_gate: true
+
+# ---------------------------------------------------------------------------
+# STAGE 0 - CAN WE ANSWER AT ALL?
+stage_0_can_we_answer:
+  # THE GATE IS FIRST AND ITS on_fail ROUTES BACK HERE. Evaluation resumes at the
+  # first node that is not a gate_ref, so the gate never re-enters itself and the
+  # nodes below are the answers it could not give with one outcome key. They are
+  # exhaustive over everything that reaches them: the row failed, so
+  # `failing_cases_n < 10` OR `not can_rerun_failures` - and each case has its
+  # own node, in the order a person needs to hear them.
+  - gate_ref: G0_SOMETHING_TO_MEASURE    # node S0_NOTHING_TO_MEASURE
+
+  - node: S0_SOME_BUT_NOT_TEN
+    condition: "failing_cases_n > 0 and failing_cases_n < 10"
+    outcome: ACTION__WRITE_DOWN_TEN_FAILURES
+    say: >
+      You have real failures written down and not enough of them. Ten is the
+      floor because below it a rate is not a rate: with nine cases the smallest
+      difference you can observe is one case in nine, which is eleven points, so
+      one lucky run reads as a large improvement and nothing you do next can be
+      told apart from noise. Keep the ones you have. Take the rest out of actual
+      use rather than out of your head, and write what should have happened
+      beside each one - that second half is what makes a failure re-runnable, and
+      it is the half people skip.
+
+  - node: S0_NOTHING_WRITTEN_DOWN
+    condition: "not (failing_cases_n > 0)"
+    outcome: BLOCKED__NOTHING_TO_MEASURE_AGAINST
+    say: >
+      There is nothing written down to check against, so there is nothing any
+      change could be measured by and no answer here would be honest yet. Ten
+      real failures from actual use, each with what should have happened instead.
+      Not ten you can imagine - ten that happened. The ones you can imagine are
+      the ones you have already thought about, and those are rarely the ones
+      costing you anything.
+
+  - node: S0_CANNOT_RERUN
+    condition: "not can_rerun_failures"
+    outcome: ACTION__BUILD_AN_EVAL_HARNESS
+    say: >
+      There are failures written down and no way to run them again. Everything
+      after this - the baseline, whether a change helped, whether the loop
+      terminates - is measured by running them, so this is the first real work
+      and it is not the expensive one.
+
+  - node: S0_NO_TARGET
+    condition: "target_success_rate is null"
+    outcome: ACTION__SET_A_TARGET_RATE
+    say: >
+      Nobody else can say what good enough is. Without it there is no way to tell
+      "it improved" from "it is finished", and the difference decides whether to
+      build anything at all.
+
+  # ORDERING IS LOAD-BEARING and the condition is the negation of the two nodes
+  # above, both, for the reason the ML ledger's shadowing_rule gives: the
+  # ordering makes it right today and the negation keeps it right after somebody
+  # reorders the stage. It is a real predicate rather than `always`, because an
+  # `always` on a node that is not a fork cannot be told apart from a condition
+  # somebody deleted.
+  - node: S0_ANSWERABLE
+    condition: "can_rerun_failures and target_success_rate is not null"
+    outcome: REROUTE
+    route: stage_1_reproduce
+
+# ---------------------------------------------------------------------------
+# STAGE 1 - DOES IT REPRODUCE, AND WHAT IS ACTUALLY FAILING?
+stage_1_reproduce:
+  - gate_ref: G3_FAILURE_REPRODUCES     # node S1_DOES_NOT_REPRODUCE
+  - gate_ref: G1_FAILURE_RATE_MEASURED      # node S1_RATE_UNMEASURED
+
+  # RENAMED 2026-08-24. It was S1_ALREADY_BELOW_TARGET, and the condition it
+  # carries is `baseline_success_rate >= target_success_rate` - at or ABOVE. The
+  # name said one thing, the predicate said the other, and the `say:` underneath
+  # spoke in failure-rate units about a success-rate target, so a reader
+  # comparing the sentence to the number had to do the arithmetic in their head
+  # to find out the product had it right. Nothing behaved wrongly; three
+  # spellings of one fact disagreed, which is how a real defect gets in later.
+  - node: S1_ALREADY_AT_TARGET
+    condition: "baseline_success_rate >= target_success_rate"
+    outcome: NO_AGENT__SHIP_IT
+    say: >
+      The measured success rate already meets the target you set, so the honest
+      thing to build is nothing. Stop here. That is a real answer rather than a
+      consolation one, and it is the one nothing else you could have asked was
+      going to give you - the most expensive month in this domain is the one
+      spent improving something that was already good enough and had not been
+      measured since.
+
+  # WHY THERE IS NO SEPARATE ACTION__RECORD_TRACES, which
+  # docs/ledgers/AI_ENGINEERING_DESIGN.md lists beside this outcome in its action
+  # table. It would be the same answer at the same node in the same words, under
+  # a second id: this state and "go and record traces" are not two situations,
+  # they are a situation and its remedy. This ledger keeps remedies in the
+  # sentence a person reads - gates keep theirs in `on_fail.recipe` and nodes in
+  # `say:` - so the remedy is spelled out below and there is one id for it. Two
+  # ids for one answer is how a ledger's refusals start to drift apart, and the
+  # refusals are the product.
+  - node: S1_NO_TRACES
+    condition: "not has_traces"
+    outcome: BLOCKED__NO_TRACES
+    say: >
+      Nothing recorded what the system actually did, so every diagnosis from here
+      would be a guess about which of five different problems you have - and they
+      look identical from the outside. A tool that is never called looks exactly
+      like a tool that does not work. A right answer in the wrong shape looks
+      exactly like a wrong answer. Record one entry per run: what went into the
+      model, every tool call with its arguments and what came back, and the final
+      answer. Then re-run the failures you already wrote down and come back. That
+      is the whole of the work and it is usually an afternoon.
+
+  - node: S1_TOO_FEW_CLASSIFIED
+    condition: "sum(failure_buckets.values()) < 10"
+    outcome: ACTION__CLASSIFY_THE_FAILURES
+    say: >
+      Bucket at least ten real failures into {tool_choice, tool_execution,
+      reasoning, context, format}. Until failures are bucketed every remedy is a
+      guess, and three of these five buckets do not lead to a build at all.
+
+  # THE FORK, AND IT IS THE HINGE OF THE WHOLE LEDGER. `select: argmax` takes the
+  # bucket with the most failures; ties resolve in the order the routes are
+  # written, so reordering them is a decision and it shows in a diff. The stage
+  # each route lands in reads that same order, so a tie is broken the same way in
+  # both places.
+  #
+  # FIVE BUCKETS, THREE DESTINATIONS, AND THREE OF THE FIVE END IN A REFUSAL.
+  # Until 2026-08-24 five buckets had TWO destinations and neither of them
+  # refused: `tool_execution` was sent to a stage that only diagnoses tool
+  # CHOICE, so somebody whose tools were called correctly and returned junk was
+  # told "the tools fire and the answers are still wrong, so the tools are not
+  # the bug" - a wrong answer, produced by the routing, to the one bucket that
+  # names the tools explicitly. `context` and `format` were sent to the
+  # control-flow stage, where the only questions asked are whether the next step
+  # depends on the last one; a person whose answers were RIGHT and unusable could
+  # walk out of here holding BUILD__AGENT_WITH_TOOLS. The file's own known_gaps
+  # called that "honest for now and thin". It was thinner than that: it was three
+  # of the five most common agent failures being answered by a question about
+  # loops.
+  - node: S1_FORK_BY_FAILURE_BUCKET
+    condition: always
+    fork:
+      branch_on: failure_buckets
+      select: argmax
+      routes:
+        tool_choice:    stage_3_tools          # the model chose wrong, or chose nothing
+        tool_execution: stage_2_not_the_loop   # the tool itself is broken
+        reasoning:      stage_5_control_flow   # the only road to an agent
+        context:        stage_2_not_the_loop   # it was not knowable from what was given
+        format:         stage_2_not_the_loop   # it was right and unusable
+      no_match:
+        outcome: ACTION__CLASSIFY_THE_FAILURES
+    # THIS `say:` IS ONLY EVER READ ON no_match, and that is a property of the
+    # engine rather than a choice: a fork that MATCHES returns a route, the walk
+    # carries on, and this node never terminates. So the sentence here is read by
+    # exactly one person - the one whose buckets this ledger has no route for -
+    # and it used to describe the mechanism to them instead of answering them.
+    say: >
+      Your failures are bucketed into categories this ledger has no route for, so
+      nothing here can act on them. The five it knows are tool_choice (the wrong
+      tool was called, or none was), tool_execution (the right tool was called
+      and it failed or returned junk), reasoning (the tools worked and the
+      conclusion was wrong), context (the answer was not knowable from what the
+      model was given) and format (the answer was right and unusable). Re-bucket
+      into those five and come back. They are not an arbitrary taxonomy: each one
+      has a different remedy, and three of the five mean you should not build
+      anything at all.
+
+# ---------------------------------------------------------------------------
+# STAGE 2 - THE LOOP IS NOT THE BUG.
+#
+# Three of the five failure buckets mean the control flow is innocent, and this
+# is where they land. They share one argument and it is worth stating once: an
+# agent is a way of DECIDING WHAT TO DO NEXT. If the failure is that a tool
+# returned junk, that the information was never in the window, or that the answer
+# was right and shaped wrong, then deciding what to do next was never the
+# problem, and every remedy that adds deciding - a better prompt, a loop, a
+# second agent - buys latency and cost and changes nothing.
+#
+# THREE NODES, ONE PER BUCKET, IN THE SAME ORDER AS THE FORK'S ROUTES. That
+# ordering is load-bearing and it is the fork's tie-break rule honoured a second
+# time: `argmax` resolves a tie in route-declaration order, and these conditions
+# resolve a tie in node order, so a histogram with two of these buckets level
+# gets the same answer from both halves of the machine. `>= max(failure_buckets)`
+# is "this bucket is a maximum", which is true by construction of whichever route
+# brought the walk here and false for the other two.
+#
+# NO GATE HEADS THIS STAGE, and that is the same decision stage 3 documents: G2
+# and G4 are questions ABOUT A LOOP, and asking somebody whose tool returns junk
+# whether their loop terminates is the product answering a question it was not
+# asked. Nothing proposes here, so nothing reaches S9_SWEEP_THE_GATES from this
+# stage and there is no skipped gate to pay for.
+stage_2_not_the_loop:
+
+  - node: S2_THE_TOOL_RETURNS_JUNK
+    condition: "failure_buckets.tool_execution >= max(failure_buckets)"
+    outcome: NO_AGENT__FIX_THE_TOOL
+    say: >
+      The right tool was called and it failed or returned junk, and that is the
+      whole of the failure. No loop, no better prompt and no second agent repairs
+      a tool that returns the wrong thing - they only spend more money finding it
+      out, and they make the trace longer while they do. Fix the tool, or the
+      service behind it, and re-run the same failures. This is the cheapest
+      answer in this file and it is the one most often walked past, because a
+      broken tool inside an agent presents as the agent being bad at its job.
+
+  - node: S2_NOT_KNOWABLE
+    condition: "failure_buckets.context >= max(failure_buckets)"
+    outcome: NO_AGENT__FIX_THE_CONTEXT
+    say: >
+      The answer was not knowable from what the model was given. Nothing
+      downstream invents information that was not there: an agent with the same
+      context fails the same way, more slowly and at more cost, and two agents
+      with the same context fail twice. What goes into the window, and how it
+      gets chosen, is the entire problem here - which makes this a retrieval
+      question rather than an agent one, and this harness has a ledger for that.
+      It is also the answer most multi-agent projects are actually looking for
+      and do not know it.
+
+  - node: S2_RIGHT_BUT_UNUSABLE
+    condition: "failure_buckets.format >= max(failure_buckets)"
+    outcome: NO_AGENT__CONSTRAIN_THE_OUTPUT
+    say: >
+      The answers were right and the shape was wrong. That is the cheapest defect
+      there is and the one most often mistaken for a hard one, because from the
+      outside a right answer your code cannot parse is indistinguishable from a
+      wrong answer. Constrain the output - a schema, structured outputs, a
+      grammar, or a parser you own - and re-run the same failures. Never build a
+      loop for a shape a grammar can enforce.
+
+# ---------------------------------------------------------------------------
+# STAGE 3 - THE MODEL CHOSE THE WRONG TOOL, OR CHOSE NOTHING.
+#
+# This is the stage that pays for itself. The single most common real defect in
+# an agent system is a tool that is never called because its description is
+# wrong, and it looks exactly like a tool that does not work - so two of the
+# three answers here are refusals rather than builds.
+#
+# ONE BUCKET ROUTES HERE AND IT IS `tool_choice`. `tool_execution` used to land
+# here too and got answered by nodes that only read `tool_call_success_rate` -
+# which is a measure of whether the model CALLED the right thing, not of whether
+# the thing worked. It goes to stage_2_not_the_loop now. Read the two nodes below
+# knowing that the failures that reached them are choice failures: the question
+# is why the model picked wrong, and there are exactly two answers.
+stage_3_tools:
+  - node: S3_NO_TOOLS_AT_ALL
+    condition: "tool_count == 0"
+    propose: TOOLS_FOR_AN_EXISTING_LOOP
+    route: stage_9_shape_selector
+    say: >
+      The failures are about tools and there are no tools. This is the one place
+      in this stage where building is the answer, and it is the cheap build: give
+      the loop you already have the tools it is missing.
+
+  - node: S3_DESCRIPTION_IS_THE_BUG
+    condition: "tool_count > 0 and tool_call_success_rate < 0.5"
+    outcome: NO_TOOLS__DESCRIPTION_IS_THE_BUG
+    say: >
+      The tools exist and are not being called. The description is what the model
+      reads when it decides; that is the thing to fix, and it costs an afternoon
+      rather than a rebuild.
+
+  - node: S3_PROMPT_IS_THE_BUG
+    condition: "tool_count > 0 and tool_call_success_rate >= 0.5"
+    outcome: NO_TOOLS__PROMPT_IS_THE_BUG
+    say: >
+      The tools fire and the answers are still wrong, so the tools are not the
+      bug. The instructions are.
+
+# ---------------------------------------------------------------------------
+# STAGE 5 - DOES THE CONTROL FLOW GENUINELY HAVE TO BE MODEL-DRIVEN?
+#
+# The last question, and the one that decides whether any of this needed an
+# agent. THREE OF THE FIVE ANSWERS ARE REFUSALS, and one bucket reaches this
+# stage - `reasoning`, the tools worked and the conclusion was wrong. That is the
+# only failure shape in this ledger for which deciding-what-to-do-next is
+# plausibly the fix, which is why it is the only road to a BUILD__ that goes
+# through a loop.
+#
+# TWO GATES HEAD THIS STAGE AND NOT THE TOOLS STAGE, WHICH IS A DECISION. G2
+# asks whether the version without model-driven control flow was tried and G4
+# asks what one run costs and whether it stops - both are questions ABOUT A LOOP,
+# and asking them of somebody whose tool description is the bug would be the
+# product answering a question it was not asked. The tools branch skips both and
+# pays for the skip at S9_SWEEP_THE_GATES, which is the same shape the ML
+# ledger's tabular, format and retriever branches have and the single structural
+# reason skipping is safe.
+stage_5_control_flow:
+  - gate_ref: G2_SIMPLE_VERSION_TRIED           # node S5_NOT_TRIED_SIMPLE
+  - gate_ref: G4_COST_AND_TERMINATION_BOUNDED   # node S5_UNBOUNDED
+
+  - node: S5_A_SCRIPT
+    condition: "not control_flow_is_dynamic"
+    outcome: NO_AGENT__A_SCRIPT
+    say: >
+      The steps are known and they do not depend on what the last one returned.
+      Write the code. A model in the loop adds latency, cost and doubt, and buys
+      nothing you cannot get from a function call.
+
+  - node: S5_A_WORKFLOW
+    condition: "control_flow_is_dynamic and not workflow_tried"
+    outcome: NO_AGENT__A_WORKFLOW
+    say: >
+      The content varies and the steps do not. A fixed sequence of calls is a
+      workflow, it is testable, it terminates by construction, and it is the
+      version of this that has to fail before an agent is the honest answer.
+
+  # THE RUNG NOBODY REMEMBERS IS A RUNG. It sits ABOVE S5_MULTI_AGENT and its
+  # condition is that node's condition with the last clause negated, so the two
+  # partition the multi-agent case between them and neither can shadow the other.
+  #
+  # It exists because G2's `multi_agent` row would otherwise be the only thing
+  # asking, and a gate can only say ONE sentence: NO_AGENT__ONE_API_CALL, which
+  # is the wrong thing to tell somebody who has already tried one call and a
+  # fixed sequence and is asking for their fourth rung. The gate is the structure
+  # and this node is the sentence. Both are needed and they catch different
+  # people: this node catches the person who says plainly that they have not
+  # built one agent yet, and the gate catches the case this node cannot - a
+  # `single_agent_tried` that arrives ASSERTED, where a model answered for them,
+  # because a node may route on an assertion and a gate may not open on one.
+  - node: S5_NOT_TRIED_ONE_AGENT
+    condition: "control_flow_is_dynamic and workflow_tried and one_context_is_insufficient and not single_agent_tried"
+    outcome: NO_AGENT__ONE_AGENT_FIRST
+    say: >
+      You are asking for more than one agent and you have not measured one. Every
+      rung of this ladder has to fail before the next is honest - one call, then
+      a fixed sequence, then ONE agent with tools - and this is the rung that
+      gets skipped, because "one context cannot hold this" is a conclusion almost
+      everybody reaches before building the thing that would have measured it.
+      Build the single agent. Run your failures against it and bring back the
+      rate. If it clears your target you are finished and you have saved yourself
+      the hardest system in this file to debug; if it does not, the buckets from
+      THAT run are what decides whether a second agent is the answer or whether
+      the context was the problem all along.
+
+  - node: S5_MULTI_AGENT
+    condition: "control_flow_is_dynamic and workflow_tried and one_context_is_insufficient and single_agent_tried"
+    propose: MULTI_AGENT
+    route: stage_9_shape_selector
+    say: >
+      ONE CONTEXT PROVABLY CANNOT HOLD THE WORK, you have built the single agent
+      and measured it, and it did not get you there. This bar is deliberately the
+      highest in the file: it is the only outcome that needs its own method class
+      and its own row of G2, and it is reached only after every cheaper shape
+      above it has been tried and counted. Most multi-agent systems are one agent
+      with a context problem - and note what the routing has already ruled out
+      for you, structurally rather than by opinion: a run whose dominant failure
+      bucket was `context` never reaches this stage at all.
+
+  - node: S5_AGENT_WITH_TOOLS
+    condition: "control_flow_is_dynamic and workflow_tried and not one_context_is_insufficient"
+    propose: AGENT_WITH_TOOLS
+    route: stage_9_shape_selector
+    say: >
+      The next step genuinely depends on the last one, the fixed sequence was
+      tried and it was not enough. This is what an agent is for.
+
+# ---------------------------------------------------------------------------
+# STAGE 9 - THE SHAPE SELECTOR. The only stage that turns a candidate into a
+# verdict, and `contract.roles.commit_stages` is what says so.
+stage_9_shape_selector:
+
+  # THE SWEEP. Every required gate, re-asked under the PROPOSAL'S OWN class. A
+  # gate already passed under the row that applies to this class is skipped; one
+  # passed under a different row is asked again, because a different row is a
+  # different question. This is where a proposal that walked down the
+  # class-agnostic spine pays for it.
+  - node: S9_SWEEP_THE_GATES
+    condition: always
+    order: "G0_SOMETHING_TO_MEASURE, G1_FAILURE_RATE_MEASURED, G2_SIMPLE_VERSION_TRIED, G3_FAILURE_REPRODUCES, G4_COST_AND_TERMINATION_BOUNDED"
+    rule: >
+      Let c = method_class(proposed_method). For each gate g in that order,
+      compute r = row_key(g, c). If `path` already holds a gate entry for g whose
+      `row` == r, skip it - that exact question has been asked and answered on
+      the way here. Otherwise evaluate row r. If it is true, append the gate's
+      node entry and then the gate entry. If it is false, stop: the run
+      terminates at the gate's `on_fail`, the proposal goes into rejected[] with
+      the gate id as the reason, and the user is told the cheaper thing.
+    note: >
+      This is where a proposal made in stage_3_tools pays for never having
+      entered stage_5_control_flow. Three of the four routes out of the fork can
+      reach a proposal without touching G2 or G4 at all, and this node is the
+      single structural reason that is safe.
+
+  - node: S9_GATES_REALLY_PASSED
+    condition: "not all(g in gates_passed_under(path, method_class(proposed_method)) for g in contract.required_gates)"
+    outcome: ERROR__GATE_SKIPPED
+    say: "A build recommendation was reached without exhausting the gates. This is a bug, not a diagnosis."
+
+  - node: S9_SHAPE_IS_CLASSIFIED
+    condition: "proposed_method not in methods"
+    outcome: ERROR__UNCLASSIFIED_METHOD
+    say: "A method was proposed that has no entry in `methods`, so no gate knows which row to apply."
+
+  - node: S9_MINT_BUILD_VERDICT
+    condition: "all(g in gates_passed_under(path, method_class(proposed_method)) for g in contract.required_gates) and proposed_method != NOTHING_PROPOSED and proposed_method not in struck_methods"
+    outcome: "BUILD__{proposed_method}"
+    verdict: BUILD
+    emits: [BUILD__TOOLS_FOR_AN_EXISTING_LOOP, BUILD__AGENT_WITH_TOOLS, BUILD__MULTI_AGENT]
+    row_note: >
+      gates_passed_under, not bare membership in `path`. A gate passed under a
+      row that does not apply to this proposal's class did not ask this
+      proposal's question and does not count towards the mint.
+    say: >
+      Everything cheaper has been tried and measured, and it did not get you
+      there. Here is what is left, what one run of it costs, and how you will
+      know if it worked.
+
+  # The stage cannot run off the end: S9_MINT_BUILD_VERDICT's condition is the
+  # negation of S9_GATES_REALLY_PASSED's plus two clauses, and a proposal that reached
+  # here with NOTHING_PROPOSED would already have been caught by the fact that
+  # nothing routes here without proposing.
+  - node: S9_NOTHING_PROPOSED
+    condition: "proposed_method == NOTHING_PROPOSED"
+    outcome: ERROR__NO_PROPOSAL
+    say: "The shape selector was entered with no proposal. Every route into it proposes; this is a bug."
+
+# ---------------------------------------------------------------------------
+# The rule that killed four outcomes in the ML ledger, restated for this one
+# because it is a property of the shape rather than of the domain.
+shadowing_rule:
+  rule: >
+    Within a stage, a node with a terminal `outcome:` kills every later node
+    whose condition implies its own. Test the specific case above the general
+    one, and write the general node's condition as the negation of the specific
+    one where that is short enough to read.
+  it_applies_to_every_prefix: >
+    A dead NO_AGENT__ outcome is invisible to anything that only looks at
+    BUILD__ ones, and the no-build answers ARE the product. Four of this file's
+    outcomes are refusals and they are the four most likely to be right.
+  where_it_bites_here: >
+    stage_5_control_flow is the exposed one: five nodes, four of them conditioned
+    on `control_flow_is_dynamic`, and the last three differ only in
+    `one_context_is_insufficient` and `single_agent_tried`. Widen
+    S5_AGENT_WITH_TOOLS by dropping the `not one_context_is_insufficient` clause
+    and BOTH S5_NOT_TRIED_ONE_AGENT and S5_MULTI_AGENT die silently - which is
+    the exact mechanism, twice over, that cost the ML ledger seven outcomes.
+    stage_2_not_the_loop is exposed differently and is worth reading with this
+    rule in hand: its three conditions are `>= max(failure_buckets)`, so they can
+    ALL be true at once on a tie and the order alone decides. That is deliberate
+    and it is the fork's tie-break rule, but it means reordering those three
+    nodes changes answers without changing a condition, which is the one shape a
+    diff makes hardest to see.
+
+static_checks:
+  - id: SC1_ONE_MINT
+    rule: "No node may carry an `outcome:` starting with BUILD__ except S9_MINT_BUILD_VERDICT, which contract.outcome_prefixes.BUILD__.mintable_only_at names."
+    how: "enforced by the engine, parameterised by contract.roles and the gated prefix"
+  - id: SC2_EVERY_PROPOSAL_ROUTES_TO_A_COMMIT_STAGE
+    rule: "Every node carrying `propose:` routes to one of contract.roles.commit_stages, or is already inside one."
+  - id: SC3_EVERY_METHOD_HAS_A_ROW_IN_EVERY_GATE
+    rule: "For each method, each of the five gates has a matching passes_when row - either method_class: any, or a row for that method's class."
+
+known_gaps:
+
+  # A LIST, NOT A SENTENCE, AND THE DIFFERENCE IS THE WHOLE POINT. The prose
+  # version of this gap said FOUR for as long as it existed and the true number
+  # was nine, because a sentence cannot be recomputed and nobody recomputed it.
+  # `tests/test_the_ai_ledger_refuses_before_it_builds.py` derives this set from
+  # `{fact for spec in REGISTRY for fact in spec.measures}` and asserts it equals
+  # what is written here, in BOTH directions - so shipping an instrument turns
+  # this file red until the line comes out, and declaring a fact `inspect` that
+  # nothing measures turns it red until the name goes in.
+  no_instrument_measures: []
+
+  every_inspect_fact_is_on_that_list: >
+    EMPTY AS OF 2026-08-25, and the empty list is the headline. All nine
+    `inspect` facts have instruments - read_agent_traces,
+    read_tool_definitions, run_the_failures and bound_the_loop, in
+    `app/tools/agents.py` (docs/PHASES.md Phase 1) - because the gate was
+    DENOMINATED IN WHAT AN INSTRUMENT CAN READ: G4 now asks `tokens_per_run`,
+    which bound_the_loop reads off OTLP usage attributes and refuses to total
+    when any inference span lacks them (docs/AGENT_INSTRUMENTS.md A5.3 argued
+    this rename as the highest-value change in the plan; it shipped today).
+    The old name, `cost_per_run_usd`, is gone rather than unmeasured - no
+    instrument can read US dollars out of a trace, so a fact this harness can
+    never honestly measure has no place in a ledger whose gates open on
+    measurements. A currency figure stays available as a derived display over
+    measured tokens times a price the user STATED, on a date. The list stays
+    here anyway, empty, because the test recomputes it from the registry in
+    BOTH directions - shipping an instrument takes a name off, declaring an
+    unmeasured `inspect` fact puts one on - and a list that cannot be empty
+    is a list that lies the first time it should be.
+
+  no_outcome_here_leads_to_a_build_yet: >
+    RETIRED 2026-08-25, AND KEPT HERE SAYING SO, because its replacement is a
+    claim with a test behind it. ALL THREE BUILD__ outcomes now have proposers:
+    the same measurement core (re-grade, bound, walk) answers each, differing
+    only in what they lead with and why - BUILD__AGENT_WITH_TOOLS re-measures a
+    stale tool layer, BUILD__TOOLS_FOR_AN_EXISTING_LOOP leads with the
+    definitions reader because that verdict arrives from ZERO tools, and
+    BUILD__MULTI_AGENT re-measures the same single-agent recordings before
+    anybody writes orchestration. All three are gated by
+    `the_agent_instruments_are_registered` rather than hardcoded. The count that
+    matters now lives in propose.PROPOSERS, read live off the registry.
+
+  the_fork_has_five_buckets_and_three_destinations: >
+    CLOSED 2026-08-24, and what it was hiding was worse than thin. tool_choice
+    goes to stage_3_tools, reasoning goes to stage_5_control_flow, and
+    tool_execution, context and format now go to stage_2_not_the_loop, where each
+    gets a refusal of its own. What remains open is the ratio: ONE of the five
+    buckets can lead to a loop-shaped build, and whether that is the domain
+    telling the truth or this ledger being too narrow is a question only real
+    runs can answer. It is written here so the first run that disagrees has
+    something to disagree with.
+
+  reasoning_is_one_bucket_doing_two_jobs: >
+    "The tools worked and the conclusion was wrong" covers both a model that
+    cannot do the task and a model that was not told what the task was, and those
+    have opposite remedies - a better model against a better prompt. This ledger
+    routes both to stage_5_control_flow and asks neither. It is the next honest
+    subdivision and it needs a fact nothing here measures yet.

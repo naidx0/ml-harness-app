@@ -1,0 +1,29 @@
+<!-- THE CLEAVE, written by scripts/make_icon.py. Do not hand-edit: it
+     is the same geometry as src-tauri/icons/icon.svg on a 48 grid, and
+     the rail glyph in Icon.tsx is its flat silhouette. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="c0" gradientUnits="userSpaceOnUse" x1="0" y1="0.96" x2="0" y2="19.10"><stop offset="0" stop-color="#C0D6FF"/><stop offset="1" stop-color="#899DD1"/></linearGradient>
+    <linearGradient id="c1" gradientUnits="userSpaceOnUse" x1="0" y1="4.05" x2="0" y2="8.43"><stop offset="0" stop-color="#687BB5"/><stop offset="1" stop-color="#27387F"/></linearGradient>
+    <linearGradient id="c2" gradientUnits="userSpaceOnUse" x1="0" y1="7.66" x2="0" y2="19.10"><stop offset="0" stop-color="#37498C"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c3" gradientUnits="userSpaceOnUse" x1="0" y1="11.22" x2="0" y2="23.59"><stop offset="0" stop-color="#C0D6FF"/><stop offset="1" stop-color="#8CA1D4"/></linearGradient>
+    <linearGradient id="c4" gradientUnits="userSpaceOnUse" x1="0" y1="11.22" x2="0" y2="34.41"><stop offset="0" stop-color="#91A5D7"/><stop offset="1" stop-color="#5062A1"/></linearGradient>
+    <linearGradient id="c5" gradientUnits="userSpaceOnUse" x1="0" y1="19.72" x2="0" y2="34.67"><stop offset="0" stop-color="#475999"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c6" gradientUnits="userSpaceOnUse" x1="0" y1="34.41" x2="0" y2="47.04"><stop offset="0" stop-color="#304186"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c7" gradientUnits="userSpaceOnUse" x1="0" y1="34.41" x2="0" y2="47.04"><stop offset="0" stop-color="#445697"/><stop offset="1" stop-color="#0C1C68"/></linearGradient>
+    <linearGradient id="c8" gradientUnits="userSpaceOnUse" x1="0" y1="23.59" x2="0" y2="42.92"><stop offset="0" stop-color="#869BCF"/><stop offset="1" stop-color="#465898"/></linearGradient>
+    <linearGradient id="c9" gradientUnits="userSpaceOnUse" x1="0" y1="21.89" x2="0" y2="26.42"><stop offset="0" stop-color="#BAD0FA"/><stop offset="1" stop-color="#798DC4"/></linearGradient>
+    <radialGradient id="pool" gradientUnits="userSpaceOnUse" cx="21.29" cy="7.14" r="11.85"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+  </defs>
+  <polygon points="13.56,19.10 21.81,0.96 35.34,4.05 27.60,7.66" fill="url(#c0)" stroke="url(#c0)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="35.34,4.05 37.96,8.43 27.60,7.66" fill="url(#c1)" stroke="url(#c1)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="37.96,8.43 13.56,19.10 27.60,7.66" fill="url(#c2)" stroke="url(#c2)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="10.28,21.89 34.68,11.22 20.78,23.59" fill="url(#c3)" stroke="url(#c3)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="34.68,11.22 39.78,19.72 30.44,34.41 20.78,23.59" fill="url(#c4)" stroke="url(#c4)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="39.78,19.72 37.85,34.67 30.44,34.41" fill="url(#c5)" stroke="url(#c5)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="37.85,34.67 28.19,47.04 30.44,34.41" fill="url(#c6)" stroke="url(#c6)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="28.19,47.04 14.01,42.92 30.44,34.41" fill="url(#c7)" stroke="url(#c7)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="14.01,42.92 8.22,26.42 20.78,23.59 30.44,34.41" fill="url(#c8)" stroke="url(#c8)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="8.22,26.42 10.28,21.89 20.78,23.59" fill="url(#c9)" stroke="url(#c9)" stroke-width="0.86" stroke-linejoin="round"/>
+  <polygon points="13.56,19.10 21.81,0.96 35.34,4.05 37.96,8.43" fill="url(#pool)" stroke="url(#pool)" stroke-width="0.86" stroke-linejoin="round"/>
+</svg>

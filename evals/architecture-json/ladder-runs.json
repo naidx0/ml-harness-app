@@ -1,0 +1,50 @@
+[
+  {
+    "arm": "zeroshot",
+    "thread_id": 51,
+    "seconds": 294.6,
+    "rows_path": "evals/architecture-json/runs/ladder-zeroshot-baseline-20260909T130448.jsonl",
+    "exact_match_score": 0.0,
+    "replaced_a_baseline_from": null
+  },
+  {
+    "arm": "oneshot",
+    "thread_id": 52,
+    "seconds": 365.6,
+    "rows_path": "evals/architecture-json/runs/ladder-oneshot-baseline-20260909T131153.jsonl",
+    "exact_match_score": 0.0,
+    "replaced_a_baseline_from": null
+  },
+  {
+    "arm": "twoshot",
+    "thread_id": 53,
+    "seconds": 342.8,
+    "rows_path": "evals/architecture-json/runs/ladder-twoshot-baseline-20260909T131736.jsonl",
+    "exact_match_score": 0.0,
+    "replaced_a_baseline_from": null
+  },
+  {
+    "arm": "threeshot",
+    "thread_id": 54,
+    "seconds": 367.2,
+    "rows_path": "evals/architecture-json/runs/ladder-threeshot-baseline-20260909T132343.jsonl",
+    "exact_match_score": 0.0,
+    "replaced_a_baseline_from": null
+  },
+  {
+    "arm": "offdomain",
+    "thread_id": 55,
+    "seconds": 353.1,
+    "rows_path": "evals/architecture-json/runs/ladder-offdomain-baseline-20260909T132937.jsonl",
+    "exact_match_score": 0.0,
+    "replaced_a_baseline_from": null
+  },
+  {
+    "arm": "namingrule",
+    "thread_id": 56,
+    "seconds": 360.4,
+    "rows_path": "evals/architecture-json/runs/ladder-namingrule-baseline-20260909T133639.jsonl",
+    "exact_match_score": 0.0,
+    "replaced_a_baseline_from": null
+  }
+]

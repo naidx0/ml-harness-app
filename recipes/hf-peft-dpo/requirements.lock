@@ -1,0 +1,96 @@
+# The pinned environment for the hf-peft-dpo recipe.
+#
+# Materialise it with, from the repository root:
+#
+#   uv venv --python 3.11 recipes/hf-peft-dpo/.venv
+#   uv pip install --python recipes/hf-peft-dpo/.venv/Scripts/python.exe #       --index-url https://download.pytorch.org/whl/cu124 torch==2.6.0
+#   uv pip sync --python recipes/hf-peft-dpo/.venv/Scripts/python.exe #       recipes/hf-peft-dpo/requirements.lock
+#
+# DELIBERATELY IDENTICAL TO `hf-peft-lora/requirements.lock`, AND THAT IS NOT A
+# COPY-PASTE OVERSIGHT. trl 0.24 ships `SFTTrainer` and `DPOTrainer` in the same
+# distribution, so the two recipes need the same forty-five pins. They are
+# separate files because `recipe.toml` frames a recipe as a named backend a plan
+# says out loud, and `app/jobspec.py` resolves the lock per directory - a shared
+# lock would be one file two recipes could drift apart on, and the first time
+# one of them needed a pin the other could not take, there would be nowhere to
+# put it.
+#
+# torch is installed first and from a different index for `hf-peft-lora`'s
+# reason, unchanged: PyPI's Windows torch wheel is CPU-only at 122 MB, the CUDA
+# build is 2.75 GB and only exists on download.pytorch.org, and a run on the
+# wrong one completes every setup step and is then silently twenty times slower.
+# `entrypoint.py`'s preflight refuses to start on it.
+#
+# Disk cost: 4.8 GB, the same as the other recipe and NOT shared with it. That
+# is per recipe and it is the number to show somebody before offering to build
+# one.
+#
+# NOT YET MATERIALISED ON THIS MACHINE. The figures in `hf-peft-lora`'s header -
+# peak VRAM, seconds, adapter size - come from a run that happened there. There
+# is no such run here yet, so there are no figures here, and inventing them from
+# the sibling would be inventing a measurement of something that never ran.
+
+#
+# ## WHY bitsandbytes IS PINNED HERE AND NOT YET USED HERE
+#
+# `hf-peft-lora` gained a 4-bit base on 2026-09-10, because a 1.7B LoRA in fp16
+# peaked at 7.05 GiB on an 8 GiB card at sequence 512 and 4-bit took the same
+# configuration to 1.79. The pins of the two recipes are asserted IDENTICAL by
+# tests/test_a_preference_run_continues_an_sft_pass.py, and that assertion is
+# worth keeping - two recipes on one trl distribution drifting apart is the
+# thing it exists to catch - so the pin lands here too.
+#
+# IT IS NOT WIRED INTO THIS ENTRYPOINT, AND THE REASON IS A REAL ONE RATHER
+# THAN A TODO. This recipe's `policy` is either the base model or the result of
+# `PeftModel.merge_and_unload()` when continuing from an SFT adapter, and
+# merging LoRA deltas into a 4-bit base is not a clean operation: the merge
+# needs dequantised weights to add into. So QLoRA-DPO here needs a decision
+# about WHERE the merge happens relative to the quantisation, which is a design
+# question and not a line of config. Whoever takes it: that is the whole
+# problem, and the fp16 path below is untouched and still correct.
+accelerate==1.10.1
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+attrs==26.1.0
+bitsandbytes==0.50.2
+certifi==2026.7.22
+charset-normalizer==3.5.1
+colorama==0.4.6
+datasets==4.0.0
+dill==0.3.8
+filelock==3.32.3
+frozenlist==1.8.0
+fsspec==2025.3.0
+huggingface-hub==0.36.2
+idna==3.19
+jinja2==3.1.6
+markupsafe==3.0.3
+mpmath==1.3.0
+multidict==6.7.1
+multiprocess==0.70.16
+networkx==3.6.1
+numpy==2.4.6
+packaging==26.3
+pandas==3.0.5
+peft==0.17.1
+propcache==0.5.2
+psutil==7.2.2
+pyarrow==25.0.1
+python-dateutil==2.9.0.post0
+pyyaml==6.0.3
+regex==2026.7.19
+requests==2.34.2
+safetensors==0.8.0
+six==1.17.0
+sympy==1.13.1
+tokenizers==0.22.2
+torch==2.6.0+cu124
+tqdm==4.70.0
+transformers==4.57.1
+trl==0.24.0
+typing-extensions==4.16.0
+tzdata==2026.3
+urllib3==2.7.0
+xxhash==4.0.1
+yarl==1.24.5

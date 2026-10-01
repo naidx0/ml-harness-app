@@ -1,0 +1,716 @@
+{
+  "situation": "A measured recall that RECORDED. measure_retriever_recall over an eval set that names the right document for every question, on an index that is not truncated, with no unresolved row, no unlabelled row and no row a score tie decided - which is every one of the seven conditions the stamp is guarded by, met.",
+  "corpus": "handbook/ - 24 sections, each owning one rare term, and 66 short notices that mention the same terms. BM25 normalises by length so a notice outranks the section it summarises: section n lands at rank n%7+1, which is why recall rises with k here instead of being flat.",
+  "produced_by": {
+    "tool": "measure_retriever_recall",
+    "arguments": {
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\handbook.jsonl",
+      "question_field": "question",
+      "ground_truth_field": "gold_document",
+      "k": 5,
+      "index_id": 1
+    },
+    "index_built_first": {
+      "path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\handbook",
+      "name": "handbook"
+    },
+    "thread_id": 1,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\claude\\C--Users-example-OneDrive-Documents-GitHub-ml-harness\\95a6345b-2d3c-44f9-ad75-3c543aa629e6\\scratchpad\\gate\\capture.db",
+    "work_root": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2",
+    "captured_at_utc": "2026-08-21T10:49:08+00:00",
+    "engine": "app/tools/retrieval.py, via app.tools.REGISTRY.call"
+  },
+  "shape": {
+    "top_level_keys": 38,
+    "rows_a_flat_table_would_draw": 411,
+    "rows_the_payload_actually_holds": 411,
+    "max_nesting_depth": 4,
+    "containers_summarised_away_at_depth_3": 30,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {
+      "rows[].returned": 24,
+      "misses[].returned": 6
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 3,
+    "longest_string_chars": 607,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": true,
+    "index_id": 1,
+    "index_name": "handbook",
+    "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\handbook.jsonl",
+    "question_field": "question",
+    "ground_truth_field": "gold_document",
+    "ground_truth_chosen_how": "named in the call",
+    "ground_truth_level": "document",
+    "levels": {
+      "document": 24
+    },
+    "matched_by": {
+      "doc_key": 24
+    },
+    "k": 5,
+    "questions_scored": 24,
+    "questions_eligible": 24,
+    "rows_seen": 24,
+    "rows_read": 24,
+    "hit_row_cap": false,
+    "unlabelled_rows": [],
+    "unlabelled_n": 0,
+    "unlabelled_by_reason": {},
+    "tie_decided_rows": [],
+    "tie_decided_n": 0,
+    "hits": 18,
+    "recall_at_k": 0.75,
+    "recall_curve": [
+      {
+        "k": 1,
+        "hits": 4,
+        "of": 24,
+        "recall": 0.16666666666666666,
+        "tie_decided": 0
+      },
+      {
+        "k": 2,
+        "hits": 8,
+        "of": 24,
+        "recall": 0.3333333333333333,
+        "tie_decided": 0
+      },
+      {
+        "k": 3,
+        "hits": 12,
+        "of": 24,
+        "recall": 0.5,
+        "tie_decided": 0
+      },
+      {
+        "k": 4,
+        "hits": 15,
+        "of": 24,
+        "recall": 0.625,
+        "tie_decided": 0
+      },
+      {
+        "k": 5,
+        "hits": 18,
+        "of": 24,
+        "recall": 0.75,
+        "tie_decided": 0
+      }
+    ],
+    "unresolved_ground_truth": [],
+    "unresolved_n": 0,
+    "rows": [
+      {
+        "row": 0,
+        "question": "zarquon procedure",
+        "ground_truth": "sections/hb-00.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 1,
+        "best_possible_rank": 1,
+        "worst_possible_rank": 1,
+        "tie_decided_at_k": [],
+        "top_passage": "sections/hb-00.md#0",
+        "returned": [
+          "sections/hb-00.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0",
+          "notices/notice-03-0.md#0"
+        ]
+      },
+      {
+        "row": 1,
+        "question": "blorptide procedure",
+        "ground_truth": "sections/hb-01.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 2,
+        "best_possible_rank": 2,
+        "worst_possible_rank": 2,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-01-0.md#0",
+        "returned": [
+          "notices/notice-01-0.md#0",
+          "sections/hb-01.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0",
+          "notices/notice-03-0.md#0"
+        ]
+      },
+      {
+        "row": 2,
+        "question": "quibblesnap procedure",
+        "ground_truth": "sections/hb-02.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 3,
+        "best_possible_rank": 3,
+        "worst_possible_rank": 3,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-02-0.md#0",
+        "returned": [
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0",
+          "sections/hb-02.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-03-0.md#0"
+        ]
+      },
+      {
+        "row": 3,
+        "question": "frobnicate procedure",
+        "ground_truth": "sections/hb-03.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 4,
+        "best_possible_rank": 4,
+        "worst_possible_rank": 4,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-03-0.md#0",
+        "returned": [
+          "notices/notice-03-0.md#0",
+          "notices/notice-03-1.md#0",
+          "notices/notice-03-2.md#0",
+          "sections/hb-03.md#0",
+          "notices/notice-01-0.md#0"
+        ]
+      },
+      {
+        "row": 4,
+        "question": "wibblethorn procedure",
+        "ground_truth": "sections/hb-04.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 5,
+        "best_possible_rank": 5,
+        "worst_possible_rank": 5,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-04-0.md#0",
+        "returned": [
+          "notices/notice-04-0.md#0",
+          "notices/notice-04-1.md#0",
+          "notices/notice-04-2.md#0",
+          "notices/notice-04-3.md#0",
+          "sections/hb-04.md#0"
+        ]
+      },
+      {
+        "row": 5,
+        "question": "gnarflux procedure",
+        "ground_truth": "sections/hb-05.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 6,
+        "worst_possible_rank": 6,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-05-0.md#0",
+        "returned": [
+          "notices/notice-05-0.md#0",
+          "notices/notice-05-1.md#0",
+          "notices/notice-05-2.md#0",
+          "notices/notice-05-3.md#0",
+          "notices/notice-05-4.md#0"
+        ]
+      },
+      {
+        "row": 6,
+        "question": "plumbago procedure",
+        "ground_truth": "sections/hb-06.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 7,
+        "worst_possible_rank": 7,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-06-0.md#0",
+        "returned": [
+          "notices/notice-06-0.md#0",
+          "notices/notice-06-1.md#0",
+          "notices/notice-06-2.md#0",
+          "notices/notice-06-3.md#0",
+          "notices/notice-06-4.md#0"
+        ]
+      },
+      {
+        "row": 7,
+        "question": "skerrivant procedure",
+        "ground_truth": "sections/hb-07.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 1,
+        "best_possible_rank": 1,
+        "worst_possible_rank": 1,
+        "tie_decided_at_k": [],
+        "top_passage": "sections/hb-07.md#0",
+        "returned": [
+          "sections/hb-07.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0",
+          "notices/notice-03-0.md#0"
+        ]
+      },
+      {
+        "row": 8,
+        "question": "thrumbolt procedure",
+        "ground_truth": "sections/hb-08.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 2,
+        "best_possible_rank": 2,
+        "worst_possible_rank": 2,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-08-0.md#0",
+        "returned": [
+          "notices/notice-08-0.md#0",
+          "sections/hb-08.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0"
+        ]
+      },
+      {
+        "row": 9,
+        "question": "vexilate procedure",
+        "ground_truth": "sections/hb-09.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 3,
+        "best_possible_rank": 3,
+        "worst_possible_rank": 3,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-09-0.md#0",
+        "returned": [
+          "notices/notice-09-0.md#0",
+          "notices/notice-09-1.md#0",
+          "sections/hb-09.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0"
+        ]
+      },
+      {
+        "row": 10,
+        "question": "morrowgate procedure",
+        "ground_truth": "sections/hb-10.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 4,
+        "best_possible_rank": 4,
+        "worst_possible_rank": 4,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-10-0.md#0",
+        "returned": [
+          "notices/notice-10-0.md#0",
+          "notices/notice-10-1.md#0",
+          "notices/notice-10-2.md#0",
+          "sections/hb-10.md#0",
+          "notices/notice-01-0.md#0"
+        ]
+      },
+      {
+        "row": 11,
+        "question": "clindersome procedure",
+        "ground_truth": "sections/hb-11.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 5,
+        "best_possible_rank": 5,
+        "worst_possible_rank": 5,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-11-0.md#0",
+        "returned": [
+          "notices/notice-11-0.md#0",
+          "notices/notice-11-1.md#0",
+          "notices/notice-11-2.md#0",
+          "notices/notice-11-3.md#0",
+          "sections/hb-11.md#0"
+        ]
+      },
+      {
+        "row": 12,
+        "question": "arbuthnot procedure",
+        "ground_truth": "sections/hb-12.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 6,
+        "worst_possible_rank": 6,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-12-0.md#0",
+        "returned": [
+          "notices/notice-12-0.md#0",
+          "notices/notice-12-1.md#0",
+          "notices/notice-12-2.md#0",
+          "notices/notice-12-3.md#0",
+          "notices/notice-12-4.md#0"
+        ]
+      },
+      {
+        "row": 13,
+        "question": "dwindlecap procedure",
+        "ground_truth": "sections/hb-13.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 7,
+        "worst_possible_rank": 7,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-13-0.md#0",
+        "returned": [
+          "notices/notice-13-0.md#0",
+          "notices/notice-13-1.md#0",
+          "notices/notice-13-2.md#0",
+          "notices/notice-13-3.md#0",
+          "notices/notice-13-4.md#0"
+        ]
+      },
+      {
+        "row": 14,
+        "question": "estovar procedure",
+        "ground_truth": "sections/hb-14.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 1,
+        "best_possible_rank": 1,
+        "worst_possible_rank": 1,
+        "tie_decided_at_k": [],
+        "top_passage": "sections/hb-14.md#0",
+        "returned": [
+          "sections/hb-14.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0",
+          "notices/notice-03-0.md#0"
+        ]
+      },
+      {
+        "row": 15,
+        "question": "fenwicket procedure",
+        "ground_truth": "sections/hb-15.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 2,
+        "best_possible_rank": 2,
+        "worst_possible_rank": 2,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-15-0.md#0",
+        "returned": [
+          "notices/notice-15-0.md#0",
+          "sections/hb-15.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0"
+        ]
+      },
+      {
+        "row": 16,
+        "question": "grumbleaxe procedure",
+        "ground_truth": "sections/hb-16.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 3,
+        "best_possible_rank": 3,
+        "worst_possible_rank": 3,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-16-0.md#0",
+        "returned": [
+          "notices/notice-16-0.md#0",
+          "notices/notice-16-1.md#0",
+          "sections/hb-16.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0"
+        ]
+      },
+      {
+        "row": 17,
+        "question": "hesperine procedure",
+        "ground_truth": "sections/hb-17.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 4,
+        "best_possible_rank": 4,
+        "worst_possible_rank": 4,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-17-0.md#0",
+        "returned": [
+          "notices/notice-17-0.md#0",
+          "notices/notice-17-1.md#0",
+          "notices/notice-17-2.md#0",
+          "sections/hb-17.md#0",
+          "notices/notice-01-0.md#0"
+        ]
+      },
+      {
+        "row": 18,
+        "question": "inkwhistle procedure",
+        "ground_truth": "sections/hb-18.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 5,
+        "best_possible_rank": 5,
+        "worst_possible_rank": 5,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-18-0.md#0",
+        "returned": [
+          "notices/notice-18-0.md#0",
+          "notices/notice-18-1.md#0",
+          "notices/notice-18-2.md#0",
+          "notices/notice-18-3.md#0",
+          "sections/hb-18.md#0"
+        ]
+      },
+      {
+        "row": 19,
+        "question": "jorbelisk procedure",
+        "ground_truth": "sections/hb-19.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 6,
+        "worst_possible_rank": 6,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-19-0.md#0",
+        "returned": [
+          "notices/notice-19-0.md#0",
+          "notices/notice-19-1.md#0",
+          "notices/notice-19-2.md#0",
+          "notices/notice-19-3.md#0",
+          "notices/notice-19-4.md#0"
+        ]
+      },
+      {
+        "row": 20,
+        "question": "kessleroy procedure",
+        "ground_truth": "sections/hb-20.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 7,
+        "worst_possible_rank": 7,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-20-0.md#0",
+        "returned": [
+          "notices/notice-20-0.md#0",
+          "notices/notice-20-1.md#0",
+          "notices/notice-20-2.md#0",
+          "notices/notice-20-3.md#0",
+          "notices/notice-20-4.md#0"
+        ]
+      },
+      {
+        "row": 21,
+        "question": "lumbertide procedure",
+        "ground_truth": "sections/hb-21.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 1,
+        "best_possible_rank": 1,
+        "worst_possible_rank": 1,
+        "tie_decided_at_k": [],
+        "top_passage": "sections/hb-21.md#0",
+        "returned": [
+          "sections/hb-21.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0",
+          "notices/notice-03-0.md#0"
+        ]
+      },
+      {
+        "row": 22,
+        "question": "marchpane procedure",
+        "ground_truth": "sections/hb-22.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 2,
+        "best_possible_rank": 2,
+        "worst_possible_rank": 2,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-22-0.md#0",
+        "returned": [
+          "notices/notice-22-0.md#0",
+          "sections/hb-22.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0",
+          "notices/notice-02-1.md#0"
+        ]
+      },
+      {
+        "row": 23,
+        "question": "nockspindle procedure",
+        "ground_truth": "sections/hb-23.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": 3,
+        "best_possible_rank": 3,
+        "worst_possible_rank": 3,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-23-0.md#0",
+        "returned": [
+          "notices/notice-23-0.md#0",
+          "notices/notice-23-1.md#0",
+          "sections/hb-23.md#0",
+          "notices/notice-01-0.md#0",
+          "notices/notice-02-0.md#0"
+        ]
+      }
+    ],
+    "misses": [
+      {
+        "row": 5,
+        "question": "gnarflux procedure",
+        "ground_truth": "sections/hb-05.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 6,
+        "worst_possible_rank": 6,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-05-0.md#0",
+        "returned": [
+          "notices/notice-05-0.md#0",
+          "notices/notice-05-1.md#0",
+          "notices/notice-05-2.md#0",
+          "notices/notice-05-3.md#0",
+          "notices/notice-05-4.md#0"
+        ]
+      },
+      {
+        "row": 6,
+        "question": "plumbago procedure",
+        "ground_truth": "sections/hb-06.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 7,
+        "worst_possible_rank": 7,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-06-0.md#0",
+        "returned": [
+          "notices/notice-06-0.md#0",
+          "notices/notice-06-1.md#0",
+          "notices/notice-06-2.md#0",
+          "notices/notice-06-3.md#0",
+          "notices/notice-06-4.md#0"
+        ]
+      },
+      {
+        "row": 12,
+        "question": "arbuthnot procedure",
+        "ground_truth": "sections/hb-12.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 6,
+        "worst_possible_rank": 6,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-12-0.md#0",
+        "returned": [
+          "notices/notice-12-0.md#0",
+          "notices/notice-12-1.md#0",
+          "notices/notice-12-2.md#0",
+          "notices/notice-12-3.md#0",
+          "notices/notice-12-4.md#0"
+        ]
+      },
+      {
+        "row": 13,
+        "question": "dwindlecap procedure",
+        "ground_truth": "sections/hb-13.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 7,
+        "worst_possible_rank": 7,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-13-0.md#0",
+        "returned": [
+          "notices/notice-13-0.md#0",
+          "notices/notice-13-1.md#0",
+          "notices/notice-13-2.md#0",
+          "notices/notice-13-3.md#0",
+          "notices/notice-13-4.md#0"
+        ]
+      },
+      {
+        "row": 19,
+        "question": "jorbelisk procedure",
+        "ground_truth": "sections/hb-19.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 6,
+        "worst_possible_rank": 6,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-19-0.md#0",
+        "returned": [
+          "notices/notice-19-0.md#0",
+          "notices/notice-19-1.md#0",
+          "notices/notice-19-2.md#0",
+          "notices/notice-19-3.md#0",
+          "notices/notice-19-4.md#0"
+        ]
+      },
+      {
+        "row": 20,
+        "question": "kessleroy procedure",
+        "ground_truth": "sections/hb-20.md",
+        "level": "document",
+        "matched_by": "doc_key",
+        "found_at_rank": null,
+        "best_possible_rank": 7,
+        "worst_possible_rank": 7,
+        "tie_decided_at_k": [],
+        "top_passage": "notices/notice-20-0.md#0",
+        "returned": [
+          "notices/notice-20-0.md#0",
+          "notices/notice-20-1.md#0",
+          "notices/notice-20-2.md#0",
+          "notices/notice-20-3.md#0",
+          "notices/notice-20-4.md#0"
+        ]
+      }
+    ],
+    "answer_in_passage": null,
+    "resolution": {
+      "n": 24,
+      "ci_95": [
+        0.55100555994846,
+        0.8800063377140499
+      ],
+      "half_width_points": 16.450038888279494,
+      "resolves_a_difference_of_at_least_points": 28.289643351904292,
+      "rows_for_a_10_point_difference": 193,
+      "more_rows_needed_for_10_points": 169,
+      "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+      "says": "24 rows put this score between 55% and 88% with 95% confidence (+-16.5 points). Two separate runs on a set this size cannot be told apart unless they differ by about 28 points. To resolve a 10-point difference this way you would need 193 rows, which is 169 more than you have."
+    },
+    "stampable": true,
+    "scorer": "BM25, k1=1.5, b=0.75, over 90 passages. No model was asked anything and nothing left this machine.",
+    "decides_nothing": "This is a measurement of the retriever alone. It does not say the answer would be right, it does not set retrieval_tried - which is yours to say - and it opens no gate by itself.",
+    "summary": "18 of 24 questions had a passage from the right document in the top 5 (75%), measured against handbook - 90 passages from 90 documents, BM25, on this machine. Ground truth came from the 'gold_document' column, named in the call. Recall rises with k and here is the whole curve: k=1 4/24, k=2 8/24, k=3 12/24, k=4 15/24, k=5 18/24. 24 rows put this score between 55% and 88% with 95% confidence (+-16.5 points). Two separate runs on a set this size cannot be told apart unless they differ by about 28 points. To resolve a 10-point difference this way you would need 193 rows, which is 169 more than you have.",
+    "measured": [
+      {
+        "fact": "retriever_recall_at_k",
+        "value": 0.75,
+        "origin": "MEASURED",
+        "how": "18 of 24 questions in C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\handbook.jsonl had a passage from the right document in the top 5 of index 'handbook' (1), which holds 90 passages scored by BM25 on this machine; ground truth read from the 'gold_document' column, named in the call; 95% interval 55%-88%. RECALL RISES WITH K and this number is at k=5"
+      }
+    ],
+    "not_measured": "",
+    "recorded": "retriever_recall_at_k = 0.7500 MEASURED, at k=5, scoped to this conversation. The k is in the record because the fact's name does not carry it and the engine's bar is a flat 0.8.",
+    "measured_facts": [
+      {
+        "fact": "retriever_recall_at_k",
+        "value": 0.75,
+        "origin": "MEASURED",
+        "how": "18 of 24 questions in C:\\Users\\example\\AppData\\Local\\Temp\\tmpq86_dfs2\\evals\\handbook.jsonl had a passage from the right document in the top 5 of index 'handbook' (1), which holds 90 passages scored by BM25 on this machine; ground truth read from the 'gold_document' column, named in the call; 95% interval 55%-88%. RECALL RISES WITH K and this number is at k=5"
+      }
+    ]
+  }
+}

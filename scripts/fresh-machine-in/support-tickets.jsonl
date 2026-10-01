@@ -1,0 +1,24 @@
+{"text": "Uploading a PDF over 10 MB fails silently", "category": "bug"}
+{"text": "I was charged twice for March", "category": "billing"}
+{"text": "The mobile app crashes on the settings screen", "category": "bug"}
+{"text": "SSO redirect loops back to the login page", "category": "access"}
+{"text": "Locked out after changing my password", "category": "access"}
+{"text": "Account says suspended but billing is current", "category": "access"}
+{"text": "Is there an API for creating projects?", "category": "howto"}
+{"text": "How do I set up a weekly digest email?", "category": "howto"}
+{"text": "Password reset email never arrives", "category": "access"}
+{"text": "Can I switch from monthly to annual mid-term?", "category": "billing"}
+{"text": "Refund for the annual plan hasn't arrived", "category": "billing"}
+{"text": "Can I bulk-import contacts from a spreadsheet?", "category": "howto"}
+{"text": "Card declined but the order went through", "category": "billing"}
+{"text": "Where do I change the billing address?", "category": "howto"}
+{"text": "The discount code did not apply at checkout", "category": "billing"}
+{"text": "How do I invite a read-only user?", "category": "howto"}
+{"text": "My colleague cannot see the shared workspace", "category": "access"}
+{"text": "How do I archive a project without deleting it?", "category": "howto"}
+{"text": "Search returns results from a deleted project", "category": "bug"}
+{"text": "Timestamps are three hours off", "category": "bug"}
+{"text": "Two-factor codes are rejected", "category": "access"}
+{"text": "My invoice shows the wrong VAT rate", "category": "billing"}
+{"text": "The dashboard shows last week's numbers", "category": "bug"}
+{"text": "Export to CSV produces an empty file", "category": "bug"}

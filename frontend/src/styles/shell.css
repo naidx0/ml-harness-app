@@ -1,0 +1,3850 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE SHELL, RETARGETED TO GRAPHITE.
+
+   Every value below is a Graphite token or a literal the brand book states as
+   component geometry (a 28px send button, a 2px diff gutter, a 1px border).
+   docs/brand/option-a-graphite.html is the source; where this file and
+   docs/DESIGN_SYSTEM.md disagree, Graphite wins.
+
+   THE THREE THINGS THAT CHANGED MOST, and they are the three corrections
+   DESIGN_DIRECTIVES names:
+
+   1. COMPACT IS THE ONLY DENSITY. `--row-scale`, `data-rows="compact"` and
+      every `:root[data-rows]` rule are gone. Rows are drawn at their literal
+      compact heights — 30px rail rows, 28px thread rows, 26px tool rows, 28px
+      controls — because "a scale that is only ever used at one setting should
+      be drawn at that setting rather than derived from a looser one". Two
+      modes means every component has two sets of true values and only one of
+      them is ever tested.
+
+   2. THE USER MESSAGE IS A BUBBLE, the assistant is not. See chat.css.
+
+   3. THERE IS ONE PRODUCT. The portal switch, its `.scaffbar` strip and the
+      `.scaffold` fence it sat in have all gone — Max, 2026-08-19, and
+      DESIGN_DIRECTIVES §3 rewritten to match.
+
+   AND THE RULE THAT GOVERNS ALL OF IT: every hue on screen is a claim about
+   the world, and there are never more hues than there are claims. Dividers,
+   headings and chrome are NEVER coloured. A red WON'T FIT is alarming because
+   it is the only red on screen.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ══ THE THREE ZONES ══════════════════════════════════════════════════════ */
+
+.app {
+  display: grid;
+  /* CS18 — inspector lives inside .workspace under the shared appbar, so the
+     shell is always two columns: rail | workspace. Pane width is a body-row
+     split, not a third grid track. */
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  grid-template-rows: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+.app[data-rail='collapsed'] { grid-template-columns: 0 minmax(0, 1fr); }
+
+/* Grid children must be allowed to be shorter than their content, or the inner
+   flex columns grow past the window and the composer is clipped off the
+   bottom. The brand book hit this too and says so. */
+.app > * { min-height: 0; min-width: 0; }
+
+/* ── Resize grabbers — a 4px bar inside a 16px hit area. ─────────────────── */
+
+.grabber {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 16px;
+  cursor: col-resize;
+  z-index: 3;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.grabber::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 6px;
+  width: 4px;
+  background: transparent;
+  transition: background var(--dur-1) var(--ease);
+}
+.grabber:hover::after,
+.grabber:focus-visible::after { background: var(--edge-strong); }
+/* IN A FRAME. Max asked for panes that "snap into frame instead of working
+   independently", and a snap the hand cannot see is a snap the hand fights:
+   the pane stops following the pointer for 48px and nothing says why. The bar
+   the person is already holding turns accent the moment a frame catches it,
+   and goes back to the hover grey the moment it lets go. No new colour - the
+   same --accent the focus ring uses. */
+.grabber[data-snapped]::after,
+.grabber[data-snapped]:hover::after { background: var(--accent); }
+.grabber--rail { right: -8px; }
+.grabber--stack { left: -8px; }
+
+/* ══ RAIL ═════════════════════════════════════════════════════════════════
+   Icon + label rows at the top, then a "Threads" header with small
+   right-aligned action icons, then the thread rows, then an account row at the
+   bottom. That is the Codex reading and Graphite draws it literally. */
+
+.rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--surface-1);
+  border-right: 1px solid var(--edge);
+}
+.app[data-rail='collapsed'] .rail { display: none; }
+
+.rail__top {
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: 0 var(--sp-12);
+  flex: 0 0 auto;
+}
+.rail__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--sp-4) var(--sp-8) var(--sp-8);
+}
+
+/* ── COMPACT IS NOT CRAMPED ────────────────────────────────────────────────
+   MAX: "Make sure there's good spacing and it's easy to read."
+
+   The row heights were never the problem and are unchanged: 30px rail items,
+   24px section head, 30px folders, 28px threads, exactly as page 17.2 rules.
+   What was wrong was that the rail had ONE gap — nothing — between everything.
+   Measured before this change: 10px from the last rail item to the THREADS
+   head, 0px from that head to the first folder, and 0px between one project's
+   last thread and the next project's folder row. Three different relationships
+   drawn with two values, so nothing grouped.
+
+   Page 08 hands out the scale by job, and this uses three of its steps as one
+   ladder:
+     --sp-8   between rows        ("row padding, gaps between rows")
+     --sp-12  between GROUPS      one step up, so a break is visible
+     --sp-16  above a section head so the label owns what is under it
+   A label stays welded to its own content at 0. That is the whole fix. */
+.rail__group + .rail__group { margin-top: var(--sp-12); }
+.rail__group > .threads { margin-top: var(--sp-2); }
+
+/* Rail item: 30px, --r-10, icon at --ink-3, label at --ink-2. */
+.railitem {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  height: var(--row-h);
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-10);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.railitem:hover { background: var(--state-hover); color: var(--ink-1); }
+.railitem:active { background: var(--state-press); }
+.railitem .i { color: var(--ink-3); }
+.railitem:hover .i { color: var(--ink-2); }
+.railitem--strong { color: var(--ink-1); }
+
+/* Section header inside the rail: mono, 10px, uppercase, +.08em, --ink-3.
+   Never coloured — a coloured heading and a coloured verdict are the same
+   signal to someone scanning. */
+.railhead {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--sp-8);
+  /* 16, not 10: this separates the application's own actions from the list of
+     conversations, which is the largest break in the rail. 10px is the
+     button-padding step and was never a separator. */
+  margin-top: var(--sp-16);
+  margin-bottom: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+/* The section head's two actions — new folder and filter. 20px, and page 17.2
+   records that this is THE ONLY place in the product where a control is drawn
+   below 26px: they sit against a 10px uppercase label, and a 26px control
+   beside it would out-weigh the thing it labels. */
+.railhead__acts {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+  letter-spacing: 0;
+}
+.railhead__acts button {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.railhead__acts button:hover { background: var(--state-hover); color: var(--ink-1); }
+.railhead__acts button[aria-pressed='true'],
+.railhead__acts button[aria-expanded='true'] {
+  background: var(--state-selected);
+  color: var(--ink-1);
+}
+
+/* ── The folder row — a project. 30px, --r-10, collapse chevron at --ink-4.
+   Page 39 calls this a RELABEL rather than a difference: Codex has folders and
+   we have projects, and "a project owns a data root, a sensitivity level and a
+   hardware profile; a folder owns nothing". ──────────────────────────────── */
+/* One 30px line, two controls. The line is what the book draws — 30px, --r-10,
+   one hover — and it is still one row of arithmetic in a rail whose whole
+   argument is arithmetic. It is split because the row now answers two
+   questions: "start a thread here" (the name) and "show me what is in here"
+   (the chevron page 17.2 already names as the collapse control). A row cannot
+   answer two questions with one click, and a folder that could only collapse
+   was a folder no thread could ever be put into. */
+.folderline {
+  display: flex;
+  align-items: center;
+  height: var(--row-h);
+  border-radius: var(--r-10);
+  transition: background var(--dur-1) var(--ease);
+}
+.folderline:hover { background: var(--state-hover); }
+.folderline:has(.folderrow[aria-current='true']) { background: var(--state-selected); }
+
+.folderrow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-width: 0;
+  flex: 1 1 auto;
+  height: var(--row-h);
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-10);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease);
+}
+.folderline:hover .folderrow { color: var(--ink-1); }
+.folderrow:active { background: var(--state-press); }
+.folderrow[aria-current='true'] { color: var(--ink-1); }
+.folderrow:disabled { cursor: default; }
+.folderrow .i { color: var(--ink-3); }
+.folderline:hover .folderrow .i,
+.folderrow[aria-current='true'] .i { color: var(--ink-2); }
+.folderrow__name {
+  min-width: 0;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The collapse control. 20px, the same treatment the section head's two
+   actions already use — page 17.2 records that 20px is the one size in this
+   product a control may be drawn below 26px, and this sits on the same kind of
+   row against the same kind of label. */
+.folderline__cv {
+  flex: 0 0 auto;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  margin-right: 6px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-4);
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.folderline__cv:hover { background: var(--state-hover); color: var(--ink-2); }
+/* Delete is coloured on the ink only, and only under the pointer - page 14.5's
+   rule for the one destructive row, applied to the one destructive button. */
+.folderline__cv--danger:hover { color: var(--wont); background: var(--wont-wash); }
+
+/* Thread rows are indented under their folder by --sp-16. That indent is the
+   only thing saying which folder a row belongs to, so it is a token and not a
+   guess. */
+.threads { padding-left: var(--sp-16); }
+
+/* Page 17, rule 7. An empty project says so in one 28px row of --ink-4 words —
+   not a dashed box, not an illustration, not a call to action. The dashed
+   .empty treatment is for a pane that has room for it; inside a 280px rail it
+   would cost six threads to say nothing. */
+/* THE MACHINE FOLD. A project folder's line, holding the Machine pane when
+   open. See components/MachineFold.tsx; Max, 2026-09-11: "the nvidia local
+   lab thing / gpu available / compute available, should be from the sidebar
+   drop down and expandable." It sits above the foot with the same air a
+   group gets, and the foot stays the settings door. */
+.machinefold {
+  flex: 0 0 auto;
+  /* THE SAME BAND AS THE FOOT BELOW IT: a hairline, then --sp-8 above and
+     below the 30px row, so the row sits centred in its band rather than
+     pressed against the foot's own hairline - the "not centred, spacing
+     off" the owner photographed on 2026-09-12. */
+  margin: 0;
+  padding: var(--sp-8) var(--sp-8) var(--sp-8);
+  border-top: 1px solid var(--edge);
+}
+.machinefold .folderline { gap: var(--sp-2); }
+.machinefold .folderrow { gap: var(--sp-8); padding-right: var(--sp-4); }
+/* The two 20px buttons sit flush with the row's right padding, one gap
+   apart - not each carrying its own 6px margin. */
+.machinefold .folderline__cv { margin-right: 0; }
+.machinefold .folderline__cv:last-child { margin-right: var(--sp-4); }
+.machinefold__name { flex: 0 0 auto; color: var(--ink-1); }
+.machinefold__gpu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--ink-3);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+}
+.machinefold__card { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.machinefold__dot { color: var(--ink-4); flex: 0 0 auto; }
+.machinefold__vram { font-family: var(--font-mono); font-variant-numeric: var(--num); color: var(--ink-3); }
+.machinefold__body {
+  padding: var(--sp-4) 0 var(--sp-8) var(--sp-8);
+  max-height: 40vh;
+  overflow: auto;
+}
+/* The pane's rows at the rail's width: a shorter label column and the
+   provenance tag kept, because the tag is the row's evidence. */
+.machinefold__body .kvrow { padding: 0 var(--sp-4); gap: var(--sp-6); }
+.machinefold__body .kvrow__k { flex: 0 0 72px; }
+
+/* THE MEMORY PANE. Two editable blocks - this project's notes and who the
+   person is - in the plan editor's own chrome. See components/MemoryPane.tsx. */
+.memorypane { display: flex; flex-direction: column; gap: var(--sp-16); }
+.memorypane__block { display: flex; flex-direction: column; gap: var(--sp-6); }
+.memorypane__head { display: flex; align-items: baseline; gap: var(--sp-8); }
+.memorypane__use { margin-left: auto; }
+.memorypane__edit { min-height: 140px; font-family: var(--font-sans); font-size: var(--t-12); line-height: var(--lh-12); }
+.memorypane__edit:disabled { opacity: .55; }
+
+/* A notice's dismiss: the strip's own ink, no fill, at the strip's right. */
+.strip__dismiss {
+  margin-left: auto;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: inherit;
+  opacity: .7;
+  cursor: pointer;
+}
+.strip__dismiss:hover { opacity: 1; background: var(--state-hover); }
+
+/* THE PLAN AS A DOCUMENT (components/PlanDocument.tsx): a phase nav beside a
+   rendered markdown article; steps are the renderer's own checkboxes, live. */
+.plandoc { display: flex; flex-direction: column; gap: var(--sp-12); min-height: 0; height: 100%; }
+/* THE SUMMARY, THEN ONE PAGE. Max, 2026-09-12: "have that whole plan not be
+   sectioned off, summary quick at the top, and then same as Cursor - one
+   clean page where the whole md view can just be clear and visible." The
+   summary is the title, the count and the phases as chips; the document
+   under it flows as one page on a reading measure - no cards, no borders,
+   the phase headings ruled the way a document's are. */
+.plandoc__summary { display: flex; flex-direction: column; gap: var(--sp-6); flex: 0 0 auto; padding-bottom: var(--sp-10); border-bottom: 1px solid var(--edge-faint); }
+.plandoc__summaryrow { display: flex; align-items: center; gap: var(--sp-8); }
+/* THE PLAN IS A DOCUMENT, AND ITS TITLE IS SET LIKE ONE. Max, 2026-09-14:
+   "use more nice fonts throughout different UI systems, maybe around plan, or
+   in the chat transcript."
+
+   The two serifs in this product were doing one job each - Marcellus cut into
+   the wordmark, Cormorant italic for the empty session, which the book calls
+   the voice face for "the moments the product speaks as itself". Neither was
+   available for anything a PERSON wrote, and the plan is exactly that: a
+   written artifact with a title, phases and steps, which the harness reads
+   back and works down. Setting its title in Cormorant says "document" before
+   a word of it is read, and distinguishes it from the interface chrome around
+   it without adding a colour or a rule.
+
+   500 UPRIGHT, NOT 600, and not italic. 500 is the cut that is loaded; asking
+   for 600 upright would synthesise a bold out of it, which is the exact fault
+   being fixed one file over in main.tsx. Italic belongs to the product's own
+   voice and this is not the product speaking. */
+.plandoc__title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ink-1);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.plandoc__count { margin: 0; color: var(--ink-3); font-size: var(--t-11); }
+/* ── The goal bar: the plan, at the top, expandable into its to-do ────────
+   Max, 2026-09-13: "have it pop up above the chat box or at the top... once
+   it's running the plan, it's just executing goal, and the goal is the plan."
+   One line at rest; every step and what happened to it when opened. It sits
+   between the app bar and the transcript, so it is the first thing read and
+   it does not move when the transcript scrolls. */
+.goalbar {
+  flex: 0 0 auto;
+  /* NARROWER THAN THE CHAT BOX, AND CENTRED. Max, 2026-09-14: "have it so
+     that the goal or to-do is not the same width as the chatbox, it's
+     supposed to be centred and a little condensed on both ends." Inset
+     rather than a width, so it stays centred at every column size the
+     dock takes without a second rule to keep the two in step. */
+  /* AND JOINED TO THE CHAT BOX, NOT FLOATING OVER IT. Max, 2026-09-14:
+     "can we have the goal card a small extension from the chat, and be
+     connected from it - minimised it shows a little above it, but not
+     hovering separately. Have it a little darker than the chatbox so it's
+     easy to see the surface differences."
+
+     So: no gap under it, no shadow, and no bottom border - the card's bottom
+     edge IS the chat box's top edge, and the two read as one object with a
+     drawer pulled out of the top of it. It keeps the inset, so the drawer is
+     narrower than the box it comes out of, which is what makes it read as an
+     extension rather than as a lid. */
+  /* A CLEAN EDGE ALL THE WAY ROUND, AND STILL SEATED ON THE BOX. Max,
+     2026-09-14: "add proper borders and shadows around the goal card as well
+     so it's clean around all the way." The previous cut dropped the bottom
+     border to merge the two, which left the card's corners open where they
+     met and read as unfinished rather than as joined. The border is whole
+     again and the card pulls down ONE PIXEL so its bottom edge and the chat
+     box's top edge are the same line - joined, with no doubled rule. */
+  /* THREE SIDES, AND THE FOURTH IS THE CHAT BOX. Max, 2026-09-14, with the
+     composer focused and blue while the card above it stayed grey: *"the
+     bordering doesn't interact with the plan once the plan is actually
+     embedded with the chatbox and comes out of it. It should merge with the
+     chatbox popping out, and instead of having all 4 sides being exposed it
+     should only be 3 sides - the side with the chatbox isn't exposed - and
+     the plan joins the borders, sharing that colour with the chatbox."*
+
+     SAME WIDTH, and that is what his ask settles. The inset from earlier that
+     day made the card narrower than the box, which reads as a drawer and
+     cannot ever join: two outlines of different widths meet in a step, not a
+     line. A shared border needs a shared edge. The inset is gone. */
+  margin: 0;
+  border: 1px solid var(--edge);
+  border-bottom: 0;
+  position: relative;
+  z-index: 1;
+  /* SQUARE, LIKE EVERY OTHER SURFACE. This read `var(--r-12, 12px)` and
+     `--r-12` is not a token in tokens.css, so it fell back to the literal
+     12px - against a brand whose radii are 2px. Max, 2026-09-14: "keep our
+     buttons squared, have this goal thing a squared version as well." It was
+     a typo wearing a design decision. */
+  /* THE CHAT BOX'S OWN EDGE, which is `--r-18`. It was `--r-8`, from the day
+     the card was a separate object and "squared like our buttons" was the
+     right answer for it. It is not a separate object now, and an extension
+     that rounds differently from the thing it extends reads as a lid. Square
+     at the bottom because that edge is not an edge any more. */
+  border-radius: var(--r-18) var(--r-18) 0 0;
+  /* A STEP DARKER THAN THE CHAT BOX. The composer is `--surface-1` (#24241F);
+     this is `--bg-ground` (#1F1F1D), which is one step down and still a step
+     up from the dock behind it (`--bg-base`, #181817). Taking the dock's own
+     colour would have made the card vanish into it, which is the opposite of
+     "easy to see the surface differences". */
+  background: var(--bg-ground);
+  overflow: hidden;
+}
+/* A card that is working says so with a moving edge rather than a spinner:
+   the orbit belongs to the transcript's one working row. */
+/* THE STATE IS IN THE INK, AND THE CONTAINER IS NEVER RECOLOURED. Max,
+   2026-09-14, of the two-pixel amber rule that was here: *"if you want
+   bordering colours, apply it all around, with shadow maybe? not the one bar
+   there is now, it looks horrible and too much like AI. Please research
+   shadcn components for something to adapt into our system."*
+
+   He is right twice. A lone accent stripe across the top of a card is a
+   generated-design tell - it is on the list of them - and it was my second
+   attempt at the same mistake: an amber outline round the whole card, then an
+   amber bar across its top. Both painted the CONTAINER with a fact about its
+   CONTENTS.
+
+   READ FROM shadcn/ui's own source (registry/new-york-v4/ui):
+
+       Card    "rounded-xl border bg-card shadow-sm"
+       Alert   base    "... rounded-lg border px-4 py-3 text-sm ..."
+               default "bg-card text-card-foreground"
+               destructive "bg-card text-destructive
+                            *:data-[slot=alert-description]:text-destructive/90"
+
+   The alert's DESTRUCTIVE variant does not touch the border or the
+   background. Both variants are `bg-card`; the base border is the plain
+   neutral one. The entire difference between a normal alert and an alarming
+   one is the colour of the TEXT and the icon, with the secondary line at 90%.
+   That is a real design position and it is better than ours was: the frame
+   stays furniture, the meaning stays in the words.
+
+   So: one neutral border all the way around, the card's ordinary shadow, and
+   the state carried by the status line's icon and words. Running keeps a
+   moving signal because motion is a different channel from colour and a card
+   that is WORKING should say so without being read - but it moves the border,
+   not a bar bolted to the top edge. */
+.goalbar[data-state='running'] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--edge));
+  animation: mlh-edge 2400ms ease-in-out infinite;
+}
+@keyframes mlh-edge {
+  0%, 100% { border-color: color-mix(in srgb, var(--accent) 45%, var(--edge)); }
+  50% { border-color: color-mix(in srgb, var(--accent) 12%, var(--edge)); }
+}
+
+/* AND THE BORDER ALL THE WAY AROUND, which is the half Max asked for: "if you
+   want bordering colours, apply it all around." shadcn does not tint its
+   border at all, and one accent edge on an otherwise neutral card is quieter
+   than a stripe, so this takes a restrained mix - the state is legible in the
+   frame without the frame becoming the loudest thing in the window. */
+.goalbar[data-state='done'] { border-color: color-mix(in srgb, var(--fits) 34%, var(--edge)); }
+.goalbar[data-state='partly'] { border-color: color-mix(in srgb, var(--spills) 34%, var(--edge)); }
+
+/* The ink, which is where the state actually lives. THE WORDS, not their
+   container: the first cut set the colour on `.goalbar__state` and
+   `.buildloop__why` carried its own `--ink-3`, so the sentence a person reads
+   stayed cream while the empty box around it turned green. That is the whole
+   mechanism missed by one selector. */
+.goalbar[data-state='done'] .goalbar__state { color: var(--fits); }
+.goalbar[data-state='partly'] .goalbar__state { color: var(--spills); }
+.goalbar[data-state='running'] .goalbar__state { color: var(--accent); }
+.goalbar[data-state='done'] .goalbar__loop,
+.goalbar[data-state='partly'] .goalbar__loop,
+.goalbar[data-state='running'] .goalbar__loop,
+.goalbar[data-state='done'] .goalbar__loop .buildloop,
+.goalbar[data-state='partly'] .goalbar__loop .buildloop,
+.goalbar[data-state='running'] .goalbar__loop .buildloop,
+.goalbar[data-state='done'] .goalbar__loop .buildloop__why,
+.goalbar[data-state='partly'] .goalbar__loop .buildloop__why,
+.goalbar[data-state='running'] .goalbar__loop .buildloop__why,
+.goalbar[data-state='done'] .goalbar__state .i,
+.goalbar[data-state='partly'] .goalbar__state .i,
+.goalbar[data-state='running'] .goalbar__state .i { color: inherit; }
+/* shadcn holds its secondary line a step back from the heading's colour;
+   ours is the elapsed time, which is a fact and not part of the verdict. */
+.goalbar__state .goalbar__took { color: var(--ink-4); }
+
+
+.goalbar__last {
+  margin: 0;
+  padding: 0 var(--sp-10) var(--sp-6);
+  color: var(--ink-4);
+  font-size: var(--t-10);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A GRID WITH ONE FLEXIBLE COLUMN, and that is the whole fix. Max, 2026-09-13,
+   photographing the flex version: "the button to expand is overlapping with
+   the text... instead of having stuff infinitely filter out and not fit, it
+   should be condensed to fit in the area." Six items in a flex row with two
+   of them able to grow is a row that overflows the moment a plan has a long
+   title; three columns, of which exactly ONE may take the slack, cannot. */
+.goalbar__row {
+  display: grid;
+  /* CS20: title left | spinner+progress right. Count is never centered. */
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-8);
+  min-height: 32px;
+  /* THE CHAT BOX'S OWN GUTTER. Max, 2026-09-14: *"it shouldn't be a smaller or
+     thinner border, it should be the same as the chatbox as well. Keep the
+     same kind of format, just a darker shade by a bit, but mostly the same in
+     terms of structure, fonts and so on."* The composer pads `--sp-10` at the
+     sides; this padded `--sp-12`, so the two stacked surfaces set their
+     contents on different margins and read as two components rather than one
+     that grew. */
+  padding: var(--sp-8) var(--sp-10);
+}
+
+.goalbar__live { display: none; }
+.goalbar__meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-6);
+  flex: 0 0 auto;
+  line-height: var(--lh-13);
+  justify-self: end;
+}
+.goalbar__spin {
+  color: var(--accent);
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+}
+/* CS15/CS17 — filled target glyph; 16px slot so rings stay readable. */
+.goalbar__target {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--gold);
+}
+.goalbar__target .i {
+  display: block;
+  /* Keep the gold target crisp on fractional DPR — no soft blur from inheritance. */
+  shape-rendering: geometricPrecision;
+}
+.goalbar__doc {
+  position: relative;
+  display: inline-flex;
+}
+.goalbar__docmenu {
+  z-index: 80;
+  min-width: 220px;
+  max-width: 320px;
+  max-height: 280px;
+  overflow: auto;
+  padding: 6px;
+  border-radius: var(--r-10);
+  border: 1px solid var(--edge-strong);
+  background: var(--surface-2);
+  box-shadow: var(--e3);
+  display: grid;
+  gap: 4px;
+}
+.goalbar__docmenu--portal {
+  position: fixed;
+  width: 280px;
+  max-width: min(280px, calc(100vw - 16px));
+}
+.goalbar__docsearch {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: var(--r-8);
+  border: 1px solid var(--edge);
+  background: var(--surface-1);
+  color: var(--ink-1);
+  font: inherit;
+  font-size: var(--t-12);
+}
+.goalbar__docrow {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--t-12);
+}
+.goalbar__docrow:hover,
+.goalbar__docrow[data-current] {
+  background: var(--surface-3);
+  color: var(--ink-1);
+}
+.goalbar__dismiss {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-4);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.goalbar__dismiss:hover { color: var(--ink-1); background: var(--surface-3); }
+.goalbar__disclose {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-6);
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--ink-1);
+  font: inherit;
+  /* THE CHAT BOX'S OWN TYPE. The composer's field is body size; the card's
+     title was one step down, which is the other half of reading as a separate
+     component. Same size, same weight rhythm - the card is the same surface
+     continuing upward, so its first line is set like the box's own. */
+  font-size: var(--t-13);
+  line-height: var(--lh-13);
+  font-weight: 500;
+  cursor: pointer;
+}
+.goalbar__disclose .i { color: var(--ink-4); }
+.goalbar__disclose:hover { color: var(--ink-1); }
+.goalbar__disclose:hover .i { color: var(--ink-2); }
+/* The path's rule, applied to every line that can outgrow its column: cut it
+   with an ellipsis and put the whole of it on the hover. */
+.goalbar__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.goalbar__count {
+  color: var(--ink-4);
+  font-size: var(--t-12);
+  line-height: var(--lh-13);
+  font-variant-numeric: var(--num);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* The run's own words, one line, truncated. A card above the chat box must
+   not change height because a refusal got longer. */
+/* THE CARD DOES NOT CHASE THE CHAT BOX'S FOCUS COLOUR. Max, 2026-09-14, after
+   I made it do exactly that: *"you're still pushing the borders of the goal to
+   match the borders of the chatbox - don't do that. Have the same chatbox
+   elements, and when the plan appears it's an extension of what the chatbox
+   is, with sharing borders, same soft border edge as theirs was as well."*
+
+   The difference is between MATCHING and BEING. A card that repaints its edge
+   to whatever the composer is doing is a second element imitating the first,
+   and it has to be told about every state the composer will ever have. An
+   extension is the same surface continuing upward: the same quiet `--edge`,
+   the same soft radius, joined along a shared edge, and it says nothing about
+   focus because focus is the chat box's business and the ring already draws
+   around the pair. So the two `:has` rules that taught it to follow are gone,
+   and nothing replaced them.
+
+*/
+/* A LITTLE MORE AIR UNDER THE HEADER. Max, 2026-09-14: "a light spacing
+   problem on the top working the plan header." Expanded, the title row and the
+   run's line were 6px apart top and bottom against a 12px gutter either side -
+   so the header read as crowded into the card's top edge while everything
+   below it breathed. */
+.goalbar__row { border-bottom: 1px solid var(--edge-faint); }
+.goalbar[data-open] .goalbar__row { background: var(--surface-2); }
+.goalbar__state {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: var(--sp-8) var(--sp-10);
+}
+.goalbar__state:empty { display: none; }
+.goalbar__loop { min-width: 0; display: block; }
+/* NO BOX INSIDE THE BOX. Max, 2026-09-13: "it has the circle box and then
+   it's showing a square box in the circle box." The build-loop line is a
+   bordered pill everywhere else, which is right in the composer's dock and
+   wrong sitting inside a card that already has an edge. Here it is a row of
+   text: no border, no height of its own, and its reason takes the slack. */
+/* LEFT, NOT CENTRED. Max, 2026-09-14, photographing the collapsed card:
+   "looks like there are some centering problems I'm seeing on the localhost."
+   The sentence sat in the middle of the row with its buttons at the far
+   right, because this was a three-column grid whose MIDDLE column took all
+   the slack - so the text was centred inside a track wider than itself. A
+   flex row with the slack after the text puts every line's first character
+   on the same left edge, which is what "working the open steps" and "Run the
+   plan" failing to line up was telling him. */
+.goalbar__loop .buildloop {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--sp-6);
+  align-items: center;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.goalbar__loop .buildloop__why {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.goalbar__loop .buildloop .i { flex: 0 0 auto; }
+.goalbar__loop .buildloop__stop,
+.goalbar__loop .buildloop__resume,
+.goalbar__loop .buildloop__ran { flex: 0 0 auto; }
+/* ONE SENTENCE, NOT TWO. The loop's own reason already reads "nothing left
+   to work - 1 done, 4 parked"; its `last run:` tail said the same thing in
+   the engine's words beside it, which is the doubling Max photographed. The
+   tail stays everywhere else and is folded into the disclosure here. */
+.goalbar__loop .buildloop__ran { display: none; }
+.goalbar__took { color: var(--ink-4); font-size: var(--t-10); font-variant-numeric: var(--num); }
+
+.goalbar__open {
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  height: 22px; padding: 0 var(--sp-8); flex: 0 0 auto;
+  border: 1px solid var(--edge); border-radius: var(--r-8);
+  background: transparent; color: var(--ink-3);
+  font: inherit; font-size: var(--t-10); cursor: pointer;
+}
+.goalbar__open:hover { color: var(--ink-1); border-color: var(--edge-strong); background: var(--state-hover); }
+
+/* The to-do. Numbered because a plan IS a sequence - the run works the first
+   open step, then the next - which is the one case page 14's rule about
+   numbering allows. */
+.goalsteps {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--sp-10) var(--sp-10) var(--sp-10);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+/* A GUTTER IN THE STATE'S OWN COLOUR, and a rule under each row. Max,
+   2026-09-14: *"make sure the to-do looks like one, has colours working
+   inside of it in different ways... use more colours, borders."* The four
+   states already had four words; now they have four colours in the one place
+   the eye lands first, and the rows read as a list rather than as text that
+   happens to be stacked. Green is done, amber is parked, blue is the one
+   being worked, and an ordinary open step keeps the quiet edge - which is
+   what makes the other three mean something. */
+.goalstep {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-8);
+  padding: 4px var(--sp-8);
+  border-left: 2px solid var(--edge);
+  border-bottom: 1px solid var(--edge-faint);
+  border-radius: 0;
+  font-size: var(--t-11);
+  color: var(--ink-2);
+  min-width: 0;
+}
+.goalsteps > .goalstep:last-of-type { border-bottom: 0; }
+.goalstep[data-state='done'] { border-left-color: color-mix(in srgb, var(--fits) 55%, transparent); }
+.goalstep[data-state='parked'] { border-left-color: var(--spills); }
+.goalstep[data-next] { border-left-color: var(--accent); }
+
+/* What you can do with a step, revealed on the row rather than always on -
+   four to-do rows each carrying three buttons would be the "over" Max named
+   one card earlier. Keyboard focus reveals them too, or they would be
+   reachable by tab and invisible while reached. */
+.goalstep__acts {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease);
+}
+.goalstep:hover .goalstep__acts,
+.goalstep:focus-within .goalstep__acts { opacity: 1; }
+.goalstep__act {
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-10);
+  line-height: 1;
+  padding: 3px var(--sp-6);
+  cursor: pointer;
+}
+.goalstep__act:hover {
+  color: var(--ink-1);
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
+.goalstep__mark {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--r-full);
+  border: 1.5px solid var(--ink-4);
+  box-sizing: border-box;
+}
+.goalstep[data-state='done'] .goalstep__mark {
+  border-color: var(--fits);
+  background: var(--fits);
+  box-shadow: inset 0 0 0 2px var(--surface-1);
+}
+.goalstep[data-state='done'] .goalstep__text {
+  text-decoration: line-through;
+  color: var(--ink-4);
+}
+.goalstep[data-state='parked'] .goalstep__mark {
+  border-color: var(--spills);
+  background: var(--spills);
+}
+.goalstep[data-next] .goalstep__mark {
+  border-color: var(--accent);
+}
+.goalstep__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.goalstep__why { color: var(--spills); font-size: var(--t-10); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.goalstep__now {
+  margin-left: auto; flex: 0 0 auto;
+  color: var(--accent); font-size: var(--t-10); font-weight: 500;
+}
+.goalstep[data-state='done'] { color: var(--ink-4); }
+.goalstep[data-next] { background: var(--accent-wash); color: var(--ink-1); }
+.goalstep--path { color: var(--ink-4); font-size: var(--t-10); overflow-wrap: anywhere; white-space: normal; }
+
+/* CS20 — rail working: context dial only. ASCII spin stays on Thinking + Goal. */
+.threadrow__working { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; margin-right: var(--sp-4); }
+.threadrow__working .ctxring { color: var(--accent); }
+.ctxring {
+  flex: 0 0 auto;
+  display: block;
+}
+
+/* Working thread title: Thinking's shimmer, in accent (blue), not a spinner. */
+.threadrow__title[data-working] {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 55%, var(--ink-3)) 0%,
+    var(--accent) 40%,
+    color-mix(in srgb, var(--accent) 70%, #fff) 50%,
+    var(--accent) 60%,
+    color-mix(in srgb, var(--accent) 55%, var(--ink-3)) 100%
+  );
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: mlh-shimmer 3.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .threadrow__title[data-working] {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: var(--accent);
+    color: var(--accent);
+  }
+}
+
+/* ── The context window pane ──────────────────────────────────────────────
+   Max, 2026-09-13, with Claude Code's popup beside it: "can we show the
+   breakdown behind token and context spend... it's an amazing and
+   transparent breakdown." One bar, a segment per named part of the prompt,
+   free space last; a row per part with its tokens and its share. Two hues
+   rather than a rainbow - the accent for what this product put on the wire,
+   warm ink for what the conversation accumulated - stepped down in opacity
+   so a row and its segment can be matched by eye. */
+.ctxpane { display: flex; flex-direction: column; gap: var(--sp-12); }
+.ctxpane__head { display: flex; align-items: baseline; gap: var(--sp-6); flex-wrap: wrap; }
+.ctxpane__total { font-size: 22px; font-weight: 600; color: var(--ink-1); line-height: 1.1; }
+.ctxpane__of { color: var(--ink-3); font-size: var(--t-11); }
+.ctxpane__of b { color: var(--ink-2); font-weight: 600; }
+.ctxpane__line { margin: 0; color: var(--ink-3); font-size: var(--t-11); display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
+.ctxpane__line b { color: var(--ink-1); font-weight: 600; }
+.ctxpane__line .i { color: var(--wont); }
+.ctxpane__line--quiet { color: var(--ink-4); }
+.ctxbar {
+  display: flex;
+  height: 10px;
+  border-radius: var(--r-full);
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--edge-faint);
+}
+.ctxbar__part { display: block; height: 100%; }
+.ctxbar__part[data-band='0'], .ctxrow__dot[data-band='0'] { background: var(--accent-solid); }
+.ctxbar__part[data-band='1'], .ctxrow__dot[data-band='1'] { background: var(--accent); }
+.ctxbar__part[data-band='2'], .ctxrow__dot[data-band='2'] { background: var(--ink-2); }
+.ctxbar__part[data-band='3'], .ctxrow__dot[data-band='3'] { background: color-mix(in srgb, var(--accent) 62%, transparent); }
+.ctxbar__part[data-band='4'], .ctxrow__dot[data-band='4'] { background: var(--ink-3); }
+.ctxbar__part[data-band='5'], .ctxrow__dot[data-band='5'] { background: color-mix(in srgb, var(--accent) 38%, transparent); }
+.ctxbar__part[data-band='6'], .ctxrow__dot[data-band='6'] { background: var(--ink-4); }
+.ctxbar__part[data-band='7'], .ctxrow__dot[data-band='7'] { background: color-mix(in srgb, var(--ink-3) 55%, transparent); }
+.ctxrows { display: flex; flex-direction: column; gap: var(--sp-4); }
+.ctxrow { display: flex; align-items: baseline; gap: var(--sp-8); font-size: var(--t-11); }
+.ctxrow__dot { width: 8px; height: 8px; border-radius: 2px; flex: 0 0 auto; align-self: center; background: var(--ink-4); }
+.ctxrow__dot--free { background: var(--surface-4); border: 1px solid var(--edge); }
+.ctxrow__label { color: var(--ink-1); font-weight: 500; flex: 0 0 auto; }
+.ctxrow__why { color: var(--ink-4); min-width: 0; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctxrow__n { color: var(--ink-2); flex: 0 0 auto; min-width: 54px; text-align: right; }
+.ctxrow__pc { color: var(--ink-3); flex: 0 0 auto; min-width: 42px; text-align: right; }
+.ctxrow--free .ctxrow__label, .ctxrow--free .ctxrow__n { color: var(--ink-3); font-weight: 400; }
+/* `.ctxrow__label` is `flex: 0 0 auto` with no ellipsis, and the two numbers
+   hold 54 + 42 of min-width between them. A long section name therefore ran
+   straight over the percentage instead of truncating. Narrow card: the "why"
+   goes first - it is already the shrinking one, and by this width it is two
+   characters and an ellipsis, which is not a phrase - and the label, which is
+   the row's actual subject, gets the room and truncates properly. */
+@container (max-width: 360px) {
+  .ctxrow__why { display: none; }
+  .ctxrow__label {
+    min-width: 0;
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.ctxhistory { display: flex; flex-direction: column; gap: var(--sp-6); }
+.ctxspark {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--edge-faint);
+}
+.ctxspark__bar {
+  flex: 0 1 22px;
+  min-width: 4px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+.ctxspark__bar[data-over] { background: var(--wont); }
+.pane__empty { margin: 0; color: var(--ink-3); font-size: var(--t-11); }
+.pane__h3 { margin: 0; font-size: var(--t-10); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-4); font-family: var(--font-mono); font-weight: 500; }
+
+/* A parked step: neither open nor done. Amber on the glyph only, the rule
+   this product already follows for a state that is not a failure. */
+.md__tasks li[data-parked] { color: var(--ink-3); }
+.md__tasks li[data-parked] .i { color: var(--spills); }
+
+/* The run's own words in the build chip. */
+.buildloop__ran { color: var(--ink-4); font-size: var(--t-10); }
+.buildloop__ran--wont { color: var(--wont); }
+.buildloop__run { display: inline-flex; align-items: center; gap: var(--sp-4); }
+
+.plandoc__path { margin: 0; color: var(--ink-4); font-size: var(--t-10); overflow-wrap: anywhere; }
+.plandoc__toggle {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  height: 24px; padding: 0 var(--sp-8);
+  border: 1px solid var(--edge); border-radius: var(--r-8);
+  background: var(--surface-2); color: var(--ink-2);
+  font: inherit; font-size: var(--t-11); cursor: pointer; flex: 0 0 auto;
+}
+.plandoc__toggle:hover, .plandoc__toggle[aria-pressed='true'] { color: var(--ink-1); border-color: var(--edge-strong); }
+.plandoc__chips { display: flex; flex-wrap: wrap; gap: var(--sp-4); }
+.plandoc__phase {
+  display: inline-flex; align-items: center; gap: var(--sp-6);
+  height: 22px; padding: 0 var(--sp-8);
+  border: 1px solid var(--edge-faint); border-radius: var(--r-full);
+  color: var(--ink-3); text-decoration: none; font-size: var(--t-11); max-width: 34ch;
+}
+.plandoc__phase .planpane__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plandoc__phase:hover { background: var(--state-hover); color: var(--ink-1); border-color: var(--edge); }
+.plandoc__doc { overflow: auto; min-width: 0; flex: 1 1 auto; padding: 0 var(--sp-8) var(--sp-16) 0; max-width: 78ch; }
+.plandoc__section { scroll-margin-top: var(--sp-8); }
+.plandoc__doc h1 { font-size: var(--t-15, 15px); margin: 0 0 var(--sp-8); }
+.plandoc__doc h2 { font-size: var(--t-13); font-weight: 600; color: var(--ink-1); margin: var(--sp-20, 20px) 0 var(--sp-8); padding-bottom: var(--sp-4); border-bottom: 1px solid var(--edge-faint); }
+.plandoc__section:first-child h2 { margin-top: var(--sp-4); }
+.plandoc__doc h3 { font-size: var(--t-12); margin: var(--sp-10) 0 var(--sp-4); }
+.plandoc__doc p { margin: 0 0 var(--sp-8); overflow-wrap: anywhere; }
+.plandoc__doc code { overflow-wrap: anywhere; white-space: pre-wrap; }
+.plandoc__doc ul, .plandoc__doc ol { margin: 0 0 var(--sp-8); }
+.plandoc__doc .md__tasks li { cursor: pointer; border-radius: var(--r-8); }
+.plandoc__doc .md__tasks li:hover { background: var(--state-hover); }
+
+.emptyfolder {
+  margin-left: var(--sp-16);
+  padding: 0 var(--sp-8);
+  height: var(--row-h-thread);
+  display: flex;
+  align-items: center;
+  color: var(--ink-4);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+
+/* The inline field the two section-head actions open into. It opens INTO the
+   scroll rather than into a popover: a popover over a 280px rail covers the
+   thing it is filtering. */
+.railfield {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: var(--row-h);
+  padding: 0 var(--sp-8);
+  margin: 2px 0;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+  color: var(--ink-3);
+}
+.railfield__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink-1);
+  font-family: var(--font-sans);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  padding: 0;
+}
+.railfield__input::placeholder { color: var(--ink-4); }
+/* Rename happens IN the row. Same 28px, same indent, so the rail does not
+   reflow around the thing being renamed. */
+.railfield--inrow {
+  height: var(--row-h-thread);
+  margin: 0;
+  padding: 0 var(--sp-6);
+}
+/* ONE RING, NOT TWO. The global :focus-visible ring landed on the input while
+   the field around it drew its own border, so a rename showed two concentric
+   rounded rectangles. The field takes the focus treatment — it is the thing
+   that looks like a control — and the input inside it takes none. This is the
+   same trade `.composer__input` already makes for the same reason. */
+.railfield:focus-within { border-color: var(--accent-edge); }
+.railfield__input:focus-visible { box-shadow: none; }
+.railfield__x {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  padding: 0;
+  border-radius: var(--r-4);
+  background: transparent;
+  color: var(--ink-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.railfield__x:hover { background: var(--state-hover); color: var(--ink-1); }
+/* Thread row — 28px, --r-10, a right-aligned relative age in mono.
+   SELECTED IS A LIGHTER FULLY-ROUNDED RECTANGLE, NOT A LEFT ACCENT BAR. The
+   old build drew a 2px --accent bar; Graphite deletes it, because it competed
+   with the run-state dot for the same edge of the same row, and because the
+   accent means "the product needs you" and a selected row is not that. In dark
+   --state-selected is a neutral lift; in light it keeps a faint accent tint,
+   because a 7% neutral darkening is invisible on white. */
+/* THE ROW IS A ROW OF CONTROLS NOW, NOT ONE CONTROL. It was a <button>; it is
+   a <div> holding a button for "open this thread" and a button for "act on
+   this thread", because a button cannot contain a button and because a row
+   cannot answer two questions with one click — the same reasoning the folder
+   row already carries for its collapse chevron.
+
+   Selection therefore moves from :is(button)[aria-current] to a data attribute
+   on the row, and the inner button keeps aria-current for the accessibility
+   tree. */
+.threadrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--row-h-thread);
+  padding: 0 var(--sp-8);
+  border-radius: var(--r-10);
+  color: var(--ink-2);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.threadrow:hover { background: var(--state-hover); color: var(--ink-1); }
+/* Select mode: a 14px box at the left of the row, ticked in the accent. */
+.threadrow__pick {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin-right: var(--sp-6);
+  border: 1px solid var(--edge-strong);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  color: var(--accent-on-solid);
+  background: transparent;
+}
+.threadrow__pick[data-on] { background: var(--accent-solid); border-color: var(--accent-solid); }
+.railselect {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: var(--sp-6) var(--sp-8);
+  border-top: 1px solid var(--edge);
+  background: var(--bg-base);
+  flex: 0 0 auto;
+}
+.railselect__count { flex: 1 1 auto; color: var(--ink-3); font-size: var(--t-11); }
+.threadrow[data-current] { background: var(--state-selected); color: var(--ink-1); }
+/* A row whose menu is open stays lit, so the object the menu acts on is
+   visible while it acts. Page 14.5: "the row stays visibly selected while the
+   menu is open." */
+.threadrow[data-open] { background: var(--state-hover); color: var(--ink-1); }
+
+.threadrow__open {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.threadrow__open:active { opacity: .8; }
+.threadrow .i { color: var(--ink-3); }
+.threadrow[data-current] .i { color: var(--ink-2); }
+.threadrow__title {
+  min-width: 0;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.threadrow__age {
+  flex: 0 0 auto;
+  padding-left: var(--sp-8);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  font-variant-numeric: var(--num);
+}
+
+/* THE OVERFLOW BUTTON STANDS EXACTLY WHERE THE TIMESTAMP STOOD, and the two
+   never both draw. Page 17.3 gives the row three signals in three channels;
+   putting a fourth object beside the age would break the alignment of the mono
+   column, which is the thing that lets forty rows read as one axis.
+
+   26px in a 28px row. Page 17.2 records that the section head's 20px controls
+   are "the only place in the product where a control is drawn below 26px", so
+   this is 26 and the row keeps 1px of clearance either side. */
+.threadrow__more {
+  position: absolute;
+  right: var(--sp-4);
+  display: none;
+  place-items: center;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  font: inherit;
+}
+.threadrow__more:hover { background: var(--state-press); color: var(--ink-1); }
+.threadrow:hover .threadrow__age,
+.threadrow:focus-within .threadrow__age,
+.threadrow[data-open] .threadrow__age { visibility: hidden; }
+.threadrow:hover .threadrow__more,
+.threadrow:focus-within .threadrow__more,
+.threadrow[data-open] .threadrow__more { display: grid; }
+
+.threadrow[data-archived='true'] { opacity: var(--st-archived-opacity); }
+
+/* The inline confirm. Archiving is reversible in the database and NOT
+   reversible from this interface, so it asks — and the sentence says both
+   halves. It is not a dialog: page 15 reserves those for a decision that
+   blocks progress, and this one does not. */
+.railconfirm {
+  margin: var(--sp-4) 0 var(--sp-6);
+  padding: var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+}
+.railconfirm__body {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+.railconfirm__acts { display: flex; gap: var(--sp-6); }
+
+.rail__empty {
+  padding: 0 var(--sp-8);
+  min-height: var(--row-h-thread);
+  display: flex;
+  align-items: center;
+  color: var(--ink-4);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+/* An engine message is the one thing in the rail allowed more than one line:
+   it is the engine's own sentence and truncating it would leave a reader with
+   half a reason. */
+.rail__empty--wrap {
+  display: block;
+  height: auto;
+  padding: var(--sp-6) var(--sp-8);
+  color: var(--ink-2);
+}
+
+.rail__foot {
+  border-top: 1px solid var(--edge);
+  padding: var(--sp-8);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex: 0 0 auto;
+}
+.acct {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--row-h);
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-10);
+  background: transparent;
+  font: inherit;
+  font-size: var(--t-12);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.acct:hover { background: var(--state-hover); color: var(--ink-1); }
+/* The model is an identifier someone might copy, so it is mono and one step
+   down from the sans beside it. "No model connected" is a sentence, not an
+   identifier, and stays in the sans. */
+.acct__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.acct__name[data-mono='true'] {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+}
+.avatar {
+  width: 18px; height: 18px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  border: 1px solid var(--edge);
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  flex: 0 0 auto;
+}
+
+/* ── Status dot — 6px. Colour appears on the dot and the state word, never on
+   a row background and never on a row border. ───────────────────────────── */
+.dot {
+  position: relative;
+  width: var(--dot); height: var(--dot);
+  border-radius: var(--r-full);
+  background: var(--st-colour, currentColor);
+  flex: 0 0 auto;
+}
+.dot[data-shape='hollow'] {
+  background: transparent;
+  width: 7px; height: 7px;
+  box-shadow: inset 0 0 0 1.5px var(--st-colour, currentColor);
+}
+.dot[data-shape='filled-ring']::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--st-colour, currentColor);
+  opacity: .5;
+}
+.dot[data-shape='none'] { background: transparent; }
+
+/* The one perpetual animation in the product. Under reduced motion it goes
+   solid and the elapsed timer carries "alive" instead. */
+@keyframes mlh-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .42; } }
+.dot[data-shape='filled-pulse'] { animation: mlh-pulse 1.8s var(--ease) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .dot[data-shape='filled-pulse'] { animation: none; opacity: 1; }
+}
+
+/* ══ WORKSPACE ════════════════════════════════════════════════════════════ */
+
+.workspace {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg-base);
+}
+
+/* Chat + inspector share one row under the appbar — a true column split. */
+.workspace__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.app[data-stack='open'] .workspace__body {
+  grid-template-columns: minmax(0, 1fr) var(--pane-w);
+}
+.centre {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* The app bar: thread title, then quiet controls on the right.
+
+   FORTY-FOUR PIXELS, AND IT WAS SIXTY-NINE. Page 18 states the number twice and
+   says why: "The rail, the centre and the pane all start at the same 44px line,
+   so the three columns read as one window rather than three panels stacked into
+   a frame." MEASURED in the running app before this: 69px, because the bar was
+   `flex-wrap: wrap` with a `min-height` and its right cluster was wider than the
+   space left by a 180px title floor — so the title took one row and the controls
+   took another, and the centre column started 25px below the rail.
+
+   It is a fixed height with no wrap now, and the title is the thing that gives:
+   page 18.2 says the title is "truncated with an ellipsis and never wrapped",
+   which is the correct thing to lose first. What made the fixed height possible
+   was moving the portal scaffolding out of the bar entirely — and it has now
+   left the product as well, so nothing sits between the bar and the
+   transcript. */
+.appbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  height: var(--topbar-h);
+  padding: 0 var(--sp-12);
+  border-bottom: 1px solid var(--edge);
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+}
+.appbar__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-13);
+  line-height: var(--lh-13);
+  font-weight: 500;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+/* Page 18.2. "New thread" is a placeholder the product wrote, not something
+   the user said, so it sets in --ink-3 and only a real title reaches --ink-1. */
+.appbar__title[data-placeholder='true'] { color: var(--ink-3); }
+.appbar__right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  flex: 0 0 auto;
+}
+/* FOUND BY LOOKING, 2026-08-27: this block shipped with three token names
+   that tokens.css does not define — `--sp-3`, `--text-xs` and `--danger`. An
+   undefined custom property is not an error anywhere; the declaration is simply
+   dropped, so the gap collapsed to `normal` and the failure line rendered at the
+   body's 13px in the body's ink, which is the one string on this bar that must
+   not look like ordinary text. The names below are the ones this product
+   actually has: `--sp-4`, `--t-11`, and `--wont`, which is the role this
+   interface already gives a request that failed — `.toolrow[data-state='failed']`
+   and `.streamstate[data-status='failed']` are both `--wont`, and an export that
+   did not download is the same kind of event. */
+.journey-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+.journey-actions__error {
+  max-width: 12rem;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--wont);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* THE VOID, CLOSED. FOUND BY LOOKING AT THE RUNNING APP.
+
+   A three-message thread pinned its messages to the top of a 900px viewport and
+   the composer to the bottom, leaving several hundred pixels of empty ground
+   between the last word and the box you answer it in. The reference does not do
+   that, and the argument against it does not need a screenshot to settle:
+
+   THE LAST TURN MUST NOT MOVE WHEN A THREAD CROSSES THE HEIGHT OF THE WINDOW.
+   Top-aligned, a short thread puts its newest message at the top of the column
+   and a long thread puts it just above the composer — the same object in two
+   completely different places for a reason that is about the window rather than
+   about the conversation. Anchoring the column to the bottom makes the newest
+   turn's position invariant: it is always the thing directly above the box you
+   type into, at three messages and at three hundred.
+
+   It is `margin-top:auto` on the column and not `justify-content:flex-end` on
+   the scroller, because an auto margin resolves to zero when there is no free
+   space, whereas flex-end on an overflowing scroll container pushes the first
+   rows past the scrollable origin where they cannot be reached.
+
+   Graphite does not rule on this. Page 20 governs what is in the column and
+   pages 30 and 36 centre the EMPTY state — `display:flex;align-items:center;
+   justify-content:center` on `.transcript`, which `.empty` below still does —
+   but the book draws every composed conversation at a window height sized to
+   its own content, so the case never arises in it. Recorded as reasoned rather
+   than as quoted. */
+.thread {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Transcript measure: 720px. Compact everywhere else, but this one number is
+   about reading rather than scanning.
+
+   THE RHYTHM IS NOT ONE GAP. A flex `gap` puts the same air between a user
+   bubble and a reply as between two consecutive tool rows, and Graphite stacks
+   tool rows 2px apart — a run of them is one thought, not six. So spacing is a
+   top margin per row kind: 16px between the things a reader stops at, 2px
+   inside a stack of narration. */
+.column {
+  width: 100%;
+  max-width: var(--col-max);
+  min-width: 0;
+  overflow-x: hidden;
+  /* top auto (the anchor), sides auto (the centring), bottom 0. `width:100%`
+     is load-bearing: auto margins on the cross axis of a column flex container
+     cancel `align-items:stretch`, so without it the column would shrink to the
+     width of its longest line. */
+  margin: auto auto 0;
+  /* The bottom step was --sp-8 and the owner felt it: "the chat is maybe a
+     letter above the chat box... space-condensed". The last line of a reply
+     can now scroll a real breath clear of the composer. */
+  padding: var(--sp-20) var(--sp-20) var(--sp-40);
+  display: flex;
+  flex-direction: column;
+}
+/* THE RHYTHM IS A TURN, NOT A ROW. This is the second thing Max named: "Run
+   and diagnosis are very clumped together."
+
+   Measured before this change, at Normal density on a real thread: EVERY gap
+   in the column was 16px except the two that were 12px. A user message
+   starting a brand-new turn stood exactly as far from the previous reply as a
+   tool row stood from the message that caused it. Nothing grouped, so
+   everything read as one wall — which is what "clumped" means even though no
+   individual gap was tight.
+
+   A turn is: the user's message, the turn line, the tool rows it caused, the
+   reply. Those four belong together. The next user message begins a new one.
+   So the ladder runs
+     --sp-4    inside a run of narration (a stack of tool rows is one thought)
+     --sp-8    between the parts of one turn
+     --sp-12   before the reply — the reader stops here
+     --sp-24   before a new user message, and around a card
+   and the largest gap in the transcript is now the one that means the most.
+   Nothing was made airier: the WITHIN-turn gaps went DOWN from 16 to 8. */
+.column > * { margin-top: var(--sp-8); }
+.column > .toolrow, .column > .metarow, .column > .turnblock { margin-top: var(--sp-4); }
+/* The first piece of narration after something a reader was reading gets air
+   back, because a tool row abutting a paragraph reads as part of it. */
+.column > .prose + .toolrow,
+.column > .prose + .metarow,
+.column > .prose + .turnblock,
+.column > .userbubble + .toolrow,
+.column > .userbubble + .metarow,
+.column > .userbubble + .turnblock { margin-top: var(--sp-8); }
+/* The reply is where the reader stops. */
+.column > .prose { margin-top: var(--sp-12); }
+/* A NEW TURN. The one big gap, and it is load-bearing: it is the only thing in
+   the transcript that says "this is where you asked the next thing". */
+.column > .userbubble { margin-top: var(--sp-24); }
+/* A CARD IS NOT A PARAGRAPH. The diagnosis card is the most important surface
+   in the product and it was sitting at paragraph distance from the prose on
+   either side of it. --sp-24 both ways, from the same step the new-turn break
+   uses, so a verdict is separated by the largest gap the column has. */
+.column > .turnblock--card,
+.column > .turnblock--card + * { margin-top: var(--sp-24); }
+.column > *:first-child { margin-top: 0; }
+/* INSIDE one turn block the parts were touching. The owner: "tool calls of
+   the same kind have good spacing. Tool calls of different kinds have bad
+   spacing" — a run of tool rows stacked at --sp-4 read as one thought, but
+   the row that caused a card sat at ZERO from the card itself, because no
+   rule ever spoke about a turnblock's inside. The parts-of-one-turn step. */
+.turnblock > * + * { margin-top: var(--sp-8); }
+
+/* ══ BUTTONS ══════════════════════════════════════════════════════════════
+   Quiet borders, no fill until hover, and no fill at all except on the two
+   places the product asks for a commitment: send, and the primary action of an
+   approval. Disabled is never a coloured button. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--control-h);
+  padding: 0 var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: var(--t-12);
+  font-weight: 550;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease),
+              border-color var(--dur-1) var(--ease);
+}
+.btn:hover { background: var(--state-hover); color: var(--ink-1); border-color: var(--edge-strong); }
+.btn:active { background: var(--state-press); }
+.btn:disabled {
+  color: var(--ink-4);
+  border-color: var(--edge-faint);
+  background: transparent;
+  cursor: not-allowed;
+}
+.btn--pill { border-radius: var(--r-full); padding: 0 var(--sp-12); }
+.btn--sm { height: 24px; font-size: var(--t-11); padding: 0 var(--sp-8); }
+
+/* Ghost — no border. The follow-up shape. */
+.btn--ghost { border-color: transparent; }
+/* The destructive confirm: ink and edge in the wont colour, never a red fill. */
+.btn--danger { color: var(--wont); border-color: var(--wont-edge); }
+.btn--danger:hover { background: var(--wont-wash); border-color: var(--wont); }
+.btn--ghost:hover { border-color: transparent; background: var(--state-hover); }
+
+/* Quiet — the old name for ghost, kept so call sites do not all have to move
+   in one step. Same shape. */
+.btn--quiet { border-color: transparent; color: var(--ink-3); }
+.btn--quiet:hover { border-color: transparent; background: var(--state-hover); color: var(--ink-1); }
+
+/* Filled. The accent appears here and on the send button, nowhere else. */
+.btn--primary {
+  background: var(--accent-solid);
+  border-color: transparent;
+  color: var(--accent-on-solid);
+  font-weight: 600;
+}
+.btn--primary:hover { background: var(--accent-solid-hover); border-color: transparent; color: var(--accent-on-solid); }
+.btn--primary:active { background: var(--accent-solid-press); }
+.btn--primary:disabled { background: var(--surface-3); color: var(--ink-4); }
+
+.btn--followup { height: 24px; font-size: var(--t-11); padding: 0 var(--sp-8); }
+
+/* Icon-only square, 26px, --r-8. */
+.iconbtn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  font: inherit;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.iconbtn:hover { background: var(--state-hover); color: var(--ink-1); }
+.iconbtn:active { background: var(--state-press); }
+.iconbtn--bordered { border-color: var(--edge); }
+.iconbtn[aria-pressed='true'] { color: var(--ink-1); }
+.iconbtn:disabled { color: var(--ink-4); cursor: not-allowed; background: transparent; }
+.iconbtn--sm { width: 22px; height: 22px; }
+/* --tap-min, not 20: this is the Stage's own detach/split control among
+   others, and a 20px square is under the 24px floor 2.5.8 sets. The GLYPH
+   inside stays small - the icon size is a separate property - so the button
+   grows without the drawing changing. */
+.iconbtn--xs { width: var(--tap-min); height: var(--tap-min); }
+
+/* THE SIGNATURE ELEMENT.
+   28 x 28, --r-full, --accent-solid, white glyph. Circular, not a square with
+   soft corners. The composer around it stays a rounded RECTANGLE at --r-18: a
+   rounded rectangle with a circular send reads as a composer; a pill with a
+   circular send reads as a search box. The shape of the container was always
+   the real carrier of that signal.
+   This is the only place the accent appears at full saturation. */
+.sendbtn {
+  width: 28px; height: 28px;
+  border-radius: var(--r-full);
+  border: 0;
+  background: var(--accent-solid);
+  color: var(--accent-on-solid);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font: inherit;
+  transition: background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+.sendbtn:hover:not(:disabled) { background: var(--accent-solid-hover); }
+.sendbtn:active:not(:disabled) { transform: scale(.94); }
+/* Never a dimmed accent — "unavailable" reads as absence, not as a state with
+   an opinion. */
+.sendbtn:disabled { background: var(--surface-3); color: var(--ink-4); cursor: not-allowed; }
+
+/* ══ BADGES, TAGS, CHIPS ══════════════════════════════════════════════════ */
+
+/* Verdict badge — the one place this design uses capitals. A verdict is a
+   terminal claim; caps at 10px with +.08em and weight 700 is what makes it
+   read as a stamp rather than a label. */
+.vpill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--sp-10);
+  border-radius: var(--r-full);
+  border: 1px solid var(--v-edge);
+  background: var(--v-wash);
+  color: var(--v-colour);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* Trailing detail sits OUTSIDE the pill, so the pill's width depends only on
+   the word and a rail of pills stays aligned. */
+.vpill__detail {
+  margin-left: var(--sp-8);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+
+/* Provenance tag — 16px, pill, mono 10px. The tag on every number. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 16px;
+  padding: 0 6px;
+  border-radius: var(--r-full);
+  background: var(--tag-wash);
+  color: var(--tag-colour);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* A tag the design system does not define gets a visible placeholder mark
+   rather than a quiet invented colour. */
+.tag[data-placeholder='true'] { border-bottom: 1px dashed var(--edge-strong); }
+
+/* THE SAME CLAIM AS A DOT. `<OriginTag compact />` where the word would be the
+   third uppercase label on one short line - see the component for the rule on
+   where this is allowed. Filled, 7px, the pill's own colour, with a ring of
+   the wash so it holds its shape on a busy ground: mass survives at this size
+   and a hollow ring does not. The word is still on the element as its
+   accessible name and its tooltip. */
+.tag--dot {
+  width: 7px;
+  height: 7px;
+  min-width: 7px;
+  padding: 0;
+  gap: 0;
+  border-radius: var(--r-full);
+  background: var(--tag-colour);
+  box-shadow: 0 0 0 2px var(--tag-wash);
+  /* It sits on a text line, so its box is its own and not the line's. */
+  align-self: center;
+  flex: 0 0 auto;
+}
+
+/* Context chip — a chip is a profile, not a filename. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 var(--sp-8) 0 6px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font: inherit;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.chip:hover { background: var(--surface-3); }
+.chip .i { color: var(--ink-3); }
+/* Two-line chip: 38px, --r-10. */
+.chip[data-lines='2'] {
+  height: 38px;
+  border-radius: var(--r-10);
+  padding: 0 var(--sp-10) 0 var(--sp-8);
+}
+.chip__stack { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; min-width: 0; }
+.chip__label { color: var(--ink-1); font-size: var(--t-12); overflow: hidden; text-overflow: ellipsis; }
+.chip__profile { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--t-10); }
+.chip__profile .num { font-family: var(--font-mono); font-variant-numeric: var(--num); }
+.chip[aria-pressed='true'] { border-color: var(--accent-edge); background: var(--accent-wash); }
+.chip[aria-pressed='true'] .i { color: var(--accent); }
+/* Sensitivity is a persistent property, not a warning: the amber lock and the
+   WORD, never colour alone. */
+.chip[data-sensitive='true'] { border-color: var(--spills-edge); background: var(--spills-wash); }
+.chip[data-sensitive='true'] .i { color: var(--spills); }
+.chip__sensitive {
+  color: var(--spills);
+  font-weight: 600;
+  font-size: var(--t-10);
+  letter-spacing: .04em;
+}
+
+/* ══ CARDS, STRIPS, BARS ══════════════════════════════════════════════════ */
+
+.card {
+  background: var(--surface-2);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  /* THE DROPDOWN'S DEPTH, on every section card — the owner's ask, pointing
+     at the old Machine popover: cards float the way that panel did instead
+     of sitting flush. e2 is exactly that panel's step. */
+  box-shadow: var(--e2);
+}
+/* The diagnosis card — the most important surface in the product — is the one
+   card at the top of the radius ramp, and the one card a step deeper. */
+.card--diagnosis { border-radius: var(--r-18); box-shadow: var(--e3); }
+.card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: var(--sp-10) var(--sp-12);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--edge-faint);
+}
+.card__kicker {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.card__chev { margin-left: auto; }
+/* Page 08 hands --sp-16 to "panel padding, the diagnosis card" by name. The
+   card was on --sp-12, the CARD-padding step, which is what a small verdict
+   card gets. This is the largest card in the product. */
+.card--diagnosis > .card__body { padding: var(--sp-16); }
+.card__body { padding: var(--sp-12); }
+.card__headline {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-10);
+  flex-wrap: wrap;
+  font-size: var(--t-15);
+  line-height: var(--lh-15);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--ink-1);
+  /* The headline and the sentence under it are ONE group — the verdict and
+     what it means — so they close up, and the space saved goes to the breaks
+     between the card's real sections. */
+  margin-bottom: var(--sp-8);
+}
+.card__text {
+  font-size: var(--t-13);
+  line-height: 19px;
+  color: var(--ink-2);
+  margin: 0 0 var(--sp-12);
+}
+.card__text--quiet {
+  color: var(--ink-4);
+  font-size: var(--t-12);
+  line-height: 18px;
+}
+/* MAX: "Run and diagnosis are very clumped together. Some of the gate ledgers
+   are clumped together."
+
+   Measured inside the card before this change: headline 10, sentence 12,
+   ledger 12, unsubstantiated-claim block 12, footnote 12. Five bordered blocks
+   of the same visual weight at one repeating distance — which is a wall, and
+   it is a wall whether or not any single gap is small. The fix is not more
+   space everywhere; it is TWO distances instead of one, so a reader can see
+   which things belong together. Within a group --sp-8, between sections
+   --sp-16, and the total height of the card barely moves. */
+.card--diagnosis > .card__body > .card__text { margin-bottom: var(--sp-16); }
+.card__actions { display: flex; gap: var(--sp-6); flex-wrap: wrap; }
+.card[data-stale='true'] { opacity: .7; }
+
+/* A finding, not an error: a strip states what is missing and offers to make
+   it, and whatever it sits above stays fully usable. */
+.strip {
+  display: block;
+  padding: var(--sp-6) var(--sp-10);
+  border: 1px solid var(--strip-edge);
+  background: var(--strip-wash);
+  border-radius: var(--r-10);
+  color: var(--strip-colour);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+.strip + .strip { margin-top: var(--sp-6); }
+/* THE THINGS A STRIP COUNTED, one per line. `run.finished` used to splice
+   seven parked steps into its own sentence; a list of seven is a list. */
+.strip__points {
+  margin: var(--sp-6) 0 0;
+  padding: 0 0 0 var(--sp-12);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.strip__points li {
+  position: relative;
+  color: var(--ink-2);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  overflow-wrap: anywhere;
+}
+.strip__points li::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--sp-12) * -1 + 3px);
+  top: 0.55em;
+  width: 3px;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--ink-3);
+}
+.strip__points-more { color: var(--ink-3); font-style: italic; }
+.strip__points-more::before { display: none; }
+.strip__action {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* VRAM budget bar. The track is a SCALE, not a container. Segments use viz
+   tokens because they are data; the boundary rule takes the verdict colour
+   because it is the claim. The 2px segment radius is the exception named in
+   tokens.css — a 4px radius on an 8px bar is a semicircle. */
+.budget {
+  position: relative;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  margin-top: 2px;
+}
+.budget__seg { position: absolute; top: 0; height: 8px; border-radius: var(--r-bar); }
+.budget__cap { position: absolute; top: -4px; height: 16px; width: 2px; border-radius: var(--r-full); background: currentColor; }
+.budget__scale {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  margin-top: var(--sp-4);
+}
+
+/* ══ COMPOSER ═════════════════════════════════════════════════════════════
+   A rounded rectangle at --r-18, surface one step above the ground, one quiet
+   border, multi-line capable. The control row lives INSIDE it; the run-target
+   tabs and the branch indicator live outside and below, muted and small,
+   because they are state rather than input. */
+
+.composer-dock {
+  flex: 0 0 auto;
+  padding: 0 var(--sp-20) var(--sp-12);
+  background: var(--bg-base);
+}
+/* A container, so the starting prompts above the composer measure the READING
+   COLUMN rather than the window — see `.suggestions` below, and the note on
+   `.inspector__card`. */
+.composer-dock__inner { container-type: inline-size; max-width: var(--col-max); margin: 0 auto; }
+
+.composer {
+  background: var(--surface-1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-18);
+  box-shadow: var(--e2);
+  padding: var(--sp-10) var(--sp-10) var(--sp-8);
+  transition: border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+}
+/* Focused is a stronger edge and a deeper shadow. NOT glass: §7's list of
+   glass surfaces was written before Graphite, and Graphite's composer is a
+   solid surface with a quiet border. */
+.composer[data-focused='true'] { border-color: var(--edge-strong); box-shadow: var(--e3); }
+
+.composer__input {
+  display: block;
+  width: 100%;
+  min-height: 21px;
+  max-height: 200px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink-1);
+  font-family: var(--font-sans);
+  font-size: var(--t-14);
+  line-height: var(--lh-14);
+  padding: var(--sp-4) var(--sp-6) var(--sp-12);
+  overflow-y: auto;
+}
+.composer__slashwrap {
+  position: relative;
+}
+.composer__slash {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: calc(100% + 4px);
+  z-index: 6;
+  display: grid;
+  gap: 2px;
+  padding: 6px;
+  border-radius: var(--r-10);
+  border: 1px solid var(--edge-strong);
+  background: var(--surface-2);
+  box-shadow: var(--e3);
+}
+.composer__slashrow {
+  display: grid;
+  grid-template-columns: 14px auto 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--t-12);
+  text-align: left;
+}
+.composer__slashrow:hover,
+.composer__slashrow[data-active] {
+  background: var(--surface-3);
+  color: var(--ink-1);
+}
+.composer__slashcmd { color: var(--gold); }
+.composer__slashhint { color: var(--ink-4); }
+.composer__input::placeholder { color: var(--ink-3); }
+/* FOUND BY LOOKING. The global double ring landed on the textarea, whose box
+   is inset only ~10px from the composer's own border — so a focused composer
+   drew an indigo ring INSIDE another rounded rectangle, 4px from its edge, and
+   read as a rendering defect rather than as focus. Codex's composer has no
+   ring inside it.
+   Focus is not removed, it is moved to the thing a person perceives as the
+   control: the ring goes on the composer itself, one ring, following the
+   composer's own 18px corner. */
+.composer__input:focus-visible { box-shadow: none; }
+.composer:has(.composer__input:focus-visible) {
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent);
+}
+
+.composer__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  /* ONE LINE, ALWAYS. The owner, seeing the GPU chip pushed under the model
+     and workspace chips: "make sure all the tools in the chatbox load in one
+     line, and not like this condensed stacked view." The chips shrink and
+     ellipsize instead of wrapping — every one already truncates gracefully —
+     and the actions on the right never shrink at all. */
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.composer__row > * { min-width: 0; flex: 0 1 auto; }
+/* The plus, the send cluster, and anything that is a fixed control keep their
+   size; it is the labels that give. */
+.composer__row > .cx-attachwrap,
+.composer__row > .composer__actions { flex: 0 0 auto; }
+.composer__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* The plus button: 24px circle, quiet border. */
+.plusbtn {
+  width: 24px; height: 24px;
+  padding: 0;
+  border-radius: var(--r-full);
+  border: 1px solid var(--edge);
+  background: transparent;
+  color: var(--ink-2);
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+  cursor: pointer;
+  font: inherit;
+}
+/* FOUND BY LOOKING (Max, 2026-09-12: "the plus in the chatbox isn't centered
+   in the button it's sitting inside of"). The button was a 24px grid with the
+   glyph centred, but the user-agent stylesheet gives a <button> its own
+   padding (1px 6px on WebView2) and the svg sat inline on the text baseline,
+   which adds descender space under it - both nudge a 14px glyph off the
+   centre of a 24px circle by a pixel or two. Padding zero, glyph a block. */
+.plusbtn .i { display: block; }
+.plusbtn:hover { background: var(--state-hover); color: var(--ink-1); }
+
+/* The in-composer selectors: no border at rest, --r-8, 24px. */
+.modelsel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  max-width: 260px;
+  padding: 0 var(--sp-8);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.modelsel:hover { background: var(--state-hover); color: var(--ink-1); }
+.modelsel .i { color: var(--ink-3); }
+.modelsel__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+}
+.modelsel[data-inert='true'] { cursor: default; }
+.modelsel[data-inert='true']:hover { background: transparent; color: var(--ink-2); }
+
+/* Graphite also draws a row BELOW and outside the composer — Local / Worktree
+   / Cloud tabs and a git branch indicator, muted and small, because they are
+   state rather than input. Nothing is drawn here: every run is local, there is
+   no worktree concept in the engine, and no recipe is under git yet. The CSS
+   for it is in the brand book and comes back with the thing it describes. */
+
+/* ══ EMPTY THREAD ═════════════════════════════════════════════════════════
+   Codex centres a small mark, a modest heading and a quiet selector, then puts
+   three suggestion cards above the composer. Graphite keeps that shape and
+   adds the one thing this product must say first: what it already measured
+   about this machine, tagged.
+   Everything here is calibrated to say "this is a tool you already have open"
+   rather than "this is a product you are being sold". */
+
+/* The empty state is the one thing in this column that is CENTRED rather than
+   anchored, exactly as pages 30 and 36 draw it. It is a screen, not a message:
+   there is no newest turn for it to sit beside. */
+.empty {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-20);
+
+  /* FOUND BY LOOKING, on a stranger walk at 1440x900. `align-items: center`
+     centres the panel, and when the panel is taller than the pane it centres
+     the overflow too: the content is pushed above the top edge, and with no
+     scroll region `scrollTop` cannot go negative, so the top is unreachable.
+     Measured before the fix: `.empty__inner` sat at -169px against a container
+     top of 44, which put a stranger's first screen in the middle of the
+     machine card with "Let's build" cut off above it and no way to get there.
+
+     `margin: auto` on the item does the same centring while leaving the
+     overflow scrollable, which is the whole reason to prefer it here. Every
+     DOM assertion passed while this was on screen. */
+  overflow-y: auto;
+}
+.empty__inner {
+  /* Centres vertically like `align-items: center` did, but yields to the
+     scroller instead of overflowing past it. See the note on `.empty`. */
+  margin-block: auto;
+  max-width: 560px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-16);
+}
+/* The mark: a 34px rounded-square outline holding one 18px glyph. */
+/* The wordmark — an INSCRIPTION now, basilica.html pages 04-05. The script
+   face is retired (the owner's verdict on the cursive was final, and correct:
+   an inscription does not sign itself in cursive). Marcellus capitals, spaced
+   like letters cut into a lintel, one weight, never bolded. */
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.markglyph {
+  width: 34px; height: 34px;
+  border: 1px solid var(--edge-strong);
+  border-radius: var(--r-10);
+  display: grid;
+  place-items: center;
+  color: var(--ink-1);
+  flex: 0 0 auto;
+}
+/* The one size above 26px in the product, and the book draws it: the empty
+   session is the product speaking as itself, and 28px Cormorant italic is its
+   voice, not a heading that escaped the scale. */
+.empty__title {
+  /* The book's empty session (page 24): Cormorant italic 500 at 28/32 — the
+     voice face, reserved for the moments the product speaks as itself. */
+  font-family: var(--font-title);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--ink-1);
+  margin: 0;
+  text-align: center;
+}
+.empty__body {
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+  margin: 0;
+}
+.empty__card {
+  width: 100%;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-1);
+  padding: var(--sp-10) var(--sp-12);
+}
+.empty__note {
+  font-size: var(--t-12);
+  line-height: 17px;
+  color: var(--ink-2);
+  padding: var(--sp-8) var(--sp-8) 0;
+  border-top: 1px solid var(--edge-faint);
+  margin-top: var(--sp-8);
+}
+/* The inspector body already carries --sp-16 of panel padding, so the empty
+   state inside it adds none horizontally. It used to add 8 on top of 8. */
+.empty--pane { display: block; height: auto; padding: var(--sp-8) 0 0; }
+/* CS19 — pane empties use Instrument Sans; Cormorant stays for blank-chat voice. */
+.empty--pane .empty__title {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 600;
+  font-size: var(--t-14);
+  line-height: var(--lh-14);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+/* Key/value row — 26px, label --ink-3 left, value mono --ink-1, tag far right. */
+.kvrow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  height: 26px;
+  padding: 0 var(--sp-8);
+  border-radius: var(--r-4);
+}
+.kvrow:hover { background: var(--state-hover); }
+/* 96px, and it does not wrap. FOUND BY LOOKING: "Driver / CUDA runtime" and
+   "Build can see the GPU" wrapped to two lines inside a 26px row and spilled
+   over the row below it. A label that has to wrap is a label that is too long
+   for a compact row — the labels were shortened to the brand book's own, and
+   this is the backstop that makes the next long one truncate instead of
+   overlap. */
+.kvrow__k {
+  font-size: var(--t-11);
+  color: var(--ink-3);
+  flex: 0 0 96px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kvrow__v {
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+  font-variant-numeric: var(--num);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kvrow__v[data-absent='true'] { color: var(--ink-3); }
+.kvrow__unit { color: var(--ink-3); }
+.kvrow__t { margin-left: auto; flex: 0 0 auto; }
+/* A row the user overrode gets a 2px --edge-strong left bar and a DECLARED
+   tag. Every verdict downstream that rests on it carries that tag. The bar is
+   chrome — it means "overridden" — so it is never a state colour. */
+.kvrow[data-overridden='true'] { box-shadow: inset 2px 0 0 var(--edge-strong); }
+
+/* Suggestion cards — three, always, above the composer on an empty thread. */
+.suggest {
+  background: var(--surface-1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  padding: var(--sp-10) var(--sp-12);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  /* The book gives .suggest a 82px floor. Without it a card is as tall as its
+     own sentence, so a row of them steps up and down with the copy and the
+     glyph stops sitting on one line across the row. Measured at 76px here
+     before it was added. */
+  min-height: 82px;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.suggest:hover { background: var(--surface-2); border-color: var(--edge-strong); }
+.suggest__glyph { color: var(--ink-3); }
+.suggest__text { font-size: var(--t-12); line-height: 16px; color: var(--ink-2); }
+.suggest__text b { color: var(--ink-1); font-weight: 550; display: block; }
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-8);
+}
+/* Graphite says three cards, always. PRODUCT_SPEC §3.1 specifies FOUR starting
+   prompts verbatim and argues the fourth is load-bearing — "a person whose
+   model is already good enough and whose problem is the bill or the clock is
+   one of the most common people to arrive here". Dropping one to satisfy a
+   count would be an editorial decision about who the product is for, so all
+   four render and the grid becomes 2 x 2. The conflict is reported, not
+   silently resolved either way. */
+.suggestions[data-count='4'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* WAS `@media (max-width: 900px)`, which is the window and not the column.
+   Open the inspector at half the workspace on a 1680px monitor and the chat is
+   ~420px wide with four cards still in a 2 x 2 — the window is 1680, so the
+   query never fired and the card text ran together. 640px of READING COLUMN is
+   where three cards stop having room for two words apiece. */
+@container (max-width: 640px) {
+  .suggestions, .suggestions[data-count='4'] { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ══ PANE STACK ═══════════════════════════════════════════════════════════ */
+
+/* ══ MENUS — Graphite page 14.4 ═══════════════════════════════════════════
+   "Rows are the rail's own 30px icon-and-label row, so a menu and the rail
+   have the same rhythm — which is correct, because the rail is a menu."
+   --r-14 shell, --sp-4 inset, --e3 and never --e4, no arrow and no tail. */
+.menu {
+  z-index: 60;
+  max-width: 264px;
+  padding: var(--sp-4);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-4);
+  box-shadow: var(--e3);
+  outline: 0;
+}
+.menu__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  height: var(--row-h);
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  text-align: left;
+  cursor: pointer;
+}
+.menu__row .i { color: var(--ink-3); flex: 0 0 auto; }
+.menu__nolead { width: 16px; flex: 0 0 auto; }
+.menu__label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu__row:hover,
+.menu__row[data-active='true'] { background: var(--state-hover); color: var(--ink-1); }
+.menu__row:hover .i,
+.menu__row[data-active='true'] .i { color: var(--ink-2); }
+.menu__row[aria-checked='true'] { color: var(--ink-1); }
+/* Page 14.5: one destructive row, last, after a divider, "coloured on the ink
+   only — never a red row fill". Red belongs to WON'T FIT. */
+.menu__row[data-destructive] { color: var(--wont); }
+.menu__row[data-destructive] .i { color: var(--wont); }
+.menu__row[data-destructive]:hover { background: var(--wont-wash); }
+/* Disabled IN PLACE, with the reason under it. Never a removed row. */
+.menu__row:disabled { color: var(--ink-4); cursor: not-allowed; background: transparent; }
+.menu__row:disabled .i { color: var(--ink-4); }
+.menu__key {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.menu__rule {
+  height: 1px;
+  margin: var(--sp-4) var(--sp-8);
+  background: var(--edge-faint);
+}
+.menu__why {
+  margin: 0 0 var(--sp-4);
+  padding: 0 var(--sp-8) 0 32px;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}
+
+/* ══ A LABEL AND A CHEVRON, WITH THE PARAGRAPH BEHIND IT ══════════════════
+   MAX: "sometimes the text can be a bit much." Three panes stood four lines of
+   prose beside the thing they were about. The sentence is kept and the space
+   it took is not. Never used for a number, a tag, a verdict or a gate row. */
+.note { margin-top: var(--sp-12); }
+.note__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  min-height: 22px;
+  list-style: none;
+  cursor: pointer;
+  color: var(--ink-3);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+.note__head::-webkit-details-marker { display: none; }
+.note__head:hover { color: var(--ink-1); }
+.note__head .i { transition: transform var(--dur-1) var(--ease); flex: 0 0 auto; }
+.note[open] > .note__head .i { transform: rotate(90deg); }
+.note__body {
+  padding: var(--sp-4) 0 0 18px;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.note__body code { font-family: var(--font-mono); font-size: var(--t-10); }
+
+/* ══ THE INSPECTOR ════════════════════════════════════════════════════════
+   CS18 — COLUMN SPLIT UNDER THE SHARED APPBAR.
+
+   Max, 2026-09-16: the work section must not float over the chat, and chrome
+   tabs must follow the brandbook — square / chatbox chips (--r-8), never
+   pills. The appbar stretches across chat + panel; the inspector is a direct
+   body-row sibling of `.centre`, not a third shell column and not an overlay.
+
+   WHAT THIS REPLACED. CS17 welded tabs onto the card. An earlier CS18 pass
+   floated pill tabs above a padded card that reserved --topbar-h so it would
+   not cover window chrome — that left a section cut-off and a secondary float. */
+.inspector {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  margin: 0;
+  padding: var(--sp-8) var(--sp-8) var(--sp-8) var(--sp-6);
+  background: var(--bg-base);
+  border: 0;
+  border-left: 1px solid var(--edge);
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  box-sizing: border-box;
+}
+.inspector__chrome {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 0 2px 10px;
+  flex: 0 0 auto;
+  min-height: 36px;
+  background: transparent;
+  border: 0;
+  overflow-x: auto;
+}
+/* THE PANE IS THE THING THE CONTENT SHOULD MEASURE ITSELF AGAINST.
+   Max: "it all condenses, some of the text starts stacking and overlapping."
+   Every responsive rule in this product except two keyed off the VIEWPORT,
+   which is the wrong ruler the moment a pane is resizable: a 1680px monitor
+   with the inspector dragged to its 320px floor leaves 292px of card, and a
+   `@media (max-width: 900px)` has no idea. Naming the card a container makes
+   `@container` queries inside it read the card's own width, so a row stacks
+   when THIS card is narrow and not when the window is. */
+.inspector__card {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  box-shadow: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+/* Legacy alias — PaneWindow / pop-out still look for __main. */
+.inspector__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+/* Kept as an alias so older selectors keep resolving during the CS18 cut. */
+.inspector__toptabs {
+  display: contents;
+}
+.inspector__toptab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 196px;
+  min-width: 0;
+  height: 32px;
+  border: 1px solid transparent;
+  /* Brandbook --r-8: square / chatbox chip, never a pill. */
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  flex: 0 0 auto;
+}
+.inspector__toptab[data-active] {
+  background: var(--surface-2);
+  border-color: var(--edge-strong);
+  color: var(--ink-1);
+  box-shadow: var(--e1);
+}
+.inspector__toptab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+  height: 100%;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--t-13);
+  line-height: 1.2;
+  font-weight: 500;
+  cursor: pointer;
+}
+.inspector__toptab[data-active] .inspector__toptab-btn {
+  padding-right: 6px;
+}
+.inspector__toptab-btn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+.inspector__toptab-btn .i { flex: 0 0 auto; color: var(--ink-4); }
+.inspector__toptab[data-active] .inspector__toptab-btn .i { color: var(--ink-2); }
+.inspector__toptab-x {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-4);
+  cursor: pointer;
+  flex: 0 0 auto;
+  opacity: 0;
+}
+.inspector__toptab:hover .inspector__toptab-x,
+.inspector__toptab[data-active] .inspector__toptab-x:focus-visible {
+  opacity: 0.85;
+}
+.inspector__toptab-x:hover {
+  opacity: 1 !important;
+  color: var(--ink-1);
+  background: var(--state-hover);
+}
+.inspector__plus {
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: 2px;
+}
+.inspector__plus-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.inspector__plus-btn:hover,
+.inspector__plus-btn[aria-expanded='true'] {
+  color: var(--ink-1);
+  background: var(--surface-2);
+  border-color: var(--edge);
+}
+.inspector__plusmenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 8;
+  min-width: 220px;
+  max-width: 280px;
+  max-height: 320px;
+  overflow: auto;
+  padding: 6px;
+  border-radius: var(--r-10);
+  border: 1px solid var(--edge-strong);
+  background: var(--surface-2);
+  box-shadow: var(--e3);
+  display: grid;
+  gap: 2px;
+}
+/* CS17 — portaled above GoalBar / chat so Search panes is usable. */
+.inspector__plusmenu--portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  width: 280px;
+  max-width: min(280px, calc(100vw - 16px));
+  max-height: min(360px, calc(100vh - 24px));
+}
+.inspector__plussearch {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  border-radius: var(--r-8);
+  border: 1px solid var(--edge);
+  background: var(--surface-1);
+  color: var(--ink-1);
+  font: inherit;
+  font-size: var(--t-12);
+}
+.inspector__plusrow {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--t-12);
+}
+.inspector__plusrow:hover,
+.inspector__plusrow[data-current] {
+  background: var(--surface-3);
+  color: var(--ink-1);
+}
+.inspector__plusempty {
+  margin: 0;
+  padding: 8px;
+  color: var(--ink-4);
+  font-size: var(--t-11);
+}
+.inspector__head--tools {
+  height: 32px;
+  min-height: 32px;
+}
+.inspector__head-spacer { flex: 1 1 auto; }
+
+/* Legacy aliases kept for PaneWindow pop-out until CS14 lands there too. */
+.inspector__rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-8) var(--sp-6);
+  border-right: 1px solid var(--edge);
+  background: var(--bg-base);
+  flex: 0 0 auto;
+}
+.inspector__tab {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-4);
+  cursor: pointer;
+}
+.inspector__tab:hover { color: var(--ink-1); }
+.inspector__tab[aria-current] {
+  border-color: var(--edge-strong);
+  color: var(--ink-1);
+}
+
+.app[data-stack='closed'] .inspector { display: none; }
+
+/* THE 44px LINE. .rail__top, .appbar and this are all --topbar-h: three
+   headers that read as one. */
+.inspector__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: var(--topbar-h);
+  padding: 0 var(--sp-4) 0 var(--sp-8);
+  border-bottom: 1px solid var(--edge);
+  flex: 0 0 auto;
+}
+/* The header names the pane; the rail beside it chooses. The head's own icon
+   reads in ink-3 like the rail's resting tabs. */
+.inspector__head > .i { color: var(--ink-3); }
+.inspector__subject {
+  font-size: var(--t-12);
+  font-weight: 600;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The one fact allowed to qualify a subject, per 18.4 — "and never more than
+   one of them". Mono because it is a count. */
+.inspector__qual {
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  font-variant-numeric: var(--num);
+  white-space: nowrap;
+}
+/* With no qualifier the dismiss button still has to sit at the right edge. */
+.inspector__head > .iconbtn:last-child { margin-left: auto; }
+.inspector__qual + .iconbtn { margin-left: var(--sp-6); }
+
+/* CS19 — endpoint status lines stay out of people’s faces; keep the class
+   inert so older markup (PaneWindow) does not reappear as a strip. */
+.inspector__prov { display: none; }
+/* --sp-16 is the book's "panel padding" step. The stack used --sp-4/--sp-8,
+   which is the ROW-padding step, and that is most of why the panes read as
+   clumped: the content had less air around it than the rows inside it. */
+.inspector__body {
+  /* Room and sections, not a bar: panel-step padding all round, and the
+     pane's own children space out as blocks so each reads as a section of a
+     page rather than rows in a strip. */
+  padding: var(--sp-16) var(--sp-20) var(--sp-20);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-16);
+  /* Grows into the panel's working height, stops at content past it, and
+     only scrolls when the viewport caps the panel. */
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.inspector__body > * { flex: 0 0 auto; }
+
+/* CS18 — no overlay mode. The inspector is always a column split under the
+   shared appbar; narrow viewports clamp pane width instead of floating. */
+
+/* ── THE FILES PANE — the workspace folder, readable and editable. ──────── */
+
+.filespane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--sp-8);
+}
+.filespane__prov { display: none; }
+.filespane__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-10);
+  min-height: 0;
+}
+.filespane__split[data-open='true'] {
+  grid-template-columns: minmax(120px, 38%) minmax(0, 1fr);
+}
+.filespane__rail {
+  min-width: 0;
+  max-height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  border-right: 0;
+  padding-right: 0;
+}
+.filespane__split[data-open='true'] .filespane__rail {
+  border-right: 1px solid var(--edge);
+  padding-right: var(--sp-8);
+}
+.filespane__viewer {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+  min-height: 0;
+}
+.filespane__empty {
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-3);
+}
+.filespane__empty--hint {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+}
+.filespane__group {
+  margin: 0 0 var(--sp-6);
+  font-size: var(--t-10);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.filespane__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.filespane__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  width: 100%;
+  padding: var(--sp-4) var(--sp-6);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--t-11);
+  cursor: pointer;
+  text-align: left;
+}
+.filespane__row:hover { background: var(--state-hover); color: var(--ink-1); }
+.filespane__row[data-active] {
+  border-color: var(--edge-strong);
+  background: var(--surface-2);
+  color: var(--ink-1);
+}
+.filespane__row .i { color: var(--ink-3); flex: 0 0 auto; }
+.filespane__path {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.filespane__meta {
+  flex: 0 0 auto;
+  color: var(--ink-4);
+  font-size: var(--t-10);
+}
+.filespane__filehead {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  min-width: 0;
+}
+.filespane__modes {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.filespane__mode {
+  border: 1px solid var(--edge);
+  background: var(--surface-1);
+  color: var(--ink-3);
+  font-family: var(--font-sans);
+  font-size: var(--t-11);
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--r-8);
+  cursor: pointer;
+}
+.filespane__mode[aria-pressed='true'] {
+  border-color: var(--edge-strong);
+  color: var(--ink-1);
+  background: var(--surface-2);
+}
+.filespane__meta-line {
+  margin: 0;
+  font-size: var(--t-10);
+  color: var(--ink-4);
+  font-family: var(--font-mono);
+}
+.filespane__pretty {
+  min-height: 0;
+  overflow: auto;
+  padding: var(--sp-8);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+}
+.filespane__content,
+.filespane__editor {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font-size: var(--t-12);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.filespane__editor {
+  min-height: 220px;
+  resize: vertical;
+  font-family: var(--font-mono);
+}
+.filespane__acts {
+  display: flex;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+.filespane__note { margin-top: var(--sp-4); }
+
+/* WHAT LEFT WITH THE STACK. `.pane`, `.pane__head`, `.pane__title`,
+   `.pane__prov`, `.pane__content`, `.tabbar`, `.tab` and `.tabbed-pane` are
+   gone: they styled nine accordion headers and the horizontal tab bar that
+   stood in for them below --col-min, and neither object exists any more. */
+
+/* Gate ledger — five rows, always five, always in the same order. */
+.gates {
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  overflow: hidden;
+}
+/* A ledger is a SECTION, not a row. Inside the inspector, whatever it lands
+   next to gets the panel step between them rather than the row step. Scoped:
+   inside the diagnosis card the same separation is set on the blocks
+   themselves, and two mechanisms would add up to 32px. */
+.inspector__body .gates + *,
+.inspector__body * + .gates { margin-top: var(--sp-16); }
+.gates__head + .gate { border-top: 0; }
+.gates__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--sp-6) var(--sp-10);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--edge-faint);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.gates__count { margin-left: auto; font-variant-numeric: var(--num); letter-spacing: 0; }
+/* MAX: "Some of the gate ledgers are clumped together."
+   Five rows at 33px with 5px of vertical padding and a hairline between them:
+   the rows were tight against their own borders, so the ledger read as one
+   striped block rather than as five separate questions. --sp-6 is the step the
+   book gives a row's own padding at this size and it takes the row to 35px.
+   The head keeps its own hairline; the ledger's separation from what sits
+   above and below it is now --sp-16, set on .gates below. */
+.gate {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  padding: var(--sp-6) var(--sp-10);
+  border: 0;
+  border-bottom: 1px solid var(--edge-faint);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.gate:last-child { border-bottom: 0; }
+.gate:hover { background: var(--state-hover); }
+.gate__no {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  width: 14px;
+  font-variant-numeric: var(--num);
+  flex: 0 0 auto;
+}
+.gate__name {
+  font-size: var(--t-12);
+  color: var(--ink-1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gate__right { margin-left: auto; display: flex; align-items: center; gap: var(--sp-8); flex: 0 0 auto; }
+
+/* Decision-walk node. Rejections carry no verdict colour — they are a peer
+   list, not a failure. */
+.node {
+  background: var(--surface-2);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  padding: var(--sp-6) var(--sp-10);
+  margin-bottom: var(--sp-4);
+}
+.node__q { font-size: var(--t-12); line-height: var(--lh-12); color: var(--ink-1); }
+.node__a { font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-2); }
+.rejected {
+  border-left: 1px solid var(--edge-faint);
+  padding-left: var(--sp-10);
+  margin-top: var(--sp-8);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+}
+
+/* Log — mono, a right-aligned gutter in --ink-3. Line numbers are readable
+   text, so they never drop to --ink-4. */
+.log { font-family: var(--font-mono); font-size: var(--t-11); line-height: 18px; color: var(--ink-2); }
+.log__line { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: var(--sp-8); }
+.log__no {
+  color: var(--ink-3);
+  text-align: right;
+  border-right: 1px solid var(--edge-faint);
+  padding-right: var(--sp-8);
+  font-variant-numeric: var(--num);
+}
+
+/* Diff rows. Diff colour uses a channel the verdicts do not — background wash
+   only, never foreground — so a removed line can never be misread as a
+   verdict. The gutter bar is an inset box-shadow and carries NO radius: its
+   2px is the bar's width, so it is written as a literal rather than reading
+   --r-bar, which would name a width after a radius. Page 08 of the book. */
+.diffwrap { font-family: var(--font-mono); font-size: var(--t-11); line-height: 18px; }
+.diffline { display: flex; align-items: stretch; min-width: 0; max-width: 100%; }
+.diffline__ln {
+  width: 34px; flex: 0 0 auto;
+  text-align: right;
+  padding-right: var(--sp-8);
+  color: var(--ink-3);
+  font-variant-numeric: var(--num);
+  user-select: none;
+  border-right: 1px solid var(--edge-faint);
+}
+.diffline__sg { width: 16px; flex: 0 0 auto; text-align: center; color: var(--ink-3); }
+.diffline__tx {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: var(--sp-8);
+  white-space: pre;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.diffline[data-kind='add'] { background: var(--diff-add-bg); box-shadow: inset 2px 0 0 var(--diff-add-gutter); }
+.diffline[data-kind='add'] .diffline__sg { color: var(--diff-add-gutter); }
+.diffline[data-kind='del'] { background: var(--diff-del-bg); box-shadow: inset 2px 0 0 var(--diff-del-gutter); }
+.diffline[data-kind='del'] .diffline__sg { color: var(--diff-del-gutter); }
+/* THE DIFF FINALLY HAS A CONSUMER. Everything above this line has been in
+   the sheet since the `--diff-*` tokens were added and had never rendered:
+   the feature it was drawn for was not built. `components/PlanDiff.tsx` is
+   that feature, and the rules above are unchanged by it.
+
+   TWO THINGS THE ORPHANED SHEET STILL NEEDED. `.diffline__tx` clips with an
+   ellipsis and `.diffwrap` had no overflow rule, so a long step line was
+   silently truncated with no way to read the rest - the exact fault Max named
+   on the goal card, and the whole line is on `title=` for the same reason. And
+   the wrap needed a bound: a plan rewrite is 80 rows and this sits inside the
+   conversation's flow. */
+.plandiff { margin-top: var(--sp-6); max-width: 100%; min-width: 0; }
+.plandiff__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-10);
+  cursor: pointer;
+  max-width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.plandiff__toggle:hover { color: var(--ink-1); }
+.plandiff__toggle .i { color: var(--ink-4); }
+.plandiff__sum { display: inline-flex; gap: var(--sp-6); }
+.plandiff .diffwrap {
+  margin-top: var(--sp-6);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--bg-base);
+  overflow-x: auto;
+  max-height: 46vh;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.plandiff__clipped {
+  margin: 0;
+  padding: var(--sp-6) var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+  color: var(--ink-4);
+  font-family: var(--font-sans);
+  font-size: var(--t-10);
+}
+
+.stat-add { color: var(--fits); font-family: var(--font-mono); font-size: var(--t-11); font-variant-numeric: var(--num); }
+.stat-del { color: var(--wont); font-family: var(--font-mono); font-size: var(--t-11); font-variant-numeric: var(--num); }
+
+/* ══ SMALL SHARED BITS ════════════════════════════════════════════════════ */
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .08em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.sep { color: var(--ink-4); }
+.rowgap-8 { display: flex; gap: var(--sp-8); align-items: center; flex-wrap: wrap; }
+.rowgap-6 { display: flex; gap: var(--sp-6); align-items: center; flex-wrap: wrap; }
+.stackgap-12 { display: flex; flex-direction: column; gap: var(--sp-12); }
+.hr { height: 1px; background: var(--edge-faint); border: 0; margin: var(--sp-12) 0; }
+
+/* ── Segmented control ────────────────────────────────────────────────────
+   The chrome is monochrome and carries at most ONE accent element, and that
+   one is the send button. So an active segment is --surface-3 + --ink-1 and
+   carries no accent at all. */
+.seg {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+}
+/* NOWRAP, because the box is a hard 24px. A two-word segment label wrapping
+   inside a fixed-height pill paints its second line through the control below
+   it - the same shape as the Stage header's "· Data". Max, 2026-09-19: "fix
+   some spacing problems throughout the app... this is on full expansion too,
+   so it's not like a formatting issue when things too small." */
+.seg__btn {
+  height: var(--tap-min);
+  white-space: nowrap;
+  flex: 0 0 auto;
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  font-family: inherit;
+  font-size: var(--t-11);
+  font-weight: 550;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.seg__btn:hover { color: var(--ink-1); background: var(--state-hover); }
+.seg__btn[aria-pressed='true'] { background: var(--surface-3); color: var(--ink-1); box-shadow: var(--e1); }
+
+
+
+/* ── Studios ──────────────────────────────────────────────────────────────
+   The capability packs, on the empty screen, under the machine card.
+
+   It is deliberately the QUIETEST block on that screen: same border, same
+   radius and same surface as `.empty__card`, no accent, no glyph larger than
+   the 34px mark above it. This is an inventory a person can open, not an offer
+   — see the module comment in components/Studios.tsx for why the difference
+   matters here more than it looks like it should. */
+.studios {
+  width: 100%;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-1);
+  padding: var(--sp-10) var(--sp-12);
+}
+.studios__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: 0 var(--sp-8) var(--sp-8);
+}
+.studios__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-12);
+  font-weight: 550;
+  color: var(--ink-1);
+}
+.studios__count {
+  margin-left: auto;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.studios__list { list-style: none; margin: 0; padding: 0; }
+
+/* One row per pack. 26px, the same rhythm as `.kvrow` directly above it in the
+   empty column, so the two cards read as one column of rows rather than two
+   grids that nearly line up. */
+.studio__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  height: 26px;
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-4);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.studio__row:hover { background: var(--state-hover); }
+.studio__row--skeleton {
+  display: block;
+  background: var(--surface-3);
+  cursor: default;
+}
+.studio__name {
+  flex: 0 0 auto;
+  min-width: 82px;
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+}
+/* "core" is a fact about when the pack loads, not a quality rating, so it gets
+   the same neutral chip every other non-verdict label in this product gets. Its
+   slot is held on every row so the description column is a column. */
+.studio__slot { flex: 0 0 34px; display: flex; }
+.studio__core {
+  flex: 0 0 auto;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-4);
+  font-size: var(--t-11);
+  line-height: 15px;
+  color: var(--ink-3);
+}
+/* The engine's own one-line description. It truncates rather than wraps: a row
+   that wraps breaks the 26px rhythm, and the full sentence is one hover away
+   in the title attribute the engine's text already fills. */
+.studio__what {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.studio__n {
+  flex: 0 0 auto;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+/* The tools inside one pack, shown when its row is opened. Mono, because these
+   are the identifiers the model is handed and the controls list — not labels
+   written for this card. */
+.studio__tools {
+  list-style: none;
+  margin: 0 0 var(--sp-6);
+  /* Indented to the description column: 8 padding + 82 name + 8 gap + 34 slot
+     + 8 gap, so an opened pack's tools sit under its own sentence. */
+  padding: var(--sp-4) var(--sp-8) 0 calc(var(--sp-8) + 82px + var(--sp-8) + 34px + var(--sp-8));
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4) var(--sp-6);
+}
+.studio__tool {
+  padding: 0 var(--sp-6);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-4);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: 17px;
+  color: var(--ink-2);
+}
+@media (max-width: 520px) {
+  .studio__tools { padding-left: var(--sp-8); }
+}
+
+
+/* ── The frameless window's own controls ─────────────────────────────────
+   The appbar is the drag region (data-tauri-drag-region); every interactive
+   child must opt back out or the whole bar would drag instead of clicking. */
+.appbar[data-tauri-drag-region] button,
+.appbar[data-tauri-drag-region] [role='button'] { -webkit-app-region: no-drag; }
+
+.winctl {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-left: var(--sp-8);
+  padding-left: var(--sp-8);
+  border-left: 1px solid var(--edge);
+}
+.winctl__btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--r-4);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: default;
+}
+.winctl__btn:hover { background: var(--state-hover); color: var(--ink-1); }
+.winctl__btn--close:hover { background: var(--wont); color: #fff; }
+
+/* The wait, said in one measured number. Quiet by design: this is the product
+   working, not the product needing you, so it carries no status hue. Sits on
+   the caret's own line so the row stays one thing. */
+.waiting {
+  margin-left: var(--sp-8);
+  color: var(--ink-3);
+  font-size: 11px;
+}
+
+.waiting__t {
+  font-family: var(--mono);
+  font-variant-numeric: var(--num);
+}
+
+/* A turn that stopped when the engine did. Quiet, not a status colour: this is
+   a fact about the record, not a state the product is in. */
+.unfinished__say {
+  color: var(--ink-3);
+  font-size: 12px;
+  line-height: 1.5;
+  border-left: 2px solid var(--line);
+  padding-left: var(--sp-8);
+  margin: 0;
+}
+
+/* ── SUB-AGENTS: who else is working on this plan ──────────────────────────
+   Max, 2026-09-13: "create a creative way to view sub agents, see how many
+   are active... use our blue colouring, maybe use yellow or red for sub
+   agents." The orchestrator keeps the accent; a sub-agent is GOLD, which is
+   the one distinction a person needs in a window where several things claim
+   to be working. Red is kept for a sub-agent that FAILED, so the alarm colour
+   still means an alarm. */
+.subagents {
+  border-top: 1px solid var(--edge-faint);
+  padding: var(--sp-8) var(--sp-12) var(--sp-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+.subagents__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  color: var(--ink-4);
+  font-size: var(--t-10);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.subagents[data-working] .subagents__title { color: var(--gold); }
+
+/* One pip per slot the machine has. The cap and the load in three pixels. */
+.subagents__dots { display: inline-flex; gap: 3px; }
+.subagents__pip {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: var(--surface-4);
+}
+.subagents__pip[data-lit] {
+  background: var(--gold);
+  animation: mlh-breathe 1800ms ease-in-out infinite;
+}
+.subagents__elsewhere { margin-left: auto; text-transform: none; letter-spacing: 0; }
+
+.subagents__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.subagent { display: flex; align-items: center; gap: var(--sp-4); }
+/* FIVE THINGS ON ONE ROW: dot, phase, "3 of 7", the bar, and how long ago.
+   The bar is a fixed 72 and `.subagent__when` is `nowrap`, so at 292px of card
+   the phase had nothing left to give and the timestamp pushed straight through
+   the count. Under 360px of card the timestamp goes - it is the one of the five
+   that the `title` on the row already says in words - and the bar becomes a
+   minmax so it can give up its last pixels before anything collides. */
+.subagent__open {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto minmax(0, 72px) auto;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: var(--sp-4) var(--sp-8);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: var(--t-11);
+  text-align: left;
+  cursor: pointer;
+}
+.subagent__open:hover { background: var(--state-hover); border-color: var(--edge); }
+.subagent__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--ink-4);
+}
+.subagent[data-state='running'] .subagent__open {
+  border-color: color-mix(in srgb, var(--gold) 38%, transparent);
+  background: color-mix(in srgb, var(--gold) 8%, var(--surface-2));
+}
+.subagent[data-state='running'] .subagent__dot {
+  background: var(--gold);
+  animation: mlh-breathe 1600ms ease-in-out infinite;
+}
+.subagent[data-state='done'] .subagent__dot { background: var(--fits); }
+.subagent[data-state='failed'] .subagent__dot { background: var(--wont); }
+.subagent[data-state='stopped'] .subagent__dot { background: var(--spills); }
+
+.subagent__phase {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.subagent__count { color: var(--ink-4); font-variant-numeric: var(--num); }
+.subagent__bar {
+  display: block;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--surface-4);
+  overflow: hidden;
+}
+.subagent__fill {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transition: width var(--dur-2) var(--ease);
+}
+.subagent[data-state='done'] .subagent__fill { background: var(--fits); }
+.subagent[data-state='failed'] .subagent__fill { background: var(--wont); }
+.subagent__when { color: var(--ink-4); font-variant-numeric: var(--num); white-space: nowrap; }
+@container (max-width: 360px) {
+  .subagent__open { grid-template-columns: 8px minmax(0, 1fr) auto minmax(0, 72px); }
+  .subagent__when { display: none; }
+}
+/* NO BORDER. The stop glyph is itself a square, and a square inside a
+   bordered box is the box-in-a-box Max named on 2026-09-13. It is a control
+   on a row that is already a control, so it takes its edge from the row. */
+.subagent__stop {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-4);
+  cursor: pointer;
+}
+.subagent__stop:hover { color: var(--wont); background: var(--state-hover); }
+
+/* A dot that breathes rather than blinks: work in progress, not an alert. */
+@keyframes mlh-breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .subagents__pip[data-lit],
+  .subagent[data-state='running'] .subagent__dot,
+  .goalbar[data-state='running'] { animation: none; }
+}
+
+/* ── A SUB-AGENT IN THE RAIL ───────────────────────────────────────────────
+   Max, 2026-09-14: "have the subagents pop up under and indented from the
+   chat on the rail - so that if the chat moves up, you can see on the side
+   rail how many subagents are running, colour coded, with the context windows
+   and ascii loading monitor in the same idea."
+
+   They were already rows, because a sub-agent IS a conversation - which is
+   what lets a person open one and read every word it wrote. What they lacked
+   was the relationship: sorted by recency they sat ABOVE the parent that sent
+   them out and read as unrelated chats. Now they are indented under it, with
+   a rule down the gutter so the group is one object, and GOLD while working -
+   the same colour the goal card gives a sub-agent, so two surfaces are not
+   two vocabularies. The spinner and the context dial are the row's own and
+   need nothing added: a working child spins the same braille orbit and fills
+   the same dial as any other thread. */
+.threadrow[data-subagent] { padding-left: var(--sp-16); position: relative; }
+.threadrow[data-subagent]::before {
+  content: '';
+  position: absolute;
+  left: var(--sp-8);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--edge);
+}
+/* The last child rounds the gutter off rather than running it into the next
+   conversation, which would read as one long list again. */
+.threadrow[data-subagent]:not(:has(+ .threadrow[data-subagent]))::before { bottom: 50%; }
+.threadrow[data-subagent]::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-8);
+  top: 50%;
+  width: var(--sp-6);
+  height: 1px;
+  background: var(--edge);
+}
+.threadrow[data-subagent='running'] .threadrow__title { color: var(--gold); }
+.threadrow[data-subagent='running']::before,
+.threadrow[data-subagent='running']::after { background: color-mix(in srgb, var(--gold) 50%, var(--edge)); }
+.threadrow[data-subagent='failed'] .threadrow__title { color: var(--wont); }
+.threadrow[data-subagent='stopped'] .threadrow__title { color: var(--ink-4); }
+
+/* ── THE SUB-AGENT BOARD, in the conversation ──────────────────────────────
+   Max, 2026-09-14: "have sub agents show up in the chat in a big section (not
+   a separate section) but just have it shown in a large way to not pollute the
+   main screen around the chatbox (hence the small expandable goal tool)."
+
+   So it takes the column's width and it scrolls with the talk. Gold is a
+   sub-agent here exactly as it is in the rail and on the card - one colour for
+   one idea across three surfaces. */
+.subboard {
+  margin: var(--sp-12) 0 var(--sp-16);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--surface-1);
+  box-shadow: var(--e1);
+  overflow: hidden;
+}
+.subboard[data-working] { border-color: color-mix(in srgb, var(--gold) 34%, var(--edge)); }
+
+.subboard__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: var(--sp-8) var(--sp-12);
+  border-bottom: 1px solid var(--edge-faint);
+  background: var(--surface-2);
+}
+.subboard__pips { display: inline-flex; gap: 3px; flex: 0 0 auto; }
+.subboard__pip {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: var(--surface-4);
+}
+.subboard__pip[data-lit] { background: var(--gold); animation: mlh-breathe 1800ms ease-in-out infinite; }
+.subboard__title {
+  margin: 0;
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.subboard[data-working] .subboard__title { color: var(--gold); }
+.subboard__count { color: var(--ink-4); font-size: var(--t-11); }
+.subboard__elsewhere { margin-left: auto; color: var(--ink-4); font-size: var(--t-10); }
+
+.subboard__list { list-style: none; margin: 0; padding: 0; }
+.subcard { display: flex; align-items: stretch; border-top: 1px solid var(--edge-faint); }
+.subcard:first-child { border-top: 0; }
+.subcard__open {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding: var(--sp-10) var(--sp-12);
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.subcard__open:hover { background: var(--state-hover); }
+
+.subcard__head { display: flex; align-items: center; gap: var(--sp-8); min-width: 0; }
+.subcard__dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: var(--r-full);
+  background: var(--ink-4);
+}
+.subcard[data-state='running'] .subcard__dot { background: var(--gold); animation: mlh-breathe 1600ms ease-in-out infinite; }
+.subcard[data-state='done'] .subcard__dot { background: var(--fits); }
+.subcard[data-state='failed'] .subcard__dot { background: var(--wont); }
+.subcard[data-state='stopped'] .subcard__dot { background: var(--spills); }
+.subcard__phase {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--t-12);
+  font-weight: 500;
+  color: var(--ink-1);
+}
+.subcard__when { flex: 0 0 auto; color: var(--ink-4); font-size: var(--t-11); font-variant-numeric: var(--num); }
+
+.subcard__counts { display: flex; flex-wrap: wrap; gap: var(--sp-8); font-size: var(--t-10); }
+.subcard__count { color: var(--ink-4); font-variant-numeric: var(--num); }
+.subcard__count[data-kind='done'] { color: var(--fits); }
+.subcard__count[data-kind='parked'] { color: var(--spills); }
+
+.subcard__bar {
+  display: block;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.subcard__fill { display: block; height: 100%; background: var(--gold); transition: width var(--dur-2) var(--ease); }
+.subcard[data-state='done'] .subcard__fill { background: var(--fits); }
+.subcard[data-state='failed'] .subcard__fill { background: var(--wont); }
+
+.subcard__parked { display: flex; flex-direction: column; gap: 2px; }
+.subcard__why {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  min-width: 0;
+  color: var(--ink-3);
+  font-size: var(--t-10);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.subcard__why .i { color: var(--spills); flex: 0 0 auto; align-self: center; }
+.subcard__why b { color: var(--ink-2); font-weight: 500; }
+.subcard__why--more { color: var(--ink-4); padding-left: var(--sp-16); }
+
+.subcard__stop {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 0 var(--sp-10);
+  border: 0;
+  border-left: 1px solid var(--edge-faint);
+  background: transparent;
+  color: var(--ink-4);
+  font: inherit;
+  font-size: var(--t-10);
+  cursor: pointer;
+}
+.subcard__stop:hover { color: var(--wont); background: var(--state-hover); }
+
+/* ── A PLAN CHANGE, QUIETLY ────────────────────────────────────────────────
+   Max, 2026-09-14: "I'm also seeing a lot of blue, and overall expanded tool
+   calling - I want it condensed, icons, more minimised view by default which
+   can be expanded and seen if clicked on."
+
+   The blue was `--info`, which in this product means "a finding about your
+   situation, read it". A ticked step is not a finding; it is the plan working.
+   One line, one glyph, the diff behind its own disclosure - and the disclosure
+   is the "expanded if clicked on" half, already built. */
+.planline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  margin: var(--sp-6) 0;
+  color: var(--ink-3);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.planline .i { color: var(--ink-4); flex: 0 0 auto; align-self: center; }
+.planline__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The diff's own toggle sits on the same line rather than under it: the whole
+   row is one log entry, and a second line for "see what changed" would spend
+   the height this change exists to give back. */
+.planline .plandiff {
+  margin-top: 0;
+  flex: 0 1 auto;
+  max-width: 100%;
+  min-width: 0;
+}
+.planline .plandiff[data-open] {
+  flex: 1 1 100%;
+  margin-top: var(--sp-4);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ── WHAT THIS PROJECT HANDS THE MODEL ─────────────────────────────────────
+   Max, 2026-09-14: "add some UI components which lets you configure the tools
+   - like how many sub-agents you want to be using, if any at all - and so on,
+   with skills as well", and in the same breath "make sure the models aren't
+   clouded with too many tools and guidelines".
+
+   Every row carries its cost because a switch with no number beside it asks a
+   person to guess. Measured the day this was built: 12,735 tokens of tool
+   schemas on a 29,929-token prompt. */
+.toolset { display: flex; flex-direction: column; gap: var(--sp-20); }
+.toolset__block { display: flex; flex-direction: column; gap: var(--sp-8); }
+
+.toolset__choices { display: inline-flex; gap: var(--sp-4); }
+.toolset__choice {
+  min-width: 44px;
+  height: var(--control-h);
+  padding: 0 var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-12);
+  font-variant-numeric: var(--num);
+  cursor: pointer;
+}
+.toolset__choice:hover:not(:disabled) { color: var(--ink-1); border-color: var(--edge-strong); }
+.toolset__choice[aria-pressed='true'] {
+  background: var(--accent-wash);
+  border-color: var(--accent-edge);
+  color: var(--ink-1);
+}
+.toolset__choice:disabled { opacity: .6; cursor: default; }
+
+.toolset__packs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.toolset__pack {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: var(--sp-6) 0;
+  border-bottom: 1px solid var(--edge-faint);
+  font-size: var(--t-12);
+}
+.toolset__pack:last-child { border-bottom: 0; }
+.toolset__pack[data-off] .toolset__name,
+.toolset__pack[data-off] .toolset__cost { color: var(--ink-4); }
+.toolset__switch {
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  padding: 0;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--accent-wash);
+  color: var(--ink-1);
+  cursor: pointer;
+}
+.toolset__pack[data-off] .toolset__switch { background: transparent; color: var(--ink-4); }
+.toolset__switch:disabled { opacity: .5; cursor: default; }
+.toolset__name { color: var(--ink-1); }
+.toolset__core {
+  font-size: var(--t-10);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+.toolset__cost { color: var(--ink-3); font-size: var(--t-10); font-variant-numeric: var(--num); }
+
+/* ── TYPED WHILE IT WAS STILL WORKING ──────────────────────────────────────
+   Max, 2026-09-14: "also add a queueing prompt feature." Above the pair, where
+   the banners go, so it never changes the height of the box you are typing
+   into. Each row is the person's own words and each can be taken back out. */
+.queued { list-style: none; margin: 0 0 var(--sp-6); padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.queued__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: var(--sp-4) var(--sp-8);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--bg-ground);
+  color: var(--ink-3);
+  font-size: var(--t-11);
+}
+.queued__row .i { color: var(--ink-4); }
+.queued__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.queued__drop {
+  width: 18px; height: 18px;
+  display: grid; place-items: center;
+  padding: 0; border: 0; border-radius: var(--r-8);
+  background: transparent; color: var(--ink-4); cursor: pointer;
+}
+.queued__drop:hover { color: var(--ink-1); background: var(--state-hover); }
+/* The send button becomes a clock rather than a stop sign while a turn runs
+   and there is something to queue: the glyph says what pressing it does. */
+.sendbtn[data-queue] { background: var(--surface-3); color: var(--ink-1); }

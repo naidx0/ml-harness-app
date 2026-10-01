@@ -1,0 +1,20 @@
+{"input": "q0", "output": "{\"intent\": \"refund\", \"confidence\": 0.9}"}
+{"input": "q1", "output": "{\"intent\": \"status\", \"confidence\": 0.9}"}
+{"input": "q2", "output": "{\"intent\": \"other\", \"confidence\": 0.9}"}
+{"input": "q3", "output": "{\"intent\": \"refund\", \"confidence\": 0.9}"}
+{"input": "q4", "output": "{\"intent\": \"status\", \"confidence\": 0.9}"}
+{"input": "q5", "output": "{\"intent\": \"other\", \"confidence\": 0.9}"}
+{"input": "q6", "output": "{\"intent\": \"refund\", \"confidence\": 0.9}"}
+{"input": "q7", "output": "{\"intent\": \"status\", \"confidence\": 0.9}"}
+{"input": "q8", "output": "{\"intent\": \"other\", \"confidence\": 0.9}"}
+{"input": "q9", "output": "{\"intent\": \"refund\", \"confidence\": 0.9}"}
+{"input": "q10", "output": "{\"intent\": \"status\", \"confidence\": 0.9}"}
+{"input": "q11", "output": "{\"intent\": \"other\", \"confidence\": 0.9}"}
+{"input": "q12", "output": "{\"intent\": \"refund\", \"confidence\": 0.9}"}
+{"input": "q13", "output": "{\"intent\": \"status\", \"confidence\": 0.9}"}
+{"input": "q14", "output": "Sure! Here is the JSON: {\"intent\": \"refund\"}"}
+{"input": "q15", "output": "Sure! Here is the JSON: {\"intent\": \"refund\"}"}
+{"input": "q16", "output": "Sure! Here is the JSON: {\"intent\": \"refund\"}"}
+{"input": "q17", "output": "{\"intent\": \"refund\"}"}
+{"input": "q18", "output": "{\"intent\": \"refund\"}"}
+{"input": "q19", "output": "{\"intent\": \"cancel\", \"confidence\": 0.5}"}

@@ -1,0 +1,72 @@
+# Line endings, decided once, so that a byte is the same byte everywhere.
+#
+# ## WHY THIS FILE EXISTS, and it is two measured symptoms rather than tidiness
+#
+# `core.autocrlf` is true on this machine and there was no `.gitattributes`, so
+# git stored LF, checked out CRLF, and **every text file in this repository had
+# two different sha256s** - one for the bytes git holds, one for the bytes on
+# disk. Two things fell out of that, both measured on 2026-09-10/11:
+#
+# 1. **A release build dirtied a tracked file and blocked the next push.**
+#    `tauri build` rewrote `src-tauri/Cargo.toml`'s line endings with no content
+#    change, `git status` reported it modified, and `push_if_green` refused with
+#    exit 2 - "a gate would certify a tree that is not the object this would
+#    push". The refusal was correct. The cause was this.
+#
+# 2. **Three published checksums could not be verified on this platform.**
+#    `evals/architecture-json/held-out.sha256` and its two siblings record the
+#    hash of the LF form. Checked against the CRLF file on disk they MISMATCH -
+#    all three, today, before this file existed. Normalising does not break
+#    them; it is what makes them checkable at all.
+#
+# A hash that does not say which bytes it hashed cannot be checked, and the
+# honest fix is not to label every hash twice forever - it is to stop having two
+# answers.
+#
+# ## WHAT `text=auto eol=lf` DOES
+#
+# Git decides what is text; everything it calls text is stored AND checked out
+# with LF, on every platform. Windows editors have handled LF for many years,
+# and the two symptoms above are what the alternative costs.
+
+* text=auto eol=lf
+
+# ## THE BINARIES, MARKED EXPLICITLY
+#
+# `text=auto` already detects these by content, and marking them is belt and
+# braces: a detection heuristic that guesses wrong on one file corrupts it
+# silently, and a corrupted PNG is not a thing anybody notices in a diff.
+#
+# The first two are what this repository actually tracks (166 `.png`, 1 `.ico`,
+# counted). The rest are formats this project produces or fetches - adapters,
+# wheels, sidecars, models - which are gitignored today and would arrive
+# unannounced the first time one is not.
+
+*.png   binary
+*.ico   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.pdf   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.zip   binary
+*.gz    binary
+*.exe   binary
+*.dll   binary
+*.msi   binary
+*.whl   binary
+*.safetensors binary
+*.gguf  binary
+*.bin   binary
+*.onnx  binary
+*.npy   binary
+*.npz   binary
+
+# Shell scripts that a POSIX shell runs need LF whatever a Windows editor
+# prefers; `eol=lf` above already gives them that, and saying so here is for the
+# reader rather than for git.
+*.sh    text eol=lf

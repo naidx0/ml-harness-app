@@ -1,0 +1,1298 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE EVALUATION BENCH.
+
+   Every value below is a token from `tokens.css`, which is Graphite
+   transcribed. There are no literal hexes, no literal spacing numbers outside
+   the ones the book itself fixes as component geometry (the 38px run row, the
+   6px dot, the 3px legend key), and no radius off the six-step ramp.
+
+   ══ THE TWO DISTANCES ═════════════════════════════════════════════════════
+
+   `shell.css` records the correction that produced them: five bordered blocks
+   at one repeating distance is a wall, "and it is a wall whether or not any
+   single gap is small. The fix is not more space everywhere; it is TWO
+   distances instead of one." Within a group --sp-8. Between sections --sp-16.
+   This file uses exactly those two and no third, which is why an eval card
+   with five sections reads as five things rather than as a form.
+
+   ══ THE HUE BUDGET ════════════════════════════════════════════════════════
+
+   Counted, because "every hue is a claim" is checkable and a card that spends
+   nine of them is decorated rather than designed. The eval card spends:
+
+     --viz-1..6   failure buckets — categories, never judgements. Page 27:
+                  the --viz-* namespace exists so a chart with six series does
+                  not spend the verdict budget.
+     --fits       ONE claim: this score's interval clears the trivial baseline.
+     --wont       ONE claim: it does not.
+     --accent     progress — how far through, which is not how well.
+
+   The comparison card spends three: --fits and --wont on improved and
+   regressed ROWS (each of which is a measurement — that row went from wrong to
+   right), and --unknown on the verdict when there is no evidence. The delta
+   gets a hue ONLY when McNemar resolved it. Nothing else on either card is
+   coloured: headings, dividers, chrome and the axes are all ink and edge.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ══ THE RUN ROW — Graphite page 26.1 ═══════════════════════════════════════
+   38px, --r-10, four answers left to right. The geometry is the book's. */
+
+.evalrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-10);
+  height: 38px;
+  padding: 0 var(--sp-12);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-1);
+  overflow: hidden;
+}
+
+/* The progress fill IS the row's background — one line, never two. --accent-
+   wash because the accent is the one hue with no verdict meaning, so "60% of
+   the way through" cannot be read as "60% right". */
+.evalrow::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--fill, 0%);
+  background: var(--accent-wash);
+  transition: width var(--dur-2) var(--ease);
+  pointer-events: none;
+}
+/* A finished run's bar would be 100% and say nothing; a reused run graded
+   nothing now, and a full bar would claim it did. Both lose it.
+
+   A STOPPED RUN KEEPS ITS BAR, and the first cut of this rule was wrong to take
+   it away. Caught by running a `model_graded` eval that hit the deadline: the
+   row read "Stopped · 19/40" with no bar at all, and the proportion is the
+   whole news on that row — nineteen rows are graded, stored, and will be
+   continued from, which is the difference between an interruption and a loss.
+   The bar is static here (both the transition and the dot's pulse are keyed to
+   `running`), so it says how far it got without claiming to still be moving. */
+.evalrow[data-state='finished']::before,
+.evalrow[data-state='reused']::before { display: none; }
+.evalrow[data-state='interrupted']::before {
+  transition: none;
+  background: var(--state-hover);
+}
+
+.evalrow > * { position: relative; }
+
+.evalrow__dot {
+  flex: 0 0 auto;
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: var(--r-full);
+}
+/* Alive, and only alive. A finished run's dot is a static mark; a pulsing one
+   would say the engine is still spending. */
+.evalrow[data-state='running'] .evalrow__dot { animation: evalpulse 1.6s var(--ease) infinite; }
+@keyframes evalpulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) {
+  .evalrow[data-state='running'] .evalrow__dot { animation: none; }
+  .evalrow::before { transition: none; }
+}
+
+.evalrow__body { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; gap: 1px; }
+.evalrow__title {
+  font-size: var(--t-12);
+  font-weight: 500;
+  color: var(--ink-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.evalrow__meta {
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.evalrow__state { font-weight: 600; }
+
+.evalrow__num {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-2);
+}
+.evalrow__num--quiet { color: var(--ink-3); }
+.evalrow__of { color: var(--ink-4); }
+.evalrow__score {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-12);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+
+/* ══ THE CARDS ═════════════════════════════════════════════════════════════ */
+
+/* Page 08 gives --sp-16 to panel padding on the large cards. The eval card and
+   the comparison are both large, multi-section surfaces — the same class of
+   thing as the diagnosis — so they take the same padding and the same top of
+   the radius ramp. */
+.card--eval,
+.card--compare { border-radius: var(--r-18); }
+.card--eval > .card__body,
+.card--compare > .card__body { padding: var(--sp-16); }
+.card--evalrefusal > .card__body { padding: var(--sp-12); }
+
+/* ── the score headline ── */
+
+.evalhead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-10);
+  margin-bottom: var(--sp-8);
+}
+.evalhead__score {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-26);
+  line-height: var(--lh-26);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink-1);
+}
+/* A partial score is not a score. It keeps the slot so the reader can see
+   where the run got to, and loses the weight so it cannot be quoted. */
+.evalhead__score[data-partial='true'] { color: var(--ink-3); font-weight: 500; }
+/* A JUDGE'S NUMBER IS NOT A READING, so it does not get a reading's authority.
+   Same treatment as a partial score and for a related reason: the slot is kept
+   because the number is what was asked for and hiding it would be its own kind
+   of dishonesty, and the ink and the weight are withdrawn because the card is
+   not vouching for it. The DECLARED tag in the header is the other half; page
+   05.1 — no state in this product is carried by one channel. */
+.evalhead__score[data-opinion='true'] { color: var(--ink-2); font-weight: 500; }
+.evalhead__score--absent {
+  font-family: var(--font-sans);
+  font-size: var(--t-17);
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.evalhead__of { font-size: var(--t-12); color: var(--ink-3); }
+.evalhead__of b { color: var(--ink-2); font-weight: 600; }
+.evalhead__reused {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+.evalhead__reused > .i { color: var(--ink-4); }
+
+/* ── the score scale ──────────────────────────────────────────────────────
+   The interval drawn to scale. This is the component that makes the resolution
+   impossible to drop: the band's WIDTH is the honesty, and it is geometry
+   rather than a sentence somebody can skip. */
+
+.scale { margin-bottom: var(--sp-16); }
+.scale__track {
+  position: relative;
+  height: 26px;
+  border-radius: var(--r-4);
+  background: var(--bg-base);
+  border: 1px solid var(--edge-faint);
+}
+.scale__band {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: var(--viz-band);
+  border-left: 1px solid var(--viz-axis);
+  border-right: 1px solid var(--viz-axis);
+  min-width: 1px;
+}
+/* The trivial baseline, as page 27.1 draws a measured baseline: a dashed
+   --viz-baseline rule. Vertical here because the axis is a score and not time,
+   and the dash pattern is the book's 4 3. */
+.scale__baseline {
+  position: absolute;
+  top: -2px; bottom: -2px;
+  width: 0;
+  border-left: 1.5px dashed var(--viz-baseline);
+}
+/* INSET BY ITS OWN RADIUS PLUS ITS RING, so a score of 0% or 100% sits fully
+   inside the track instead of half outside it. --p is the fraction, handed over
+   by the component; the plot range is the track minus one marker width. */
+.scale__marker {
+  position: absolute;
+  top: 50%;
+  left: calc(6.5px + (100% - 13px) * var(--p, 0));
+  width: 9px; height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: var(--r-full);
+  background: var(--ink-1);
+  box-shadow: 0 0 0 2px var(--surface-2);
+}
+/* THE ONE HUE ON THIS COMPONENT, and it answers a question rather than
+   grading the score: does the 95% interval clear the trivial baseline. */
+.scale__marker[data-beats='true'] { background: var(--fits); }
+.scale__marker[data-beats='false'] { background: var(--wont); }
+
+.scale__axis {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--sp-4);
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: 9px;              /* page 27: chart axis labels are mono 9px */
+  color: var(--ink-3);
+}
+.scale__label {
+  font-family: var(--font-sans);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+
+.scale__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-3);
+}
+.scale__note > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-4); }
+.scale__note b { color: var(--ink-2); font-weight: 600; }
+/* A score whose interval does not clear the trivial baseline is a finding, and
+   it is the single most useful thing this card can tell somebody. */
+.scale__note[data-beats='false'] { color: var(--ink-2); }
+.scale__note[data-beats='false'] > .i { color: var(--wont); }
+
+/* ── the resolution block ── */
+
+.reso__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-20);
+  margin-bottom: var(--sp-8);
+}
+.fig { display: flex; flex-direction: column; gap: 1px; }
+.fig__value {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-17);
+  line-height: var(--lh-17);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.fig__unit {
+  margin-left: var(--sp-4);
+  font-family: var(--font-sans);
+  font-size: var(--t-10);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.fig__caption { font-size: var(--t-10); line-height: var(--lh-10); color: var(--ink-3); }
+
+.reso__says {
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.reso__method {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}
+.reso__method > .i { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── a model's opinion of a model's work ──────────────────────────────────
+
+   NOT RED, AND THE REASON IS THE SAME ONE THAT MAKES UNKNOWN GREY. Nothing
+   failed here: `model_graded` exists because some tasks cannot be graded by a
+   rule, and `docs/diagnosis_engine.yaml` is explicit that the harness "does
+   not refuse the judge". What this block says is what KIND of number the score
+   is, and "off the good-to-bad scale" is --unknown's own job. A --wont border
+   would tell somebody their eval broke.
+
+   The hue budget is unchanged by this block: --unknown was already spent on
+   the comparison's verdict, and this is the same claim — we are not implying
+   we checked. */
+
+.judged {
+  margin: 0 0 var(--sp-16);
+  padding: var(--sp-10) var(--sp-12);
+  border: 1px solid var(--unknown-edge);
+  border-radius: var(--r-10);
+  background: var(--unknown-wash);
+}
+.judged__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+}
+.judged__head > .i { flex: 0 0 auto; margin-top: 2px; color: var(--unknown); }
+.judged__title { flex: 1 1 auto; min-width: 0; }
+.judged__title b { font-weight: 600; }
+.judged__rows {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* THE RULES' ANSWER ON THE SAME ROWS. The gap between these and the judge is
+   the whole disclosure, so they are on the card at readable size rather than
+   joined into one line inside a collapsed block — which is where they were. */
+.judged__rules {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-6) var(--sp-16);
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--unknown-edge);
+}
+.judged__ruleslabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.judged__rule { display: inline-flex; align-items: baseline; gap: var(--sp-6); }
+.judged__rulev {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-17);
+  line-height: var(--lh-17);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.judged__rulek { font-size: var(--t-10); color: var(--ink-3); }
+
+.judged__norules,
+.judged__says {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.judged__norules code {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-2);
+}
+
+/* ── failure buckets ──────────────────────────────────────────────────────
+   Four columns on one grid so the bars share a left edge and the counts share
+   a right one. A bucket list where each row sizes itself is a ragged thing
+   that cannot be read as a distribution. */
+
+.buckets { display: grid; grid-template-columns: auto 1fr auto auto; gap: var(--sp-6) var(--sp-8); align-items: center; }
+.bucket { display: contents; }
+.bucket__name { font-size: var(--t-12); color: var(--ink-1); white-space: nowrap; }
+.bucket__bar { height: 8px; border-radius: var(--r-bar); background: var(--edge-faint); overflow: hidden; }
+.bucket__fill { display: block; height: 100%; border-radius: var(--r-bar); }
+.bucket__fill--none { background: var(--ink-4); opacity: .5; }
+.bucket__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-12);
+  color: var(--ink-1);
+  text-align: right;
+}
+.bucket__route { font-size: var(--t-10); color: var(--ink-3); white-space: nowrap; }
+.bucket__unrouted { color: var(--ink-4); font-style: italic; }
+.bucket--unclassified .bucket__name { color: var(--ink-3); }
+
+.buckets__verdict,
+.buckets__by {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.buckets__verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin-top: var(--sp-4);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.buckets__verdict > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-4); }
+.buckets__verdict b { font-weight: 600; color: var(--ink-1); }
+/* Mixed failures is the engine's own ACTION__SPLIT_THE_TASK, which is an
+   admission that the run has more than one problem. Amber is the admission
+   hue in this palette; it is not a failure and not a verdict. */
+.buckets__verdict[data-dominates='false'] > .i { color: var(--spills); }
+.buckets__by {
+  margin-top: var(--sp-4);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}
+
+/* ── the failing rows ── */
+
+.rows { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+.frow { border: 1px solid var(--edge-faint); border-radius: var(--r-8); background: var(--bg-base); }
+.frow[data-open='true'] { border-color: var(--edge); background: var(--surface-1); }
+.frow__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  min-height: var(--row-h);
+  padding: var(--sp-4) var(--sp-8);
+  background: none;
+  border: 0;
+  border-radius: var(--r-8);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.frow__head:hover { background: var(--state-hover); }
+.frow__head > .i { flex: 0 0 auto; color: var(--ink-4); }
+.frow__index {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+}
+.frow__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-12);
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The bucket, on the collapsed row. Grey: a failure MODE is a category the
+   engine will route on, not a severity. */
+.frow__mode {
+  flex: 0 0 auto;
+  padding: 1px var(--sp-6);
+  border-radius: var(--r-full);
+  border: 1px solid var(--edge);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.frow__body { padding: var(--sp-4) var(--sp-8) var(--sp-8) var(--sp-24); }
+.frow__pair { display: flex; gap: var(--sp-8); padding: var(--sp-2) 0; }
+.frow__k {
+  flex: 0 0 64px;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.frow__v {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.frow__v i { color: var(--ink-4); }
+/* EXPECTED AND ANSWERED ARE THE TWO THE EYE COMPARES, so they get the diff
+   channel — a background wash only, never foreground, which is exactly what
+   page 08 rules for --diff-*. Disjoint from the verdict channel, so "what was
+   wanted" can never be misread as "won't fit". */
+.frow__pair[data-tone='expected'] .frow__v { background: var(--diff-add-bg); box-shadow: inset 2px 0 0 var(--diff-add-gutter); padding-left: var(--sp-6); border-radius: 0 var(--r-4) var(--r-4) 0; }
+.frow__pair[data-tone='answered'] .frow__v { background: var(--diff-del-bg); box-shadow: inset 2px 0 0 var(--diff-del-gutter); padding-left: var(--sp-6); border-radius: 0 var(--r-4) var(--r-4) 0; }
+
+.frow__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-8);
+  margin-top: var(--sp-6);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+}
+.frow__by b { color: var(--ink-3); font-weight: 600; }
+.frow__verdict {
+  font-family: var(--font-mono);
+  padding: 0 var(--sp-4);
+  border-radius: var(--r-4);
+  border: 1px solid var(--edge-faint);
+}
+.frow__verdict[data-hit='true'] { color: var(--ink-2); }
+
+.rows__all {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  width: 100%;
+  min-height: var(--row-h);
+  padding: var(--sp-4) var(--sp-8);
+  border: 1px dashed var(--edge);
+  border-radius: var(--r-8);
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--t-11);
+  color: var(--ink-3);
+  text-align: left;
+}
+.rows__all:hover { background: var(--state-hover); color: var(--ink-2); }
+.rows__all > .i { flex: 0 0 auto; color: var(--ink-4); }
+
+.rows__more {
+  margin: var(--sp-4) 0 0;
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}
+
+/* ── how it was run ── */
+
+.runfacts { margin-top: var(--sp-16); border-top: 1px solid var(--edge-faint); padding-top: var(--sp-8); }
+.runfacts__toggle {
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  width: 100%;
+  padding: var(--sp-2) 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  font-size: var(--t-11);
+  color: var(--ink-3);
+}
+.runfacts__toggle:hover { color: var(--ink-2); }
+.runfacts__toggle > .i { flex: 0 0 auto; color: var(--ink-4); }
+.runfacts__sum {
+  margin-left: auto;
+  font-size: var(--t-10);
+  color: var(--ink-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The owner, reading the recall card: "the index and eval paths are a little
+   hard to read". They were 10px mono at a 4px row gap - a footnote asked to
+   carry a filesystem path. One type step up on the value, a settled 6px
+   between rows, and the key column stays 10px so the hierarchy holds. */
+.runfacts__body { display: grid; grid-template-columns: auto 1fr; gap: var(--sp-6) var(--sp-12); margin-top: var(--sp-10); }
+.runfacts__pair { display: contents; }
+.runfacts__k { font-size: var(--t-10); color: var(--ink-3); white-space: nowrap; padding-top: 1px; }
+.runfacts__v { font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-2); word-break: break-word; }
+
+/* ══ THE COMPARISON ════════════════════════════════════════════════════════
+
+   THE RULE THIS SECTION EXISTS TO ENFORCE: the largest type on the card is the
+   VERDICT, never the delta. Two percentages in two columns are a claim that
+   one is bigger, and no caption undoes it. So there are no two columns here —
+   there is one axis, and the scores are 9px mono labels ON it. */
+
+.verdicthead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-10);
+  margin-bottom: var(--sp-16);
+}
+.verdicthead__delta {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-26);
+  line-height: var(--lh-26);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--fits);
+}
+/* A RESOLVED REGRESSION IS A REAL FINDING TOO, and it is the one that has to
+   be legible. This rule used to read `:not([data-up])` and nothing in the
+   component ever set `data-up`, so the selector matched every delta and a
+   resolved regression rendered in --fits green — a measured loss drawn as a
+   win, which is this lane's own defect in miniature. The attribute the
+   component actually sets is `data-down`, on a negative delta. */
+.verdicthead__delta[data-down] { color: var(--wont); }
+
+/* THE UNKNOWN VERDICT. Graphite page 13.5 §3, quoted in DiagnosisCard: "the
+   card does not degrade — it changes verdict, and grey is deliberate. Not
+   knowing is an absence, not a problem." Set in the SANS face rather than
+   mono, because it is a word and not a number, and the switch is what stops
+   the eye reading it as a measurement. */
+.verdicthead__unknown {
+  font-size: var(--t-26);
+  line-height: var(--lh-26);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--unknown);
+}
+.verdicthead__word {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-6);
+  font-size: var(--t-13);
+  color: var(--ink-2);
+}
+.verdicthead__word > .i { color: var(--ink-4); }
+.verdicthead[data-resolved='true'] .verdicthead__word > .i { color: var(--fits); }
+.verdicthead[data-down] .verdicthead__word > .i { color: var(--wont); }
+
+/* ── two runs on one axis ── */
+
+.axis2 { margin-bottom: var(--sp-16); }
+.axis2__track {
+  position: relative;
+  height: 34px;
+  border-radius: var(--r-4);
+  background: var(--bg-base);
+  border: 1px solid var(--edge-faint);
+}
+
+/* THE NOISE BAND — what this many rows can see, centred on the pair. Drawn
+   only when the comparison is UNRESOLVED, because that is the only case where
+   it is the point: it is wider than the gap inside it, and a reader sees the
+   two markers sitting inside one region of uncertainty. */
+/* IT HAS TO BE VISIBLE OR IT IS NOT AN ARGUMENT. --unknown-wash with two
+   --edge-strong hairlines was, measured by looking at it in both themes, two
+   steps off the track and effectively invisible — so the eye went straight to
+   the two markers and read the ordering, which is the failure this band exists
+   to prevent. A dashed --unknown edge on all four sides makes it an object. */
+.axis2__noise {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: var(--unknown-wash);
+  border: 1px dashed var(--unknown);
+  border-radius: var(--r-4);
+}
+
+/* The gap between the two scores, on a RESOLVED comparison only. McNemar
+   separated them, so the picture is allowed to draw the distance. */
+.axis2__span {
+  position: absolute;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: var(--r-bar);
+  background: var(--accent);
+  min-width: 1px;
+}
+
+/* ══ THE UNRESOLVED PICTURE: ONE OBJECT, NO ORDER ══════════════════════════
+
+   Both scores as the two ends of ONE interval, hatched, inside the resolution
+   band. There is no A marker and no B marker, because a labelled marker either
+   side of a rule is an ordering and the ordering is the exact claim the test
+   declined to make. The two numbers are still printed — under the axis, as one
+   range — so nothing measured is hidden.
+
+   Graphite page 22.3 gives the hatch its meaning already: hatching is what is
+   drawn beyond the rule, the part that does not count. Same pattern, same
+   135deg, same 2px/5px, so a reader who has met it on a feasibility card reads
+   it here without being told. */
+.axis2__both {
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  /* INSET BY THE SAME 2px THE TICKS ARE, so a pair at 0% or 100% — which is
+     exactly what two identical runs on a small slice look like — sits inside
+     the track instead of hanging over its rounded corner. --lo and --span are
+     fractions handed over by the component; the plot range is the track minus
+     one interval's minimum width. */
+  left: calc(2px + (100% - 5px) * var(--lo, 0));
+  width: max(3px, calc((100% - 5px) * var(--span, 0)));
+  border-radius: var(--r-bar);
+  color: var(--unknown);
+  background: repeating-linear-gradient(
+    135deg,
+    currentColor 0 2px,
+    transparent 2px 5px
+  );
+  box-shadow: inset 1px 0 0 var(--ink-3), inset -1px 0 0 var(--ink-3);
+}
+
+/* Inset by the tick's own width, so a run at 0% or 100% keeps both its rule
+   and its label inside the plot. --p is the fraction. */
+.axis2__marker {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: calc(2px + (100% - 4px) * var(--p, 0));
+}
+.axis2__tick {
+  position: absolute;
+  top: 6px; bottom: 6px;
+  left: -1px;
+  width: 2px;
+  border-radius: var(--r-bar);
+  background: var(--ink-2);
+}
+.axis2__marker--a .axis2__tick { background: var(--viz-1); }
+.axis2__marker--b .axis2__tick { background: var(--viz-baseline); }
+
+/* The scores. 9px mono — page 27's axis-label size — because they are axis
+   labels and not the headline. This is the line that keeps 73% and 76% from
+   reading as a result. */
+.axis2__tag {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  /* Centred on the marker in the middle of the plot, and swinging to flush-left
+     at 0% and flush-right at 100% — one linear expression in the same --p that
+     positions the marker, so the label can never hang off the plot. At p=.5 it
+     is translateX(-50%), which is plain centring. */
+  transform: translateX(calc(-50% + (0.5 - var(--p, 0)) * 100%));
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: 9px;
+  line-height: 12px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  background: var(--surface-2);
+  padding: 0 var(--sp-2);
+}
+.axis2__marker--a .axis2__tag { top: auto; bottom: -2px; color: var(--ink-2); }
+
+.axis2__axis {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--sp-4);
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: 9px;
+  color: var(--ink-3);
+}
+.axis2__legend { font-family: var(--font-sans); font-size: var(--t-10); color: var(--ink-3); }
+/* The two scores, as ONE range. Mono, because they are numbers, and at the
+   axis-label size page 27 fixes — this is a label on a plot, not a headline. */
+.axis2__legend--unordered {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  color: var(--ink-2);
+}
+.axis2__note {
+  margin: var(--sp-6) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+
+/* ── the paired strip ── */
+
+.paired__strip {
+  display: flex;
+  height: 10px;
+  border-radius: var(--r-bar);
+  overflow: hidden;
+  background: var(--edge-faint);
+}
+.paired__seg { display: block; height: 100%; }
+.paired__seg--agreed { background: var(--edge-strong); }
+.paired__seg--improved { background: var(--fits); }
+.paired__seg--regressed { background: var(--wont); }
+
+/* ══ THE HUE LEAVES THE AREA WHEN THE VERDICT IS GREY ══════════════════════
+
+   On an unresolved comparison the improved segment was the largest saturated
+   object on the card — measured at a fifth of the strip's width on a real run
+   — sitting directly under a grey headline reading "No evidence". Read the
+   picture with the words covered and it says "win".
+
+   Page 27.3 sets the rule this follows: a verdict hue is permitted inside a
+   plot only where it IS a claim about the run, which is why `diverged` may
+   take --wont. "Five rows improved" on a comparison the test could not resolve
+   is a claim this card is declining to make, so the area hatches in --unknown
+   — Graphite's own "does not count" pattern from the budget bar, page 22.3.
+
+   THE COLOUR IS NOT DELETED, IT MOVES. The 18x3px legend keys below keep
+   --fits and --wont, because there the hue labels a COUNT that really is a
+   measurement — five rows did go from wrong to right — and page 05.1 already
+   requires the word and the number beside it. What changes is that the hue no
+   longer occupies a fifth of the card. */
+.paired[data-resolved='false'] .paired__seg--improved,
+.paired[data-resolved='false'] .paired__seg--regressed {
+  color: var(--unknown);
+  background: repeating-linear-gradient(
+    135deg,
+    currentColor 0 2px,
+    transparent 2px 5px
+  );
+  box-shadow: inset 0 0 0 1px var(--unknown-edge);
+}
+
+/* The delta, at caption size, beside the counts it is arithmetically identical
+   to. `evals.py` made delta === (improved - regressed) / paired_rows, so this
+   is the same fact the strip above already draws — which is exactly why it is
+   safe here and was not safe in 26px. */
+.paired__delta {
+  margin: var(--sp-8) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+
+.paired__keys { display: flex; flex-wrap: wrap; gap: var(--sp-12); margin-top: var(--sp-8); }
+.paired__key { display: inline-flex; align-items: baseline; gap: var(--sp-6); }
+/* 18 × 3px, --r-bar — page 27's legend key, exactly. */
+.paired__swatch { align-self: center; width: 18px; height: 3px; border-radius: var(--r-bar); flex: 0 0 auto; }
+.paired__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-12);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.paired__label { font-size: var(--t-10); color: var(--ink-3); }
+
+.paired__test { display: flex; align-items: baseline; gap: var(--sp-8); margin-top: var(--sp-8); }
+.paired__p {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-1);
+}
+.paired__method { font-size: var(--t-10); color: var(--ink-4); }
+
+/* ── the comparison's sentences ── */
+
+/* THE ENGINE'S VERBATIM SUMMARY. Present, and no longer competing with the
+   five blocks above it that now say the same five things. --ink-3 at 11px
+   under a mono label is what this product already uses for "the instrument's
+   own words" — see `.reso__method` — and it is the right register for a
+   sentence whose facts are all drawn above it. */
+.compare__says {
+  margin: 0 0 var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+}
+.compare__saysk {
+  display: block;
+  margin-bottom: var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+}
+.compare__saysv {
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+}
+.compare__next,
+.compare__same {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-10);
+  margin: 0;
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-8);
+  background: var(--bg-base);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.compare__next > .i,
+.compare__same > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-3); }
+.compare__next > .fig { flex: 0 0 auto; }
+.compare__caveat {
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  align-self: center;
+}
+
+/* ── the rows only one run graded ─────────────────────────────────────────
+
+   THE BLOCK THAT CARRIES THE NUMBER THAT USED TO BE THE HEADLINE. On the run
+   this was built against, the aggregate difference is +29.5% where the honest
+   paired answer is +19.2%; before this block it appeared only as characters
+   inside a paragraph, in the same ink as the words around it, with no tag on
+   it. Invariant 3 has no exception for numbers set in running text.
+
+   It is --unknown grey and never a verdict hue, and it is deliberately BELOW
+   the paired strip: page 22.1's order is evidence, then the thing that
+   qualifies it. */
+
+.mismatch {
+  margin: 0 0 var(--sp-16);
+  padding: var(--sp-10) var(--sp-12);
+  border: 1px solid var(--unknown-edge);
+  border-radius: var(--r-10);
+  background: var(--unknown-wash);
+}
+.mismatch__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: 0;
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-1);
+}
+.mismatch__head > .i { flex: 0 0 auto; margin-top: 2px; color: var(--unknown); }
+.mismatch__head b { font-weight: 600; }
+
+.mismatch__rows { display: flex; flex-wrap: wrap; gap: var(--sp-6) var(--sp-16); margin-top: var(--sp-8); }
+.mismatch__rows--refusal { margin-top: var(--sp-10); }
+.mismatch__only { display: inline-flex; align-items: baseline; gap: var(--sp-6); }
+.mismatch__onlyk { font-size: var(--t-10); color: var(--ink-3); }
+.mismatch__onlyv {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+}
+
+/* ── the two subtractions ─────────────────────────────────────────────────
+
+   WHAT THIS REPLACED, AND WHY, because the old rule's comment argued the
+   opposite and looked right doing it. The aggregate used to be a lone figure
+   at --t-17/600 in --ink-3, and the comment justified the grey by comparing it
+   to the --fits/--wont a headline delta takes on a RESOLVED card. Measured in
+   the running app on the live fixture — champion 26/30, challenger 26/26, not
+   one shared row changed — the card was UNRESOLVED, its headline was the grey
+   word "No evidence", and the reported delta was an --t-11/450 caption in the
+   same --ink-3. So the grey demoted the aggregate relative to a colour that
+   was not on the card, and against the only other number there it was 17px
+   against 11px. The demoted figure was the biggest number on the card.
+
+   A LONE FIGURE READS AS A HEADLINE AT ANY SIZE. That is the shape page 22.3
+   already ruled on: the UNKNOWN feasibility card does not draw a fainter
+   budget bar, it declines to draw the bar and says so, because a quantity that
+   is not on the scale does not go on the scale at reduced weight. So the
+   aggregate is no longer a figure on its own. It is the second row of a
+   two-row ledger, and every channel says second:
+
+     · reading order      — the reported difference is row one
+     · the value column   — same column, same mono, tabular figures, so the
+                            two percentages stack and are read as a pair
+     · size               — exactly one step down the scale from row one
+     · ink                — one step lighter than row one
+     · the words          — "reported" against "also true", and the row set
+                            that produced it named on the same line
+
+   Size is bound to the CARD, not written twice. `data-headline="figure"` is a
+   resolved card, where a 26px coloured delta owns the top and the ledger can
+   afford --t-15/--t-13. `data-headline="word"` is an unresolved one, where
+   nothing may look like a result and the whole ledger drops to --t-12/--t-11.
+   In both, row two is one step under row one, which is the invariant. */
+
+/* ONE GRID FOR THE WHOLE LEDGER, and the rows are `display: contents`.
+   Measured: with a grid per row, the two `auto` value tracks sized to their
+   own row — 28.125px against 39px — so the figures could not share a column
+   however they were justified, and `justify-self: end` did nothing visible.
+   Hoisting the tracks to the ledger is what actually stacks the two numbers. */
+.subtract {
+  display: grid;
+  /* minmax(0, …) on every track for the same reason as `.cost__row`: in a pane
+     at its 320px floor this ledger has 292px and a track that cannot shrink
+     pushes the figures over the label beside them. The tracks still size to
+     4.5rem and auto whenever there is room, which there almost always is. */
+  grid-template-columns: minmax(0, 4.5rem) minmax(0, auto) minmax(0, 1fr);
+  align-items: baseline;
+  row-gap: var(--sp-6);
+  column-gap: var(--sp-10);
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--unknown-edge);
+}
+.subtract__row { display: contents; }
+.subtract__head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  margin: 0 0 var(--sp-2);
+}
+.subtract__headk {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.subtract__lab {
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+/* `justify-self`, NOT `text-align`. Both figures share one auto track, and
+   text-align only right-aligns text inside a box that has already been
+   stretched to the track — which a grid item sized to its own content is not.
+   Measured before this line existed: the two values sat flush LEFT at x=496
+   with their per-cent signs 11px apart, at 12px and 11px, so the pair did not
+   read as a column of two numbers. Ending them together is what makes the
+   stack legible as one comparison rather than two labelled facts. */
+.subtract__v {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-weight: 600;
+  justify-self: end;
+  white-space: nowrap;
+}
+.subtract__on {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-3);
+  min-width: 0;
+}
+.subtract__on b { color: var(--ink-2); font-weight: 600; }
+
+/* Row one: the reported difference — the term the other one is subordinate
+   to. It is never coloured. On a resolved card the headline above already
+   spends the verdict hue on this same number, and spending it twice would make
+   the ledger argue instead of tabulate; on an unresolved card there is no
+   verdict to spend. Page 05.1's second channel is carried by the word
+   "reported" and by the row set named beside it. */
+.subtract__row[data-role='reported'] .subtract__lab { color: var(--ink-2); }
+.subtract__row[data-role='reported'] .subtract__v { color: var(--ink-1); }
+.subtract__row[data-role='reported'] .subtract__on { color: var(--ink-2); }
+
+/* Row two: real, measured, and not an answer to the question the card asked.
+
+   THE LABEL STAYS AT --ink-3 AND DOES NOT GO TO --ink-4. One step under row
+   one is the demotion; two steps takes a 10px word to #56575E on the unknown
+   wash, and page 05.1 is explicit that the WORD is the first channel and the
+   colour only the second. Dimming the label past reading is spending the first
+   channel to say something the second already says. */
+.subtract__row[data-role='aggregate'] .subtract__v { color: var(--ink-3); }
+.subtract__row[data-role='aggregate'] .subtract__lab { color: var(--ink-3); }
+
+/* Sized against the card's own headline. */
+.mismatch[data-headline='figure'] .subtract__row[data-role='reported'] .subtract__v {
+  font-size: var(--t-15);
+  line-height: var(--lh-15);
+}
+.mismatch[data-headline='figure'] .subtract__row[data-role='aggregate'] .subtract__v {
+  font-size: var(--t-13);
+  line-height: var(--lh-13);
+}
+.mismatch[data-headline='word'] .subtract__row[data-role='reported'] .subtract__v {
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+}
+.mismatch[data-headline='word'] .subtract__row[data-role='aggregate'] .subtract__v {
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+}
+
+/* The section tag, when the card's header cannot carry one. */
+.plansec__tag { margin-left: auto; display: inline-flex; align-items: center; }
+
+/* ── the refusal ── */
+
+.card--evalrefusal { border-color: var(--unknown-edge); }
+
+/* ══ THE EVAL PANE ═════════════════════════════════════════════════════════
+
+   The same body as the card, in a 392px column instead of a 640px measure.
+   What changes is only what has to: the two distances stay --sp-8 within a
+   group and --sp-16 between sections, and the figures in the resolution row
+   wrap rather than compress, because a three-column row of figures at 392px is
+   the "compact is not cramped" failure.
+
+   NOTHING HERE RESTATES THE CARD. A second set of rules for the same markup is
+   how two surfaces start disagreeing about one run. */
+
+.evalpane .reso__row { gap: var(--sp-12) var(--sp-16); }
+.evalpane .judged__rules { gap: var(--sp-8) var(--sp-12); }
+/* The failing-row list is the reason this pane exists: it gets the column. */
+.evalpane .frow__k { flex-basis: 56px; }
+
+/* ── the other runs in this conversation ──────────────────────────────────
+   Page 26.1's row, at pane width: the id, what kind of run it was, the score.
+   Not 38px — that geometry is for the rail and the transcript, where a row is
+   the whole object; here it is a picker above the thing it picks, so it takes
+   --row-h and the quieter type that goes with it. */
+
+.evalpane__runs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-16);
+  padding-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--edge-faint);
+}
+.evalpick {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  width: 100%;
+  min-height: var(--row-h);
+  padding: var(--sp-2) var(--sp-8);
+  border: 1px solid transparent;
+  border-radius: var(--r-8);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.evalpick:hover { background: var(--state-hover); }
+/* The current row is marked by an EDGE and a background, never by a colour:
+   which run you are reading is not a verdict about it. */
+.evalpick[data-current] { border-color: var(--edge); background: var(--surface-1); }
+.evalpick__id {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+}
+.evalpick[data-current] .evalpick__id { color: var(--ink-1); }
+.evalpick__meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.evalpick__score {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+}
+/* A JUDGE'S NUMBER, IN A COLUMN OF SCORES. Same withdrawal as the card's
+   headline: it keeps its place in the list and loses the ink, and the row's
+   meta reads "judged by a model" rather than naming a metric. */
+.evalpick__score[data-opinion] { color: var(--ink-3); }
+
+/* ══ THE PROMPT BENCH ══════════════════════════════════════════════════════
+
+   One attempt at a better prompt. The card nests `.card--compare` inside
+   itself, so the nested card loses its shadow and its own ground: two stacked
+   elevations for one thought is how a card turns into a pile. */
+
+.card--prompt { border-radius: var(--r-18); }
+.card--prompt > .card__body { padding: var(--sp-16); }
+
+.promptver {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  padding: 1px var(--sp-6);
+  border-radius: var(--r-full);
+  border: 1px solid var(--edge);
+  color: var(--ink-2);
+}
+
+/* ── the crown ────────────────────────────────────────────────────────────
+   The headline. A promotion is the one green thing on this card; everything
+   else the bench can say is an absence, and absences are grey. */
+
+.crown {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-8);
+}
+.crown > .i { flex: 0 0 auto; color: var(--ink-4); }
+.crown[data-crowned='true'] > .i { color: var(--fits); }
+.crown__word {
+  font-size: var(--t-17);
+  line-height: var(--lh-17);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--ink-1);
+}
+.crown[data-crowned='false'] .crown__word { color: var(--ink-2); }
+.crown__holds {
+  margin: 0 0 var(--sp-8);
+  font-size: var(--t-12);
+  color: var(--ink-3);
+}
+
+.changenote {
+  display: flex;
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-16);
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--bg-base);
+}
+.changenote__k {
+  flex: 0 0 auto;
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.changenote__v { font-size: var(--t-12); line-height: var(--lh-12); color: var(--ink-1); }
+
+.targeted {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin: 0 0 var(--sp-16);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  color: var(--ink-2);
+}
+.targeted > .i { flex: 0 0 auto; margin-top: 2px; color: var(--ink-4); }
+.targeted[data-resolved='true'] > .i { color: var(--fits); }
+.targeted b { color: var(--ink-1); font-weight: 600; }
+
+/* The nested comparison. Flattened into its parent: no shadow, no raised
+   surface, and the hairline is the only thing that still separates it. */
+.card--prompt .card--compare {
+  box-shadow: none;
+  background: var(--bg-base);
+  border-radius: var(--r-14);
+  margin-bottom: var(--sp-16);
+}
+.card--prompt .card--compare > .card__body { padding: var(--sp-12); }
+/* The tags on the axis sit on the card's own ground, so they have to match it
+   where they overlap the plot rather than punching a --surface-2 hole in it. */
+.card--prompt .card--compare .axis2__tag { background: var(--bg-base); }
+
+.prompttext {
+  margin: var(--sp-8) 0 0;
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge-faint);
+  border-radius: var(--r-8);
+  background: var(--bg-base);
+  font-family: var(--font-mono);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-1);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+
+.measurednothing {
+  margin: var(--sp-16) 0 0;
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--edge-faint);
+  font-size: var(--t-10);
+  line-height: var(--lh-10);
+  color: var(--ink-4);
+}

@@ -1,0 +1,315 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   BASILICA — the token layer.
+
+   TRANSCRIBED FROM docs/brand/basilica/basilica.html, ordered on 2026-08-29
+   after the owner reviewed Letter live: "more square boxes… more bluish than
+   purple… like Arena AI, like Greek architecture, elegant, royal… a polarity
+   data type of UI. Really investigate those deeply, redo a brand book based
+   off of those, and then implement that brand book."
+
+   Investigated, not imagined — both read off the LIVE pages by computed style:
+     arenaphysica.com   bone ground #EBE9E2, warm ink #3A322F, serif display,
+                        mono eyebrows, radii 0/4/8
+     polarity.io        ground #0A1726, cobalt #6088EE, dense data surfaces
+   The synthesis: Polarity's night-blue stone carrying Arena's marble ink and
+   inscription capitals. Lapis and gold. Square.
+
+   WHAT LETTER GOT WRONG, fixed here rather than repeated: it named faces the
+   machine did not have and refused to ship them, so every surface silently
+   fell back to Segoe and none of the design arrived. The four faces are now
+   BUNDLED woff2 imports in src/main.tsx — no CDN, no fallback theatre. And
+   its 8–18px radii read soft; the ramp below is masonry.
+
+   The variable NAMES are still the component layer's. Book → this file:
+     ground #1A1A18 → --bg-ground    well #121211 → --bg-base
+     chrome #21211E → --surface-1    raised #292826 → --surface-2
+     lift #31302D → --surface-3      cobalt #6088EE → --accent
+     (lifted a step and creamed on 2026-08-29 — the owner: "graphite is a
+     little dark can we go lighter … more cream font colors instead of just
+     plain white". This variant is Pumice; Slate and Ash are drawn as
+     propositions in the palette artifact and the book.)
+     gold #D6BA78 → selection only   bone #F4F1E8 → --ink-1
+   Letter's laws (hue is a claim, never invent a number, thread sinks) and
+   Graphite's component geometry survive wherever this book is silent. */
+
+:root {
+  color-scheme: dark;
+
+  /* ground + surfaces — GRAPHITE, by the owner's correction of 2026-08-29:
+     "i still like an arena ai graphite color and maybe darker grey theme than
+     blue, just buttons i wanted blue instead of purple." The stone is warm
+     dark grey — Arena's charcoal cast, not a neutral — and the blue now lives
+     ONLY in the accent. The well still sinks, the stone still lifts. */
+  /* LIFTED ONE STEP, 2026-09-12, by the owner: "make the background chat
+     color a little lighter than the dark grey/black we have now so you can
+     see text easier." The well and the ground both move so the well still
+     sinks under the ground and the ground under the chrome. Was #121211
+     and #1A1A18. */
+  --bg-ground:#1F1F1D; --bg-base:#181817;
+  --surface-1:#24241F; --surface-2:#2B2A27; --surface-3:#33322F; --surface-4:#3B3A37;
+  --edge:rgba(235,233,226,.10); --edge-strong:rgba(235,233,226,.18); --edge-faint:rgba(235,233,226,.06);
+
+  /* ink — Arena's bone, moonlit marble on lapis. MORE CONTRAST, 2026-09-12,
+     same owner note: "have the white text font colors and greys (for
+     loading) have more contrast." Was #F1EBDB / #D2CCBD / #948F82 / #5F5B52.
+     ink-1 on the new well is 14.6:1, ink-3 6.6:1, ink-4 4.6:1 (was 3.6:1). */
+  --ink-1:#F8F3E6; --ink-2:#DFD9CB; --ink-3:#ADA89B; --ink-4:#807B70;
+
+  /* interaction */
+  --state-hover:rgba(235,233,226,.07); --state-press:rgba(235,233,226,.13);
+  --state-selected:rgba(214,186,120,.12);
+
+  /* accent — cobalt, Polarity's own, send and focus only. White on #6088EE
+     is 3.9:1, so words on a fill take the solid at 5.4:1. */
+  --accent:#6088EE; --accent-solid:#4E74DC; --accent-on-solid:#FFFFFF;
+  --accent-wash:rgba(96,136,238,.14); --accent-edge:rgba(96,136,238,.42);
+
+  /* gold — gilding. SELECTION ONLY: the chosen row, selected text. */
+  --gold:#D6BA78;
+
+  /* semantic — the claims, retuned to the blue ground */
+  --fits:#5FD3A8; --spills:#E8B45E; --wont:#EF7E7E; --unknown:#7E8899; --info:#5EB0DE;
+  --mix-wash:13%; --mix-edge:44%;
+
+  /* viz — cobalt leads so charts agree with the accent */
+  --viz-1:#6088EE; --viz-2:#5EB0DE; --viz-3:#D98BB4;
+  --viz-4:#4ECFB0; --viz-5:#D6BA78; --viz-6:#8FA3F2;
+  --viz-baseline:#7E8899;
+  --viz-band:rgba(96,136,238,.10); --viz-grid:rgba(235,233,226,.06);
+  --viz-axis:rgba(235,233,226,.14); --viz-crosshair:rgba(235,233,226,.28);
+
+  /* diff — wash only, never foreground */
+  --diff-add-bg:rgba(95,211,168,.12); --diff-add-gutter:#5FD3A8;
+  --diff-del-bg:rgba(239,126,126,.12); --diff-del-gutter:#EF7E7E;
+
+  /* utility — ::selection is gold leaf */
+  --selection-bg:rgba(214,186,120,.30);
+  --scrollbar-thumb:rgba(235,233,226,.14); --scrollbar-thumb-hover:rgba(235,233,226,.24);
+  --scrim:rgba(6,6,5,.66);
+
+  /* elevation — tone first, a cream top-light, and REAL shadows on cards.
+     The owner pointed at the old Machine dropdown as the reference: section
+     cards now carry the lifted-panel depth that popover had rather than
+     sitting flush. e2 is that depth; e3 is the popover itself; e4 a dialog. */
+  --e0:none;
+  --e1:inset 0 1px 0 rgba(241,235,219,.05), 0 1px 2px rgba(0,0,0,.35);
+  --e2:inset 0 1px 0 rgba(241,235,219,.06), 0 6px 18px rgba(0,0,0,.42);
+  --e3:inset 0 1px 0 rgba(241,235,219,.08), 0 12px 32px rgba(0,0,0,.50);
+  --e4:inset 0 1px 0 rgba(241,235,219,.10), 0 24px 64px rgba(0,0,0,.60);
+
+  /* ── theme-invariant below this line ──────────────────────────────── */
+
+  /* The book links Google Fonts because it has to open by double-clicking on a
+     machine that has never seen these files. The APP must not: §3.1's rule —
+     "a local-first product that blocks first paint on a CDN is contradicting
+     itself" — still holds, and index.html states it. The stacks below are the
+     book's own, byte for byte, so the named faces are used when they are
+     installed or bundled and the system fallback carries the design when they
+     are not. Bundling the two woff2 files is the outstanding work. */
+  --font-sans:"IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+  /* The book's two display faces. Named so they are used where installed;
+     the fallbacks are chosen to carry the ROLE (a script wordmark, an italic
+     serif title) rather than to imitate the face. Local-first still holds:
+     no CDN, no @font-face, no network request from the UI layer. */
+  /* The inscription face. Replaces the retired script wordmark: an
+     inscription does not sign itself in cursive. All four faces are bundled
+     woff2 (src/main.tsx), so these stacks RESOLVE rather than fall back. */
+  --font-display:"Marcellus", "Palatino Linotype", Georgia, serif;
+  --font-title:"Cormorant Garamond", "Cormorant", Georgia, "Times New Roman", serif;
+  --num:tabular-nums lining-nums;
+
+  /* type scale — COMPACT is the only mode. There is no size above 26px. */
+  --t-10:10px; --lh-10:14px;
+  --t-11:11px; --lh-11:15px;
+  --t-12:12px; --lh-12:16px;
+  --t-13:13px; --lh-13:18px;
+  --t-14:14px; --lh-14:21px;
+  --t-15:15px; --lh-15:23px;
+  --t-17:17px; --lh-17:22px;
+  --t-20:20px; --lh-20:26px;
+  --t-26:26px; --lh-26:30px;
+
+  /* spacing — 4px base, named for pixels */
+  --sp-2:2px; --sp-4:4px; --sp-6:6px; --sp-8:8px; --sp-10:10px; --sp-12:12px;
+  --sp-16:16px; --sp-20:20px; --sp-24:24px; --sp-32:32px; --sp-40:40px; --sp-56:56px;
+
+  /* THE RAMP IS MASONRY — basilica.html page 06: rows, inputs, chips and
+     buttons take 2; cards, panes and the composer take 4; dialogs take 6; 999
+     survives only for dots and count pills. The names keep their historic
+     values as NAMES so eight thousand lines of components need no edit; the
+     VALUES are the correction the owner asked for in the words "more square
+     boxes". */
+  --r-4:2px; --r-8:2px; --r-10:2px; --r-14:4px; --r-18:6px;
+  --r-full:999px;
+  --r-bar:2px;
+
+  /* layout constants */
+  --rail-w:280px; --pane-w:436px;
+  /* THE READING COLUMN GROWS WITH THE SCREEN. It was a fixed 720px, and on a
+     wide monitor the transcript and the chatbox floated narrow with the
+     space beside them unused - the owner: "have the chat itself expand
+     beyond the chatbox size, or the chatbox expand with the chat and
+     screen size". Both read this one token, so they grow together: 720px
+     on a laptop, a hair over 1000px on a wide desktop, never past the
+     width where a paragraph stops being a comfortable line. */
+  --col-max:clamp(720px, 58vw, 1040px);
+  --row-h:30px; --row-h-thread:28px; --control-h:28px; --icon-btn:26px;
+  --topbar-h:44px; --dot:6px;
+
+  /* THE SMALLEST A THING YOU CLICK MAY BE. WCAG 2.2 AA (2.5.8 Target Size,
+     Minimum) puts the floor at 24x24 CSS px, and this product had eleven
+     controls under it - measured in the running app, not guessed. Every one
+     was small for the same reason: it took its size from the text beside it
+     rather than from what a finger or a shaky hand needs. `--control-h` (28)
+     and `--icon-btn` (26) already clear the floor; this token is for the
+     places that were sized by eye, so the rule has a name instead of eight
+     magic numbers. Compact is still the only density: 24 is the floor, not a
+     new default. */
+  --tap-min:24px;
+
+  /* resize bounds — not the book's, because the book draws one width. These
+     are the shipped shell's existing clamps, kept so a drag cannot produce a
+     rail narrower than the folders and timestamps need. */
+  --rail-w-min:216px; --rail-w-max:400px;
+  --pane-w-min:320px; --pane-w-max:640px;
+  --col-min:420px;
+
+  /* motion */
+  --dur-1:110ms; --dur-2:170ms; --ease:cubic-bezier(.2,.7,.3,1);
+}
+
+/* derived washes/edges — one derivation, both themes, driven by --mix-*.
+   Written once rather than ten times, so a change to --fits cannot leave a
+   wash behind on last year's hue. */
+:root {
+  --fits-wash:color-mix(in srgb, var(--fits) var(--mix-wash), transparent);
+  --fits-edge:color-mix(in srgb, var(--fits) var(--mix-edge), transparent);
+  --spills-wash:color-mix(in srgb, var(--spills) var(--mix-wash), transparent);
+  --spills-edge:color-mix(in srgb, var(--spills) var(--mix-edge), transparent);
+  --wont-wash:color-mix(in srgb, var(--wont) var(--mix-wash), transparent);
+  --wont-edge:color-mix(in srgb, var(--wont) var(--mix-edge), transparent);
+  --unknown-wash:color-mix(in srgb, var(--unknown) var(--mix-wash), transparent);
+  --unknown-edge:color-mix(in srgb, var(--unknown) var(--mix-edge), transparent);
+  --info-wash:color-mix(in srgb, var(--info) var(--mix-wash), transparent);
+  --info-edge:color-mix(in srgb, var(--info) var(--mix-edge), transparent);
+  --accent-solid-hover:color-mix(in srgb, var(--accent-solid) 86%, #fff 14%);
+  --accent-solid-press:color-mix(in srgb, var(--accent-solid) 88%, #000 12%);
+  /* six run-state roles, each an explicit alias of a token that already exists */
+  --st-neutral:var(--ink-3); --st-active:var(--info); --st-attention:var(--accent);
+  --st-stalled:var(--spills); --st-failed:var(--wont); --st-done:var(--fits);
+  --st-archived-opacity:.6;
+}
+
+:root[data-theme="light"] {
+  /* CREAM, NOT WHITE — the owner, 2026-09-03: "make the light theme more
+     creme rather than just white".
+
+     This block used to be Graphite's cold grey, rising #EFEFF0 -> #F6F6F7 ->
+     #FBFBFC -> #FFFFFF, under a near-black #131315 and a violet accent that
+     did not even agree with the dark theme's cobalt. Three things wrong with
+     it: white is not a colour this brand uses anywhere, the greys were blue-
+     cast where the dark theme is warm-cast, and the accent was a second
+     opinion about what the product's blue is.
+
+     The cream is not invented either. `docs/brand/basilica/basilica.html`
+     records the live reading of arenaphysica.com that this brand was built
+     from: "bone ground #EBE9E2, warm ink #3A322F". That is the ground here,
+     deepened a step so the well still sinks and the stone still lifts, with
+     the ink warmed to the same family. The accent is the dark theme's own
+     cobalt darkened until it carries text on cream.
+
+     CONTRAST WAS COMPUTED, NOT EYEBALLED, and held at or above what the cold
+     palette gave — measured against `--bg-base`:
+
+       ink-1 12.44 (was 17.18)   ink-3  4.78 (was 4.76)
+       ink-2  7.01 (was  7.80)   ink-4  2.56 (was 2.56)
+       accent 5.58 (was  6.42)   white on --accent-solid 7.29
+
+     Those are the 2026-09-03 figures and they are kept as the record of that
+     pass. The 2026-09-10 numbers are beside the ink block below, because a
+     comment that quietly restates itself loses the ability to show that a
+     value moved.
+
+     ink-1 and ink-2 come down because the ground came up; every one of them
+     clears AA for body text, and ink-3 — the one that decides whether small
+     secondary labels are readable — is the figure this palette was tuned
+     around rather than the headline. ink-4 is the disabled tone and is not a
+     text contrast at all, matched to the old value so nothing that read as a
+     hint starts reading as a value.
+
+     Still the opt-out rather than a world the book draws: `:root` above is
+     the one this product designs for. */
+  color-scheme:light;
+
+  /* ground + surfaces — Arena's bone, and nothing rises to pure white.
+
+     2026-09-10, THE OWNER AGAIN, LOOKING AT THE RUNNING PRODUCT: "It looks
+     very white. I want more contrast ... cleaner and more cream rather than
+     poppy in your face."
+
+     The comment above already said "nothing rises to pure white" and the ramp
+     did not keep the promise. MEASURED against #FFFFFF, the old steps were
+     1.10 / 1.04 / 1.02 / 1.01 — surface-3 and surface-4 are white in all but
+     name, and they are what panels sit on. So the ground was cream and the
+     thing a person actually looks at was not, which is exactly what he saw.
+
+     The ramp is cream the whole way up now: 1.14 / 1.11 / 1.08 / 1.05 from
+     white, with the same 1.03 lift between adjacent steps that made the
+     elevation readable before. Nothing was flattened to buy the colour. */
+  --bg-ground:#E9E5DA; --bg-base:#F1EDE3;
+  --surface-1:#F4F0E6; --surface-2:#F7F3EA; --surface-3:#FAF6EE; --surface-4:#FCF9F2;
+  --edge:rgba(46,40,35,.12); --edge-strong:rgba(46,40,35,.22); --edge-faint:rgba(46,40,35,.07);
+
+  /* ink — warm, the book's #3A322F family rather than a cold near-black.
+
+     DARKENED 2026-09-10 for the second half of the same sentence: "I want more
+     contrast". Measured against --bg-base, before -> after:
+
+       ink-1 12.44 -> 13.11    ink-3  4.78 -> 5.92
+       ink-2  7.01 ->  8.35    ink-4  2.56 -> 2.85
+
+     ink-3 is the one that matters and the one the old block said it was tuned
+     around: it carries small secondary labels, and 4.78 clears AA by six
+     hundredths. It is 5.92 now. ink-4 is the disabled tone, not a text
+     contrast, and stays far enough below AA that a hint cannot start reading
+     as a value. */
+  --ink-1:#2A241F; --ink-2:#4A4338; --ink-3:#615949; --ink-4:#948C7E;
+
+  --state-hover:rgba(46,40,35,.05); --state-press:rgba(46,40,35,.09);
+  --state-selected:rgba(138,109,31,.12);
+
+  /* accent — the dark theme's cobalt, darkened until it carries text here.
+     One product, one blue: the violet this block used to hold was a second
+     opinion about the accent and disagreed with every other surface. */
+  --accent:#2F55C4; --accent-solid:#2A4EB8; --accent-on-solid:#FFFFFF;
+  --accent-wash:rgba(47,85,196,.10); --accent-edge:rgba(47,85,196,.36);
+
+  /* gold — gilding, selection only, as in the dark */
+  --gold:#8A6D1F;
+
+  --fits:#0C7B53; --spills:#8F5A00; --wont:#C2352F; --unknown:#6F6759; --info:#1667A8;
+  --mix-wash:10%; --mix-edge:38%;
+  --sage:#2E7D5B;
+
+  --viz-1:#2F55C4; --viz-2:#1A6FA8; --viz-3:#AB3782;
+  --viz-4:#0B7566; --viz-5:#845E0C; --viz-6:#4A56C4;
+  --viz-baseline:#6F6759;
+  --viz-band:rgba(47,85,196,.09); --viz-grid:rgba(46,40,35,.07);
+  --viz-axis:rgba(46,40,35,.17); --viz-crosshair:rgba(46,40,35,.32);
+
+  --diff-add-bg:rgba(12,123,83,.10); --diff-add-gutter:#0C7B53;
+  --diff-del-bg:rgba(194,53,47,.09); --diff-del-gutter:#C2352F;
+
+  --selection-bg:rgba(138,109,31,.22);
+  --scrollbar-thumb:rgba(46,40,35,.19); --scrollbar-thumb-hover:rgba(46,40,35,.31);
+  --scrim:rgba(46,40,35,.38);
+
+  /* elevation — warm shadows. A neutral-black shadow over cream reads grey
+     and greys the ground it falls on. */
+  --e0:none;
+  --e1:0 0 0 1px rgba(46,40,35,.05), 0 1px 2px rgba(46,40,35,.07);
+  --e2:0 0 0 1px rgba(46,40,35,.06), 0 2px 8px rgba(46,40,35,.09);
+  --e3:0 0 0 1px rgba(46,40,35,.07), 0 8px 24px rgba(46,40,35,.11);
+  --e4:0 0 0 1px rgba(46,40,35,.08), 0 20px 48px rgba(46,40,35,.15);
+}

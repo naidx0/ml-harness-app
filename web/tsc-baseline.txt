@@ -1,0 +1,9 @@
+1 ../vendor/opencode/packages/app/src/session/browser/model.ts TS7006 Parameter 'key' implicitly has an 'any' type.
+6 ../vendor/opencode/packages/app/src/session/browser/model.ts TS7006 Parameter 'tab' implicitly has an 'any' type.
+1 ../vendor/opencode/packages/app/src/session/files/session-side-panel.tsx TS7006 Parameter 'item' implicitly has an 'any' type.
+1 ../vendor/opencode/packages/app/src/session/terminal/terminal.tsx TS7006 Parameter 'data' implicitly has an 'any' type.
+1 ../vendor/opencode/packages/app/src/session/terminal/terminal.tsx TS7006 Parameter 'event' implicitly has an 'any' type.
+1 ../vendor/opencode/packages/app/src/session/terminal/terminal.tsx TS7006 Parameter 'key' implicitly has an 'any' type.
+1 ../vendor/opencode/packages/app/src/session/terminal/terminal.tsx TS7006 Parameter 'size' implicitly has an 'any' type.
+1 ../vendor/opencode/packages/app/src/workspaces/selection/dialog.tsx TS2353 Object literal may only specify known properties, and 'onExpansionChange' does not exist in type 'FileTreeOptions'.
+1 ../vendor/opencode/packages/app/src/workspaces/selection/dialog.tsx TS7006 Parameter 'change' implicitly has an 'any' type.

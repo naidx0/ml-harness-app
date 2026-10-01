@@ -1,0 +1,166 @@
+{
+ "n": 4112,
+ "total": 819.4662122026202,
+ "top": [
+  [
+   65.958,
+   "test_it_samples_with_replacement_and_tags_every_row (test_synthesis_is_structure_not_content.SynthesisIsStructureNotContent.test_it_samples_with_replacement_and_tags_every_row)"
+  ],
+  [
+   57.626,
+   "test_a_real_fit_passes_and_a_real_refusal_does_not (test_the_classical_branch_gets_a_build.TheCriterionSeparatesAFitFromARefusalTest.test_a_real_fit_passes_and_a_real_refusal_does_not)"
+  ],
+  [
+   32.658,
+   "test_no_randomized_fact_set_raises_or_lands_off_the_ledger (test_diagnosis_no_crash.NoFactSetMakesTheEngineRaiseTest.test_no_randomized_fact_set_raises_or_lands_off_the_ledger)"
+  ],
+  [
+   15.589,
+   "test_a_folder_of_more_than_five_thousand_files_is_counted_whole (test_the_eval_set_can_be_counted_at_any_size.ACapThatBitesSilentlyIsAnInventedNumberTest.test_a_folder_of_more_than_five_thousand_files_is_counted_whole)"
+  ],
+  [
+   13.174,
+   "test_concurrent_processes_on_a_fresh_database_all_survive (test_migrations_survive_concurrency.ConcurrentMigrationTest.test_concurrent_processes_on_a_fresh_database_all_survive)"
+  ],
+  [
+   7.257,
+   "test_removing_a_tool_from_the_registry_makes_the_build_refuse (test_the_proposal_is_executable.ABuildIsExecutableByConstructionTest.test_removing_a_tool_from_the_registry_makes_the_build_refuse)"
+  ],
+  [
+   6.538,
+   "test_nothing_honest_is_stopped (test_a_gate_is_not_a_word_it_is_a_row.TheHonestSentencesSurviveTest.test_nothing_honest_is_stopped)"
+  ],
+  [
+   6.127,
+   "test_the_baseline_does_not_hold_the_eval_set_it_is_sampling_from (test_the_eval_set_can_be_counted_at_any_size.TheNextStepMustSurviveTheSetWeJustAgreedToTest.test_the_baseline_does_not_hold_the_eval_set_it_is_sampling_from)"
+  ],
+  [
+   5.641,
+   "test_nothing_it_returns_names_a_verdict_or_a_method (test_a_stated_quantity_becomes_an_offer_to_count_it.TheDataAnswerIsNotAVerdictTest.test_nothing_it_returns_names_a_verdict_or_a_method)"
+  ],
+  [
+   5.587,
+   "test_measuring_the_data_does_not_move_the_run_towards_training (test_a_stated_quantity_becomes_an_offer_to_count_it.TheDataAnswerIsNotAVerdictTest.test_measuring_the_data_does_not_move_the_run_towards_training)"
+  ],
+  [
+   5.003,
+   "test_a_lock_whose_wrapper_died_but_whose_run_lives_is_not_stale (test_only_one_gate_runs_at_a_time.TheGateLockTest.test_a_lock_whose_wrapper_died_but_whose_run_lives_is_not_stale)"
+  ],
+  [
+   5.003,
+   "test_a_caller_that_asks_for_a_limit_still_gets_one (test_the_wait_keys_on_the_holder_not_the_clock.TheWaitKeysOnTheHolderTest.test_a_caller_that_asks_for_a_limit_still_gets_one)"
+  ],
+  [
+   5.002,
+   "test_the_wait_ends_when_the_holder_releases_and_not_before (test_the_wait_keys_on_the_holder_not_the_clock.TheWaitKeysOnTheHolderTest.test_the_wait_ends_when_the_holder_releases_and_not_before)"
+  ],
+  [
+   5.002,
+   "test_the_second_caller_cannot_take_a_held_lock (test_only_one_gate_runs_at_a_time.TheGateLockTest.test_the_second_caller_cannot_take_a_held_lock)"
+  ],
+  [
+   4.876,
+   "test_a_hung_test_prints_a_stack_that_names_it (test_a_hung_test_names_itself.TheBoundFiresAndNamesTheTestTest.test_a_hung_test_prints_a_stack_that_names_it)"
+  ],
+  [
+   4.568,
+   "test_it_does_not_kill_the_run_and_the_other_test_still_reports (test_a_hung_test_names_itself.TheBoundFiresAndNamesTheTestTest.test_it_does_not_kill_the_run_and_the_other_test_still_reports)"
+  ],
+  [
+   4.364,
+   "test_the_declared_outputs_are_where_the_tool_actually_puts_them (test_the_classical_branch_gets_a_build.TheCriterionSeparatesAFitFromARefusalTest.test_the_declared_outputs_are_where_the_tool_actually_puts_them)"
+  ],
+  [
+   3.958,
+   "test_settings_that_cannot_differ_come_back_as_no_evidence_with_nothing_crowned (test_the_chunking_lever_is_swept_or_refused.TheNullTest.test_settings_that_cannot_differ_come_back_as_no_evidence_with_nothing_crowned)"
+  ],
+  [
+   3.532,
+   "test_a_timed_out_job_does_not_inherit_a_stale_log (test_runner_log.RunnerLogTest.test_a_timed_out_job_does_not_inherit_a_stale_log)"
+  ],
+  [
+   3.298,
+   "test_partial_output_survives_a_timeout (test_runner_failure_paths.RunnerStreamsOutputTest.test_partial_output_survives_a_timeout)"
+  ],
+  [
+   2.58,
+   "test_and_without_the_lead_in_the_sentry_shows_the_whole_block (test_the_corpus_is_harvested_not_imagined.TheAuditMatchesTheSentryTest.test_and_without_the_lead_in_the_sentry_shows_the_whole_block)"
+  ],
+  [
+   2.569,
+   "test_no_string_literal_carries_a_stray_control_character (test_no_literal_backslash_eats_a_fixture.NoLiteralBackslashEatsAFixtureTest.test_no_string_literal_carries_a_stray_control_character)"
+  ],
+  [
+   2.561,
+   "test_bold_italic_and_code_do_not_disarm_it (test_a_block_lead_in_is_recognised_wearing_emphasis.ALeadInIsStillALeadInWearingEmphasisTest.test_bold_italic_and_code_do_not_disarm_it)"
+  ],
+  [
+   2.547,
+   "test_a_claim_with_no_diagnosis_behind_it_reaches_the_user (test_the_diagnosis_is_not_optional.AVerdictTheModelOwnsIsAnnotatedTest.test_a_claim_with_no_diagnosis_behind_it_reaches_the_user)"
+  ],
+  [
+   2.524,
+   "test_the_timeout_bounds_the_buffered_path_too (test_runner_failure_paths.RunnerFailurePathsTest.test_the_timeout_bounds_the_buffered_path_too)"
+  ],
+  [
+   2.477,
+   "test_an_ordinary_sentence_closes_the_block (test_the_corpus_is_harvested_not_imagined.TheAuditMatchesTheSentryTest.test_an_ordinary_sentence_closes_the_block)"
+  ],
+  [
+   2.438,
+   "test_the_loser_of_the_race_no_ops_instead_of_reapplying (test_migrations_survive_concurrency.ConcurrentMigrationTest.test_the_loser_of_the_race_no_ops_instead_of_reapplying)"
+  ],
+  [
+   2.428,
+   "test_a_timed_out_buffered_job_does_not_inherit_a_stale_log (test_runner_log.RunnerLogTest.test_a_timed_out_buffered_job_does_not_inherit_a_stale_log)"
+  ],
+  [
+   2.367,
+   "test_the_streaming_primitive_raises_on_timeout (test_runner_failure_paths.RunnerStreamsOutputTest.test_the_streaming_primitive_raises_on_timeout)"
+  ],
+  [
+   2.327,
+   "test_timeout_is_recorded_not_raised (test_runner_failure_paths.RunnerFailurePathsTest.test_timeout_is_recorded_not_raised)"
+  ],
+  [
+   2.308,
+   "test_the_timeout_actually_bounds_the_job (test_runner_failure_paths.RunnerFailurePathsTest.test_the_timeout_actually_bounds_the_job)"
+  ],
+  [
+   2.155,
+   "test_a_walk_that_never_happened_is_named_as_such (test_a_gate_is_not_a_word_it_is_a_row.TheFabricationsAreCaughtTest.test_a_walk_that_never_happened_is_named_as_such)"
+  ],
+  [
+   2.114,
+   "test_no_get_route_500s_on_an_empty_database (test_all_routes_empty_db.AllRoutesEmptyDbTest.test_no_get_route_500s_on_an_empty_database)"
+  ],
+  [
+   2.087,
+   "test_every_stage_terminator_is_actually_put_to_the_test (test_diagnosis_stage_exit.NoFactSetRunsOffTheEndOfAStageTest.test_every_stage_terminator_is_actually_put_to_the_test)"
+  ],
+  [
+   2.066,
+   "test_no_get_route_500s_on_half_finished_data (test_all_routes_empty_db.AllRoutesEmptyDbTest.test_no_get_route_500s_on_half_finished_data)"
+  ],
+  [
+   2.012,
+   "test_an_ipv4_listener_is_still_found (test_the_launcher_refuses_to_guess.ItLooksAtEveryAddressAPortResolvesTo.test_an_ipv4_listener_is_still_found)"
+  ],
+  [
+   2.009,
+   "test_more_rows_than_one_call_carries_is_refused_with_the_bound (test_an_adapter_is_scored_where_it_was_made.TheRowsAreTheBaselinesRowsTest.test_more_rows_than_one_call_carries_is_refused_with_the_bound)"
+  ],
+  [
+   2.006,
+   "test_a_socket_that_is_not_http_at_all_is_foreign (test_the_launcher_refuses_to_guess.ItClassifiesWhatIsOnAPort.test_a_socket_that_is_not_http_at_all_is_foreign)"
+  ],
+  [
+   1.993,
+   "test_check_a_catches_the_relabelling (test_a_tree_is_scored_against_the_trivial_answer.AFeatureThatCarriesTheAnswerRefusesTheFitTest.test_check_a_catches_the_relabelling)"
+  ],
+  [
+   1.955,
+   "test_no_perturbed_fact_set_runs_off_the_end_of_a_stage (test_diagnosis_stage_exit.NoFactSetRunsOffTheEndOfAStageTest.test_no_perturbed_fact_set_runs_off_the_end_of_a_stage)"
+  ]
+ ]
+}

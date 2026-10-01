@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ML Harness",
+  "version": "0.1.0",
+  "identifier": "co.rimo.ml-harness",
+  "build": {
+    "frontendDist": "../web/dist",
+    "devUrl": "http://localhost:3100",
+    "beforeDevCommand": "npm --prefix web run dev",
+    "beforeBuildCommand": "python scripts/stage_bundle.py && npm --prefix web run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "ML Harness",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 600,
+        "resizable": true,
+        "decorations": false,
+        "dragDropEnabled": false,
+        "shadow": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:8078 http://localhost:8078; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'"
+    },
+    "withGlobalTauri": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "msi",
+      "nsis"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ],
+    "resources": [
+      "resources/*.whl"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    },
+    "externalBin": [
+      "binaries/uv"
+    ]
+  }
+}

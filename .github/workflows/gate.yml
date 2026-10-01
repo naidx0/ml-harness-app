@@ -1,0 +1,284 @@
+# The gate, on a machine that is not Max's.
+#
+# `docs/THE_PLAN.md` Phase V.3 Phase C names three things: CI, code signing and
+# the clean-machine test. This is the first, and it is the only one of the three
+# that can be written without a certificate or a second computer.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# WHY IT IS WORTH HAVING BEYOND "CI IS GOOD PRACTICE"
+#
+# `AGENTS.md` makes `python -m unittest discover -s tests` the gate every change
+# passes before it commits, and it has been run on exactly one machine: a
+# Windows checkout on a OneDrive-backed path with a warm uv cache, a GPU, Ollama
+# installed, and 3.11.15. Several defects this repository has already found were
+# platform-shaped - a census keyed on posix separators swept with backslashes; a
+# path-too-long error on Windows; a `localhost` that resolves to `::1` and left
+# IPv4 loopback empty. **A suite that has only ever passed in one environment is
+# a suite with an untested assumption in it, and the assumption is the machine.**
+#
+# So this runs on Windows AND Linux. Not for coverage theatre: the two disagree
+# about path separators, case sensitivity, line endings and what `localhost`
+# means, and every one of those has already cost this repository a real defect.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# WHAT IT DELIBERATELY DOES NOT DO
+#
+# **It does not sign anything.** Signing needs a certificate, which needs an
+# identity and money, and THE_PLAN V.4 is explicit that "antivirus does not
+# block it" is a standing release condition rather than a build-time check —
+# Microsoft ended EV's automatic SmartScreen reputation in 2024 and reputation
+# accrues over consecutive signed releases. A workflow that pretended to sign
+# would be the invented number this whole product refuses.
+#
+# **It does not BUILD the Tauri shell, but it does compile it.** This paragraph
+# used to say there was no shell and no cargo. Both stopped being true: the
+# Rust half is written, `src-tauri` compiles, and the `the desktop shell
+# compiles` job below runs `cargo check`, `cargo fmt` and `cargo test` on
+# Windows. What is still not done here is LINKING a binary or bundling an
+# installer - minutes per push to prove nothing the check does not.
+#
+# **It is not the clean-machine test.** That is a person installing a wheel on a
+# computer that has never seen this repository and reaching a diagnosed problem
+# without asking a question. A runner is a fresh machine, which is most of it,
+# and it is not a person — so the wheel job below proves the half a machine can
+# prove: that `pip install .` produces an engine that can load its own ledgers,
+# read its model geometries and resolve its recipes. That is exactly the four
+# rows Phase V.0 measured BROKEN, which is why `mlh doctor` exists to report
+# them and why this job is the thing that would have caught them.
+
+name: gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# One run per branch. A second push while the first is still going makes the
+# first answer stale, and a stale green is worse than no green.
+concurrency:
+  group: gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    name: suite (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # NOT fail-fast. When Windows and Linux disagree, WHICH of them fails is
+      # the finding - cancelling the other half throws away the half of the
+      # answer that says whether it is a platform bug or a real one.
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # The floor `pyproject.toml` declares, not the newest available. A
+          # gate that only ever ran on the newest would not notice the day
+          # something needs 3.12 while the metadata still says 3.11.
+          python-version: "3.11"
+          cache: pip
+
+      # `.[test]` and not `.`, and pyproject says why in as many words: the
+      # gate does not run on a clean install, because `tests/support.py` builds
+      # a `fastapi.testclient.TestClient` and starlette refuses to construct one
+      # without an HTTP client library. The gate is not optional, so what it
+      # needs is declared rather than remembered.
+      - name: Install the product and what the gate needs
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[test]"
+
+      # THE GATE ITSELF, spelled exactly as `AGENTS.md` spells it. A CI that ran
+      # a different command from the one a person runs before committing is two
+      # gates, and the one nobody watches is the one that rots.
+      #
+      # THAT IS EXACTLY WHAT HAPPENED, and this line is the repair. Measured
+      # 2026-09-05: four entry points run this suite - this workflow,
+      # `scripts/gate.py`, `scripts/one_gate_at_a_time.py` and `pyproject.toml`
+      # - and ONE of them states what a finished run looks like. Lanes had moved
+      # to `scripts/gate.py` locally, because raw `unittest discover` cannot see
+      # two failures that were both real here: a run that lost tests still
+      # printing OK, and a test module that failed to import being replaced by a
+      # placeholder that keeps the discovered count intact. CI kept running the
+      # weaker command, so the checks that catch those ran only on the machine
+      # of whoever remembered them.
+      #
+      # `scripts/gate.py` RUNS THE SAME DISCOVERY over the same directory and
+      # adds three assertions: ran == discovered, no module failed to import,
+      # and a verdict line that has to be present for the run to have finished.
+      # Nothing is taken away. Its Windows-only neighbour check is guarded by
+      # `os.name` and stays quiet here.
+      - name: python scripts/gate.py (unittest discover, plus ran == discovered)
+        run: python scripts/gate.py
+
+  wheel:
+    name: an installed copy can load its own knowledge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # THE JOB THAT WOULD HAVE CAUGHT PHASE V.0. `ml_harness.egg-info/
+      # SOURCES.txt` carried ZERO entries for `diagnosis_engine.yaml`,
+      # `ledgers`, `model_configs` and `recipes` - so `pip install .` produced
+      # an engine that started and could not load the file holding every gate,
+      # outcome and fact it has. It was invisible because the README says
+      # `pip install -e .`, and an editable install points site-packages back at
+      # the checkout, so `docs/` is right there and everything works.
+      #
+      # This installs NON-editable, from a built wheel, and then runs it from a
+      # directory that is not the checkout - which is the only arrangement in
+      # which the bug is visible at all.
+      - name: Build a wheel and install it, not editable
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --wheel
+          python -m pip install dist/*.whl
+
+      # `mlh doctor` EXITS 0 ON A HEALTHY INSTALL AND IT DID NOT USED TO.
+      # Driven on a real wheel while this workflow was being written: `recipes`
+      # is legitimately absent from a wheel - V.3 A1b, undecided - so the
+      # command exited 1 on every correct install, which is an exit code nothing
+      # can gate on. It now distinguishes broken from known-open, and this step
+      # is the thing that would have caught the regression if it had not.
+      - name: mlh doctor, from somewhere that is not the checkout
+        run: |
+          mkdir -p "$RUNNER_TEMP/elsewhere"
+          cd "$RUNNER_TEMP/elsewhere"
+          mlh doctor
+
+      # AND THE SAME ANSWER READ BACK AS DATA, because a command that exits zero
+      # having found nothing is a command that passes for the wrong reason.
+      - name: The ledgers, the geometries and the recipes are all there
+        run: |
+          cd "$RUNNER_TEMP/elsewhere"
+          python - <<'PY'
+          import json, subprocess, sys
+          rows = json.loads(subprocess.run(
+              ["mlh", "doctor", "--json"], capture_output=True, text=True, check=True
+          ).stdout)["checks"]
+          by_name = {row["check"]: row for row in rows}
+          for wanted in ("ledgers", "model_configs", "tools"):
+              row = by_name.get(wanted)
+              if row is None or not row["ok"]:
+                  print(f"FAILED: {wanted} -> {row}", file=sys.stderr)
+                  raise SystemExit(1)
+              print(f"ok  {wanted}: {row['detail']}")
+          # `recipes` is NOT asserted here and that is deliberate rather than an
+          # omission. `recipes/` is not package data - a recipe carries a
+          # multi-gigabyte virtualenv that must never be in a wheel - and
+          # whether a recipe is package data or user data is an open question in
+          # THE_PLAN V.3 A1b. Asserting it would be this file taking a decision
+          # that document says has not been taken.
+          print("note:", by_name["recipes"]["detail"])
+          PY
+
+  shell:
+    name: the desktop shell compiles
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      # `cargo check` and not `cargo build`, deliberately. What CI is for here
+      # is that the shell still COMPILES against the frontend contract - the two
+      # command names, their argument shapes, their return payloads, which
+      # `frontend/src/lib/engine/shell.ts` declares and its tests drive. Linking
+      # a 3 MB binary on every push proves nothing more and costs minutes.
+      #
+      # Windows only, because that is the target: the shell is a WebView2 host,
+      # `pick_path` opens a Windows dialog, and `engine_status` reads
+      # `%LOCALAPPDATA%`. A Linux job here would be checking a build nobody
+      # ships.
+      # THE SIDECAR AND THE WHEEL, BEFORE ANYTHING COMPILES.
+      # `tauri.conf.json` declares `binaries/uv-<triple>.exe` as an
+      # `externalBin` and the build script validates that path, so
+      # `cargo check` fails before it reads a line of Rust when the file
+      # is absent - and it is absent on every fresh checkout, because it
+      # is 47 MB of per-machine state that `.gitignore` correctly
+      # refuses. Measured on run 33692998854, verbatim:
+      #
+      #   error: failed to run custom build command for ml-harness-shell
+      #   resource path binaries\uv-x86_64-pc-windows-msvc.exe doesn't exist
+      #
+      # `scripts/stage_bundle.py` is the same entry point
+      # `tauri.conf.json`'s own `beforeBuildCommand` runs, so what CI
+      # checks is what a real build stages: uv fetched and verified
+      # against upstream's published `.sha256`, then the wheel built
+      # with it.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: stage the bundle (uv sidecar + wheel)
+        run: python scripts/stage_bundle.py
+
+      - name: cargo check
+        run: cargo check --manifest-path src-tauri/Cargo.toml --all-targets
+      - name: cargo fmt
+        run: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+
+      # THE ONE THING HERE THAT IS NOT A COMPILE. `engine_status` used to hand
+      # the page a session read out of any `engine.json` it found, without
+      # asking whether anything was behind it - so a portfile left by an engine
+      # that died made a packaged build report a live engine, never ask the
+      # shell to start one, and send every request to a dead port. It compiled
+      # perfectly. The test drives a real portfile against a closed port and
+      # against a socket that answers, which is the only way that difference is
+      # visible.
+      - name: cargo test
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+
+  # THE INTERFACE THE SHELL NOW BUILDS: OpenCode's app, vendored, under web/.
+  # Node 24 because their manifests declare it. The type check is the
+  # baseline-aware one - fourteen vendored errors are recorded and anything
+  # new, ours or theirs, fails (scripts/check_web_types.py says why).
+  web:
+    name: web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: npm ci
+      - run: python scripts/check_web_types.py
+      - run: npx vitest run
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # `npm ci` and not `npm install`: the lockfile is the claim about what
+      # this builds against, and a job that let npm resolve something else would
+      # be testing a tree nobody committed.
+      - run: npm ci
+        working-directory: frontend
+
+      # Typecheck, test and build separately, because they fail for different
+      # reasons and a person reading a red job should not have to guess which.
+      - run: npx tsc -b
+        working-directory: frontend
+      - run: npm test
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend

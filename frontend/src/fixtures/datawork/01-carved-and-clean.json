@@ -1,0 +1,138 @@
+{
+  "situation": "A carve that WROTE and whose own leak check found nothing. ok: true, which in this tool is the conjunction of 'the two files account for every row read' and 'the leak check found nothing' rather than a mood. This is the payload where the card's green pill has to say NO LEAK and not anything that reads as a gate having opened.",
+  "dataset": "400 rows of twelve words each drawn without replacement from a 44-word vocabulary, so no two rows are near neighbours and the near-duplicate check has nothing to find.",
+  "produced_by": {
+    "tool": "carve_eval_set",
+    "arguments": {
+      "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\tickets.jsonl",
+      "into": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out",
+      "answer_column": "answer"
+    },
+    "thread_id": 1,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\scratch.db",
+    "captured_at_utc": "2026-08-21T12:17:14+00:00",
+    "engine": "e1a3117ca6fa7d7d65c9e1272d5c22482b978eca71950bceaab9efa317e73a52"
+  },
+  "shape": {
+    "top_level_keys": 22,
+    "rows_a_flat_table_would_draw": 83,
+    "rows_the_payload_actually_holds": 92,
+    "max_nesting_depth": 5,
+    "containers_summarised_away_at_depth_3": 1,
+    "rows_hidden_behind_those_summaries": 9,
+    "what_is_summarised_away": {
+      "leakage.findings[]": 1
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 2,
+    "longest_string_chars": 526,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": true,
+    "summary": "Carved 30 rows out of 400 into tickets.eval.jsonl and wrote the other 370 to tickets.train.jsonl, under C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out. The size is the 30 G0 asks for, read from G0_EVAL_SET.passes_when in docs/diagnosis_engine.yaml. No overlap: none of the 30 eval rows matched any of the 370 train rows. That covers these two files only. n=30 only resolves differences larger than ~15 points. n>=100 to trust a 5-10 point delta. Report the resolution alongside every score.",
+    "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\tickets.jsonl",
+    "into": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out",
+    "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\tickets.eval.jsonl",
+    "train_path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\tickets.train.jsonl",
+    "manifest_path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\ml_harness_manifest.json",
+    "rows_read": 400,
+    "eval_rows": 30,
+    "train_rows": 370,
+    "rows_asked_for": 30,
+    "answer_column": "answer",
+    "seed": "",
+    "distinct_answers": 4,
+    "wrote": [
+      {
+        "file": "tickets.eval.jsonl",
+        "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\tickets.eval.jsonl",
+        "rows": 30,
+        "bytes": 4031,
+        "sha256": "d5eeda644ef35bb2233851a5093e607f8fd9806de01f611ae08db6f6c8990e6a",
+        "format": "jsonl"
+      },
+      {
+        "file": "tickets.train.jsonl",
+        "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\tickets.train.jsonl",
+        "rows": 370,
+        "bytes": 49342,
+        "sha256": "d8f12f12d6a28e60ca95b8f00db4bf9e7f219ee1f46aa039b8ed90f1e3021c04",
+        "format": "jsonl"
+      }
+    ],
+    "method": {
+      "rule": "carve_eval_set/v1",
+      "how": "A row is in the eval set when signature_of_text('carve_eval_set/v1|<seed>|<row signature>') is among the lowest for the rows that qualify. Two rows are the same row when their non-null values, joined in order with spaces, are identical after collapsing whitespace and lower-casing. Column names are not part of it, so two rows saying the same thing under differently spelled columns are duplicates. This is dataquality.row_signature, the same definition profile_dataset and assess_the_data report their duplicate counts under.",
+      "seed": "",
+      "rows_asked_for": 30,
+      "rows_asked_for_came_from": "G0_EVAL_SET.passes_when in docs/diagnosis_engine.yaml",
+      "answer_column": "answer",
+      "qualifies": "a row with a value in the answer column, in a group of identical rows that all have one",
+      "whole_groups_only": "Identical rows share a signature and therefore a key, so they are drawn together and cannot land on opposite sides of the split. That is why the eval file can hold more rows than were asked for, and never fewer.",
+      "rows_are_verbatim": "No column was added, removed or renamed. Provenance is in this manifest rather than in the rows, because a per-row mark would make every eval row differ from every train row and the leakage check below would come back clean on anything."
+    },
+    "verification": {
+      "tool": "check_split_leakage",
+      "ran": true,
+      "leaked_rows": 0,
+      "exact_matches": 0,
+      "near_matches": 0,
+      "threshold": 0.8,
+      "summary": "No overlap: none of the 30 eval rows matched any of the 370 train rows. That covers these two files only.",
+      "partition_holds": true,
+      "partition_is": "30 + 370 = 400 against the 400 rows counted on the first pass. Every row went to exactly one of the two files; none was dropped and none was written twice."
+    },
+    "leakage": {
+      "ok": true,
+      "summary": "No overlap: none of the 30 eval rows matched any of the 370 train rows. That covers these two files only.",
+      "ran": true,
+      "train_path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\tickets.train.jsonl",
+      "eval_path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\01-carved-and-clean_out\\tickets.eval.jsonl",
+      "train_rows": 370,
+      "eval_rows": 30,
+      "leaked_rows": 0,
+      "leak_rate": 0.0,
+      "exact_matches": 0,
+      "near_matches": 0,
+      "threshold": 0.8,
+      "threshold_is": "our policy, not a property of the data",
+      "method": "character 5-gram shingles, a bottom-64 sketch looked up through an inverted index, verified by exact Jaccard where both rows were still in memory",
+      "examples": [],
+      "notes": [],
+      "checks_not_run": [],
+      "provenance": {
+        "train_rows": "measured",
+        "eval_rows": "measured",
+        "leaked_rows": "measured",
+        "leak_rate": "inferred",
+        "exact_matches": "measured",
+        "near_matches": "inferred"
+      },
+      "findings": [
+        {
+          "level": "INFO",
+          "code": "split_leakage",
+          "message": "No leakage found: none of the 30 eval rows matched any of the 370 train rows.",
+          "remediation": "This covers the two files given. If you later evaluate against a benchmark the harness has never seen, the check has to be run again.",
+          "evidence": {
+            "train_rows": 370,
+            "eval_rows": 30,
+            "threshold": 0.8,
+            "provenance": "measured"
+          }
+        }
+      ],
+      "blocking": []
+    },
+    "floor": {
+      "rows": 30,
+      "declared_in": "G0_EVAL_SET.passes_when in docs/diagnosis_engine.yaml",
+      "is": "the gate's threshold, which is our policy - not a property of this data",
+      "g0_recipe": "30-50 real inputs sampled from actual traffic, graded by the person who cares about the answer.",
+      "g0_resolution_note": "n=30 only resolves differences larger than ~15 points. n>=100 to trust a 5-10 point delta. Report the resolution alongside every score."
+    },
+    "measured": [],
+    "does_not_open_g0": "This wrote a file. It did not count one. G0 reads eval_size_n, which is a count taken off a file that exists by a tool that read it - and 'I wrote 40 rows' is this program's own arithmetic rather than a reading of the world. Run measure_eval_set on the eval file and the gate is asked on that count.",
+    "grading_is_still_yours": "These rows already carried answers and were split in two. Nothing here checked that the answers are right, and nothing could: 30-50 real inputs sampled from actual traffic, graded by the person who cares about the answer."
+  }
+}

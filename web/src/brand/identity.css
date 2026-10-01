@@ -1,0 +1,438 @@
+/* This product's typefaces, surfaces, ink and first-paint colour.
+ *
+ * Loaded after OpenCode's stylesheets. Their LAYOUT is kept as it is - the
+ * owner likes it - and this layer puts the harness's identity on top of it,
+ * taken from the outgoing app's own tokens (frontend/src/styles/tokens.css),
+ * not reinvented:
+ *
+ *   graphite ground and four surface steps, bone ink, cobalt only for send
+ *   and focus (the palette in theme.json), gold only for selection, IBM Plex
+ *   Sans and Mono for the interface, and one clean grotesque for the few
+ *   places the product names or speaks (the display face, below).
+ *
+ * FONTS. Their stack is Inter for sans and IBM Plex Mono for mono. They
+ * declare no `@font-face` in their UI package - the consuming app does - so
+ * declaring it here is the supported seam. The sans is also named in their
+ * appearance setting by HarnessRoot, because their settings write it as an
+ * inline style that no stylesheet can beat.
+ */
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("@ibm/plex/IBM-Plex-Sans/fonts/complete/woff2/IBMPlexSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("@ibm/plex/IBM-Plex-Sans/fonts/complete/woff2/IBMPlexSans-Text.woff2") format("woff2");
+  /* Their type scale leans on 440 and 530; Text is the face that carries it. */
+  font-weight: 450 560;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-family-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Their own variable, which their `body` reads. Setting only
+   * --font-family-sans leaves the body on whatever this resolves to. */
+  --font-family-text: var(--font-family-sans);
+
+  /* THE DISPLAY FACE. The owner, 2026-09-22, of the Roman capitals and the
+   * italic serif that were here: "clean fonts like Sora, or Neue Montreal,
+   * Aktiv Grotesk, Apfel Grotezk - clean and straightforward." His commercial
+   * faces first, used when installed on the machine; Sora is the one this
+   * product ships (entry.tsx, from @fontsource, 400/500/600), so the fallback
+   * past it is only for a build that failed to bundle it. */
+  --font-family-display: "Neue Montreal", "Aktiv Grotesk", "Apfel Grotezk", "Sora", "IBM Plex Sans", ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+/* FIRST PAINT. Their ThemeProvider sets `documentElement.style.backgroundColor`
+ * to a hardcoded #080808 (dark) or #fafafa (light) before the resolved theme
+ * lands, and their preload script does the same. Neither is this product's
+ * ground, so the window flashes a colour it never uses again.
+ *
+ * `!important` is load-bearing here: theirs is an inline style, and an inline
+ * style beats a stylesheet on specificity. This is the one place in the reskin
+ * where that is the right tool rather than a shortcut. */
+html {
+  background-color: #1f1f1d !important;
+}
+
+html[data-color-scheme="light"] {
+  background-color: #f7f4ed !important;
+}
+
+/* SURFACES AND INK, PINNED. Their theme generator derives every surface step
+ * from the palette, and from this palette it produced a NAVY second layer -
+ * visible as a saturated blue block behind every user message, which is not
+ * a colour this product has. So the surface, border, text and icon steps are
+ * set to the outgoing app's exact values instead of generated ones.
+ *
+ * Their theme is injected at runtime as `html[data-theme="..."]` rules; these
+ * selectors carry one more attribute, so they win without !important. The
+ * colour-scheme attribute is the one their preload and ThemeProvider set. */
+html[data-theme][data-color-scheme="dark"] {
+  --v2-background-bg-deep: #181817;
+  --v2-background-bg-base: #1f1f1d;
+  --v2-background-bg-layer-01: #24241f;
+  --v2-background-bg-layer-02: #2b2a27;
+  --v2-background-bg-layer-03: #33322f;
+  --v2-background-bg-layer-04: #3b3a37;
+  --v2-border-border-base: rgba(235, 233, 226, 0.1);
+  --v2-border-border-strong: rgba(235, 233, 226, 0.18);
+  --v2-border-border-muted: rgba(235, 233, 226, 0.06);
+  --v2-border-border-weak: rgba(235, 233, 226, 0.06);
+  --v2-text-text-base: #f8f3e6;
+  --v2-text-text-muted: #ada89b;
+  --v2-text-text-faint: #807b70;
+  --v2-icon-icon-base: #dfd9cb;
+  --v2-icon-icon-muted: #ada89b;
+  --v2-icon-icon-faint: #807b70;
+  --harness-gold: #d6ba78;
+  --harness-selection: rgba(214, 186, 120, 0.32);
+  /* COLOUR HINTS, the outgoing app's own (tokens.css, chat.css .modeswitch):
+   * cobalt for build and for working, purple for plan, gold for full. A dot
+   * and tinted words, never a fill. */
+  --harness-accent: #6088ee;
+  --harness-shimmer-hi: color-mix(in srgb, #6088ee 70%, #fff);
+  --harness-plan-dot: #a78bfa;
+  --harness-plan-ink: #c4b5fd;
+  --harness-build-dot: #6088ee;
+  --harness-build-ink: #93c5fd;
+  --harness-full-dot: #d6ba78;
+  --harness-full-ink: #d6ba78;
+}
+
+html[data-theme][data-color-scheme="light"] {
+  /* Cream, not white - the owner, 2026-09-03. */
+  --v2-background-bg-deep: #e9e5da;
+  --v2-background-bg-base: #f1ede3;
+  --v2-background-bg-layer-01: #f4f0e6;
+  --v2-background-bg-layer-02: #f7f3ea;
+  --v2-background-bg-layer-03: #faf6ee;
+  --v2-background-bg-layer-04: #fcf9f2;
+  --v2-border-border-base: rgba(46, 40, 35, 0.12);
+  --v2-border-border-strong: rgba(46, 40, 35, 0.22);
+  --v2-border-border-muted: rgba(46, 40, 35, 0.07);
+  --v2-border-border-weak: rgba(46, 40, 35, 0.07);
+  --v2-text-text-base: #2a241f;
+  --v2-text-text-muted: #615949;
+  --v2-text-text-faint: #948c7e;
+  --v2-icon-icon-base: #4a4338;
+  --v2-icon-icon-muted: #615949;
+  --v2-icon-icon-faint: #948c7e;
+  --harness-gold: #8a6d1f;
+  --harness-selection: rgba(138, 109, 31, 0.22);
+  /* The light theme's cobalt is the outgoing app's darkened one (#2F55C4),
+   * and the purple is taken down the same way, so both carry text on cream. */
+  --harness-accent: #2f55c4;
+  --harness-shimmer-hi: color-mix(in srgb, #2f55c4 60%, #000);
+  --harness-plan-dot: #7c3aed;
+  --harness-plan-ink: #6d28d9;
+  --harness-build-dot: #2f55c4;
+  --harness-build-ink: #2f55c4;
+  --harness-full-dot: #8a6d1f;
+  --harness-full-ink: #8a6d1f;
+}
+
+/* GOLD IS SELECTION, and only selection - gold leaf on selected text. */
+::selection {
+  background: var(--harness-selection, rgba(214, 186, 120, 0.32));
+}
+
+/* THE USER MESSAGE, as the outgoing transcript drew it: one surface step
+ * above the ground, a hairline edge, bone ink. Same selectors as theirs and
+ * later in the cascade, so their layout (width, alignment, padding) stays. */
+[data-component="user-message"] [data-slot="user-message-text"] {
+  background: var(--v2-background-bg-layer-02);
+  border: 1px solid var(--v2-border-border-base);
+  color: var(--v2-text-text-base);
+}
+
+/* THE DISPLAY FACE, WHERE THE PRODUCT NAMES OR SPEAKS. Body text stays in
+ * Plex at their 13px scale; code stays in Plex Mono. Titles are the data's
+ * own case - "Alpha", not "ALPHA" - at normal tracking, in the cuts
+ * entry.tsx loads (400/500/600), so no weight is ever synthesised.
+ *
+ * A chat's title in the session header and on its titlebar tab: 500, at
+ * their size. The editable title (their InlineInput, same slot) keeps Plex,
+ * so what a person types is not reshaped under them. */
+h1[data-slot="session-title-child"],
+[data-titlebar-tab] [data-slot="tab-title"] {
+  font-family: var(--font-family-display);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+/* The rail's project folders: 13px, 600 - a group heading over the chats. */
+[data-slot="harness-rail-folder-name"] {
+  font-family: var(--font-family-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+/* The empty states - the empty rail, and their empty lists (the palette's
+ * and pickers' "no results"): the product speaking, upright, 400. */
+[data-slot="harness-rail-empty"],
+[data-component="list"] [data-slot="list-scroll"] [data-slot="list-empty-state"] [data-slot="list-message"] {
+  font-family: var(--font-family-display);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+/* Settings page titles: 20px, 600, tracked in a hair at display size. */
+h2.settings-tab-title {
+  font-family: var(--font-family-display);
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+/* RAIL ONLY. The owner, 2026-09-22, of the vertical sidebar: "this bar where
+ * it cuts off and just shows sessions at the bottom - not helpful; it should
+ * just be a side rail". Their titlebar portals, into
+ * `[data-slot="vertical-tabs-sidebar"]`: Home, New session, a spacer, the
+ * harness rail (patch P21), then a wrapper around their vertical tab strip
+ * (shell/titlebar/tab-strip.tsx, `data-slot="vertical-tabs"`). The wrapper is
+ * hidden - only when the rail is there, so a sidebar without a server still
+ * lists its tabs - and the rail takes the height it leaves (rail.tsx:
+ * `flex-1`, with its own scroll). Their Home and New-session buttons stay. */
+[data-slot="vertical-tabs-sidebar"] [data-component="harness-rail"] ~ div:has([data-slot="vertical-tabs"]) {
+  display: none;
+}
+
+/* OPEN, which only their tab list used to show: a short bone rule at the
+ * row's leading edge for every session that has a tab. Ink, not colour. */
+[data-component="harness-rail-row"][data-open="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  width: 2px;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 1px;
+  background: var(--v2-text-text-muted);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+/* WORKING: the outgoing rail's working title (frontend/src/styles/shell.css
+ * `.threadrow__title[data-working]`) - Thinking's shimmer in cobalt, not a
+ * spinner - here on three surfaces:
+ *   - a busy rail row (rail.tsx sets data-working from their session status);
+ *   - the session header while the chat works (data-harness-working, written
+ *     by session/marks.tsx onto the chat's panel);
+ *   - their titlebar tab, which already swaps its avatar for their progress
+ *     indicator while a session works; the title follows it.
+ * Subtler than the original: the ends of the sweep are mixed back toward the
+ * row's own ink, so a busy title reads as a tint that moves, not a blue word. */
+[data-component="harness-rail-row"][data-working="true"] [data-slot="harness-rail-title"],
+[data-harness-working="true"] h1[data-slot="session-title-child"],
+[data-slot="titlebar-tab-item"]:not([data-editing="true"]):has([data-component="session-progress-indicator-v2"])
+  [data-slot="tab-title"] {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--harness-accent) 45%, var(--v2-text-text-muted)) 0%,
+    color-mix(in srgb, var(--harness-accent) 80%, var(--v2-text-text-muted)) 40%,
+    var(--harness-shimmer-hi) 50%,
+    color-mix(in srgb, var(--harness-accent) 80%, var(--v2-text-text-muted)) 60%,
+    color-mix(in srgb, var(--harness-accent) 45%, var(--v2-text-text-muted)) 100%
+  );
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: harness-shimmer 3.6s ease-in-out infinite;
+}
+
+@keyframes harness-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-component="harness-rail-row"][data-working="true"] [data-slot="harness-rail-title"],
+  [data-harness-working="true"] h1[data-slot="session-title-child"],
+  [data-slot="titlebar-tab-item"]:not([data-editing="true"]):has([data-component="session-progress-indicator-v2"])
+    [data-slot="tab-title"] {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: color-mix(in srgb, var(--harness-accent) 75%, var(--v2-text-text-muted));
+  }
+}
+
+/* MODES: plan purple, build cobalt, full gold (the outgoing `.modeswitch`).
+ * The two ladder steps between build and full, measure and write, are build
+ * turns with more pre-approved, so they wear build's colour. */
+[data-harness-mode="plan"] {
+  --harness-mode-dot: var(--harness-plan-dot);
+  --harness-mode-ink: var(--harness-plan-ink);
+}
+[data-harness-mode="build"],
+[data-harness-mode="measure"],
+[data-harness-mode="write"] {
+  --harness-mode-dot: var(--harness-build-dot);
+  --harness-mode-ink: var(--harness-build-ink);
+}
+[data-harness-mode="full"] {
+  --harness-mode-dot: var(--harness-full-dot);
+  --harness-mode-ink: var(--harness-full-ink);
+}
+
+/* The composer's agent chip: their trigger is a plain button labelled by
+ * `ui.promptInput.chooseAgent` (composer/editor/editor.tsx
+ * ComposerEditorSelect), which brand/strings.ts renames "Choose mode". A dot
+ * before the word, and the word tinted. */
+[data-harness-mode] [data-component="composer"] [data-slot="composer-controls"]
+  button:is([aria-label="Choose mode"], [aria-label="Choose agent"])::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-inline-end: 2px;
+  border-radius: 999px;
+  background: var(--harness-mode-dot);
+}
+[data-harness-mode] [data-component="composer"] [data-slot="composer-controls"]
+  button:is([aria-label="Choose mode"], [aria-label="Choose agent"])
+  > span.truncate {
+  color: var(--harness-mode-ink);
+}
+
+/* The session header: the same dot before the chat's title. */
+[data-harness-mode] h1[data-slot="session-title-child"]::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-inline-end: 8px;
+  border-radius: 999px;
+  vertical-align: 0.1em;
+  background: var(--harness-mode-dot);
+}
+
+/* THE COMPOSER'S "+" MENU without shell mode. Its entries are attach, a
+ * separator, commands, context and shell, in that order
+ * (composer/editor/editor.tsx ComposerEditorAddMenu), and the facade serves
+ * no shell route. Their items carry no attribute of their own, so the menu is
+ * found by the one class only it has (its shortcut-column utility) and the
+ * last item hidden. The words of the others are in brand/strings.ts. */
+[class*="[data-slot=menu-v2-item-shortcut]]:w-5"] > [role="menuitem"]:last-child {
+  display: none;
+}
+
+/* A TOOL CALL WHILE IT RUNS: a thin cobalt rule in the gutter beside the
+ * row, breathing. Keyed on their own running markers inside the row's
+ * trigger - the title shimmer (basic-tool.tsx, `active={pending()}`) or the
+ * status title (tool-status-title.tsx) - so it goes the moment they stop. */
+[data-component="collapsible"].tool-collapsible:has(
+    > [data-slot="collapsible-trigger"]
+      :is([data-component="text-shimmer"], [data-component="tool-status-title"])[data-active="true"]
+  ) {
+  position: relative;
+}
+[data-component="collapsible"].tool-collapsible:has(
+    > [data-slot="collapsible-trigger"]
+      :is([data-component="text-shimmer"], [data-component="tool-status-title"])[data-active="true"]
+  )::before {
+  content: "";
+  position: absolute;
+  inset-block: 4px;
+  inset-inline-start: -8px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--harness-accent);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: harness-breathe 1.8s ease-in-out infinite;
+}
+
+@keyframes harness-breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-component="collapsible"].tool-collapsible::before {
+    animation: none;
+  }
+}
+
+/* THE THINKING BLOCK (scripts/vendor_opencode.py P30-P31). The owner,
+ * 2026-09-23: "add an icon for the thinking section ... a spinning icon or a
+ * flashing sparkly icon", and the open block "keeps infinitely scrolling up
+ * and up and you can't really ever see it".
+ *
+ * The sparkle ("models", their v2 four-point star) wears the chat's mode
+ * colour, cobalt when no mode is marked, like the working shimmer above.
+ * While it thinks it turns a quarter (the star repeats every 90 degrees, so
+ * the loop has no seam) and brightens at the half; done, it holds still and
+ * settles toward the muted ink. */
+[data-component="reasoning-part"] [data-harness-reasoning-icon] {
+  flex: none;
+  align-self: center;
+  color: color-mix(in srgb, var(--harness-mode-dot, var(--harness-accent)) 55%, var(--v2-icon-icon-muted));
+}
+[data-component="reasoning-part"][data-harness-streaming="true"] [data-harness-reasoning-icon] {
+  color: var(--harness-mode-dot, var(--harness-accent));
+  transform-origin: 50% 50%;
+  animation: harness-sparkle 1.6s ease-in-out infinite;
+}
+
+@keyframes harness-sparkle {
+  0% {
+    transform: rotate(0deg) scale(0.8);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(45deg) scale(1.15);
+    opacity: 1;
+    filter: drop-shadow(0 0 3px var(--harness-shimmer-hi));
+  }
+  100% {
+    transform: rotate(90deg) scale(0.8);
+    opacity: 0.6;
+  }
+}
+
+/* While it streams and is open, the body is capped and scrolls on its own,
+ * pinned to its newest line (column-reverse keeps the scroll at the end as
+ * text arrives), so the reply below stays in reach. The top edge fades to say
+ * there is more above. Done, the cap goes and the whole thought shows. */
+[data-component="reasoning-part"][data-harness-streaming="true"] [data-slot="harness-reasoning-body"] {
+  display: flex;
+  flex-direction: column-reverse;
+  max-height: min(40vh, 240px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 28px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 28px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-component="reasoning-part"][data-harness-streaming="true"] [data-harness-reasoning-icon] {
+    animation: none;
+  }
+}

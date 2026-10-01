@@ -1,0 +1,15 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the windows may ask the shell for. `pane-*` is every pop-out pane window (`open_pane` in lib.rs labels them `pane-<pane>-<thread>`); without the glob a pane window had no drag region and no window controls, which is why the owner reported pop-outs as not really working (2026-09-11). Two commands, a file dialog, and nothing else - the list is the enforcement rather than a convention. The uv sidecar is NOT reachable from the page: it is spawned by Rust in engine.rs, so no permission here can hand it to a WebView. `stage` is the detached instrument window (docs/PHASES.md, The Stage, size C): it reads the engine through the same commands and can change nothing.",
+  "windows": [
+    "main",
+    "stage",
+    "pane-*"
+  ],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "core:window:allow-start-dragging"
+  ]
+}

@@ -1,0 +1,131 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   THE ENGINE NOTICE — the one strip that says which engine you are talking to.
+
+   Everything here comes from `tokens.css`. No hex, no rgba, no font stack, no
+   radius that is not on the ramp — DESIGN_DIRECTIVES §6, "colour appears for
+   state and for data, never for ornament", and a colour that is not a token is
+   a colour nobody has decided the meaning of.
+
+   THREE SEVERITIES, THREE TOKENS THAT ALREADY MEAN THIS:
+
+     notice → --info    "here is a fact about the connection"
+     warn   → --spills  the engine moved; you are still working, but the
+                        answers on screen may have come from somewhere else.
+                        The same amber `.streamstate[data-status=reconnecting]`
+                        already uses for "the connection is not settled".
+     stop   → --wont    the engine cannot be talked to, or cannot be fixed from
+                        this page. The same red `.streamstate` uses for failed.
+
+   There is no green here and there never should be. "The engine is the one you
+   meant" is the ordinary case and the ordinary case renders nothing at all —
+   a green bar confirming that everything is normal is the exact ornament the
+   directive rules out, and it would also be the thing a person learns to read
+   past on the day it turns amber.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.enginenotice {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: var(--sp-6) var(--sp-12);
+  border-bottom: 1px solid var(--edge);
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  background: var(--bg-base);
+}
+
+/* The hue enters on the icon, the headline and a 2px left rule, and nowhere
+   else. A full-width wash at this height reads as a banner and this is chrome.
+   The rule is an inset shadow rather than a border so it cannot change the
+   strip's height — the same technique, and the same reason, as the diff
+   gutter in `tokens.css`. */
+.enginenotice[data-severity='notice'] {
+  box-shadow: inset 2px 0 0 var(--info);
+  background: var(--info-wash);
+}
+.enginenotice[data-severity='notice'] .enginenotice__head,
+.enginenotice[data-severity='notice'] > svg { color: var(--info); }
+
+.enginenotice[data-severity='warn'] {
+  box-shadow: inset 2px 0 0 var(--spills);
+  background: var(--spills-wash);
+}
+.enginenotice[data-severity='warn'] .enginenotice__head,
+.enginenotice[data-severity='warn'] > svg { color: var(--spills); }
+
+.enginenotice[data-severity='stop'] {
+  box-shadow: inset 2px 0 0 var(--wont);
+  background: var(--wont-wash);
+}
+.enginenotice[data-severity='stop'] .enginenotice__head,
+.enginenotice[data-severity='stop'] > svg { color: var(--wont); }
+
+.enginenotice > svg { flex: 0 0 auto; }
+
+.enginenotice__head {
+  font-weight: 500;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* The evidence. It is the first thing to give up width, because the headline
+   and the instruction are the two things that must survive a narrow window —
+   the detail is on the `title` as well and never only here. */
+.enginenotice__detail {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-3);
+}
+
+.enginenotice__action {
+  flex: 0 0 auto;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.enginenotice__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex: 0 0 auto;
+  height: 22px;
+  padding: 0 var(--sp-8);
+  border: 1px solid var(--edge-strong);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.enginenotice__btn:hover { background: var(--state-hover); }
+.enginenotice__btn:active { background: var(--state-press); }
+
+.enginenotice__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-8);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.enginenotice__close:hover { color: var(--ink-1); background: var(--state-hover); }
+
+/* Narrow windows keep the headline and the instruction; the evidence goes to
+   the title attribute alone. Below --col-min the strip is the only thing on the
+   row and it must not push the transcript's measure. */
+@media (max-width: 900px) {
+  .enginenotice__detail { display: none; }
+}

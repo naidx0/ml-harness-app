@@ -1,0 +1,13 @@
+# A recipe is a directory the harness owns. `docs/ARCHITECTURE.md` section 4.11.
+#
+# This is the only recipe that ships today, and it is deliberately the one job
+# this product actually has: emit a labelled synthetic loss curve so the
+# dashboard has two runs to compare. It trains nothing. The real training
+# recipes (unsloth-qlora, hf-peft-lora, mlx-lora) arrive with pinned uv
+# virtualenvs in M7 and are not stubbed here, because a stub that looks like a
+# trainer is worse than no trainer.
+
+name = "demo-metrics"
+kinds = ["train"]
+entrypoint = "entrypoint.py"
+description = "Synthetic, clearly-labelled loss curve for dashboard development."

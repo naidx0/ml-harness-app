@@ -1,0 +1,384 @@
+/* The journey overview. Every value is a token; no hex appears in this file.
+   Class prefix `jrn-`/`jrn__` because `.step`, `.route` and `.mark` are all
+   taken elsewhere in this app - the Stage learned that the expensive way on
+   2026-09-02, when `.gate` and `.fact` from the evidence pane laid its gate
+   map out as a row of five. */
+
+.jrn { display: flex; flex-direction: column; gap: var(--sp-10); }
+
+.jrn__empty,
+.jrn__say {
+  color: var(--ink-3);
+  font-size: var(--t-12);
+  line-height: var(--lh-12);
+  margin: 0;
+  padding: var(--sp-8) 0;
+  max-width: 62ch;
+}
+.jrn__say { color: var(--ink-2); }
+
+.jrn__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.jrn__routes ul { margin: var(--sp-6) 0 0; padding-left: var(--sp-16); color: var(--ink-2); font-size: var(--t-12); }
+.jrn__routes li { margin-bottom: var(--sp-2); }
+
+.jrn__head { display: flex; align-items: center; gap: var(--sp-8); }
+.jrn__title { display: flex; align-items: center; gap: var(--sp-6); color: var(--ink-1); font-size: var(--t-13); font-weight: 550; }
+.jrn__title svg { color: var(--ink-3); }
+.jrn__count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-11);
+  color: var(--ink-2);
+}
+.jrn__inferred {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  color: var(--ink-3);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-4);
+  padding: 0 var(--sp-4);
+  cursor: help;
+}
+.jrn__says { margin: 0; color: var(--ink-2); font-size: var(--t-12); line-height: var(--lh-12); max-width: 62ch; }
+
+/* The bar is a count, not a promise: it fills with steps DONE, and a route
+   whose steps were met elsewhere fills the same way, because both are work
+   that does not have to happen again. */
+.jrn__bar { height: 3px; background: var(--surface-3); border-radius: var(--r-bar); overflow: hidden; }
+.jrn__bar i { display: block; height: 100%; background: var(--fits); }
+
+.jrn__steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+
+.jrn__step {
+  display: grid;
+  grid-template-columns: 16px 18px 1fr;
+  gap: var(--sp-6);
+  align-items: start;
+  padding: var(--sp-8) var(--sp-6);
+  border-top: 1px solid var(--edge-faint);
+  position: relative;
+}
+.jrn__step:first-child { border-top: 0; }
+
+/* The rail down the left, drawn between the marks rather than behind them, so
+   a route reads as one line of work instead of seventeen unrelated rows. */
+.jrn__step::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--sp-6) + 7px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--edge);
+}
+.jrn__step:first-child::before { top: 50%; }
+.jrn__step:last-child::before { bottom: 50%; }
+
+.jrn__mark {
+  position: relative;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  border-radius: var(--r-full);
+  display: grid;
+  place-items: center;
+  background: var(--surface-1);
+  border: 1px solid var(--edge-strong);
+  color: var(--ink-3);
+  margin-top: 1px;
+}
+.jrn__step[data-state='done'] .jrn__mark,
+.jrn__step[data-state='done_elsewhere'] .jrn__mark { color: var(--fits); border-color: var(--fits); }
+/* NOT GREEN AND NOT RED. Green would claim work nobody did; red would read as
+   a failure, and nothing failed - the route simply went another way. Grey is
+   the design's own answer for "we are not claiming anything here". */
+.jrn__step[data-state='not_needed'] .jrn__mark { color: var(--ink-4); border-color: var(--edge); }
+.jrn__step[data-state='not_needed'] .jrn__tool { color: var(--ink-3); font-weight: 500; }
+/* NEUTRAL, NOT ACCENT. This mark used to be an accent-filled disc, which made
+   three accent elements on one surface - the mark, a "you are here" chip and
+   the button - all claiming the same thing. §3.4 allows one, and the button
+   earns it. The state is still legible without a hue: a filled disc carrying a
+   chevron, against an empty ring for a step nobody has reached and a green
+   check for one that is done. */
+.jrn__step[data-state='next'] .jrn__mark {
+  color: var(--ink-1);
+  background: var(--surface-4);
+  border-color: var(--ink-3);
+}
+
+.jrn__ord {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-4);
+  text-align: right;
+  padding-top: 2px;
+}
+
+.jrn__body { min-width: 0; }
+.jrn__line { display: flex; align-items: baseline; gap: var(--sp-6); flex-wrap: wrap; }
+.jrn__tool { color: var(--ink-1); font-size: var(--t-12); font-weight: 550; }
+.jrn__step[data-state='ahead'] .jrn__tool { color: var(--ink-3); font-weight: 500; }
+
+.jrn__approval {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .08em;
+  border-radius: var(--r-4);
+  padding: 0 var(--sp-4);
+}
+.jrn__approval { color: var(--ink-3); border: 1px solid var(--edge); }
+
+.jrn__why,
+.jrn__produced,
+.jrn__met,
+.jrn__tried,
+.jrn__hint,
+.jrn__stamp {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-11);
+  max-width: 58ch;
+}
+.jrn__why { color: var(--ink-3); }
+.jrn__produced {
+  color: var(--ink-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.jrn__met { color: var(--ink-2); }
+.jrn__met b { color: var(--ink-1); font-family: var(--font-mono); font-weight: 500; }
+.jrn__hint { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--t-10); }
+.jrn__stamp { color: var(--ink-4); font-family: var(--font-mono); font-size: var(--t-10); }
+.jrn__knows { margin: var(--sp-4) 0 0; font-size: var(--t-10); color: var(--ink-3); max-width: 58ch; }
+.jrn__knows b { font-family: var(--font-mono); font-weight: 500; color: var(--ink-2); }
+
+/* The one control on this surface. It is a button and it looks like one: a
+   step you are on is the single place the product is asking for a person, and
+   §3.4's accent means exactly that. Nothing else here is clickable, so there
+   is nothing for it to compete with. */
+.jrn__do {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+  height: var(--control-h);
+  padding: 0 var(--sp-10);
+  border: 0;
+  border-radius: var(--r-10);
+  background: var(--accent-solid);
+  color: var(--accent-on-solid);
+  font: 550 var(--t-12)/1 var(--font-sans);
+  cursor: pointer;
+}
+.jrn__do:hover { background: var(--accent-solid-hover); }
+.jrn__do:active { background: var(--accent-solid-press); transform: scale(.98); }
+@media (prefers-reduced-motion: reduce) { .jrn__do:active { transform: none; } }
+
+/* WHAT CAME OUT THE OTHER END. Drawn as a card above the steps, because it is
+   the answer the route was walked to get and it should not be at the bottom of
+   seventeen rows.
+
+   NO EVIDENCE IS DRAWN AS CALMLY AS A WIN. This product exists to be able to
+   say a training run bought nothing, and a card that greyed that answer out
+   while celebrating the other would be arguing with its own thesis. So the
+   verdict word takes the neutral ink and only a RESOLVED result borrows a
+   claim colour - green for better, red for worse - which is the same rule the
+   rest of the product follows: a hue is a claim, and "we cannot tell" is not
+   one. */
+.jrn__outcome {
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-2);
+  box-shadow: var(--e1);
+  padding: var(--sp-10) var(--sp-12);
+}
+.jrn__oline { display: flex; align-items: baseline; gap: var(--sp-8); flex-wrap: wrap; }
+.jrn__overdict {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  font-weight: 700;
+  letter-spacing: .08em;
+  padding: 1px var(--sp-6);
+  border-radius: var(--r-full);
+  color: var(--unknown);
+  background: var(--unknown-wash);
+}
+.jrn__outcome[data-verdict='different'] .jrn__overdict { color: var(--fits); background: var(--fits-wash); }
+.jrn__odelta {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-13);
+  color: var(--ink-1);
+}
+.jrn__ovs { color: var(--ink-3); font-size: var(--t-11); }
+.jrn__oruns { margin-left: auto; font-family: var(--font-mono); font-size: var(--t-10); color: var(--ink-3); }
+.jrn__osays { margin: var(--sp-6) 0 0; font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-2); max-width: 60ch; }
+
+/* THE LEDGER'S ANSWER. Drawn above the adapter's score, because a person told
+   not to train should read that before they read what training got them.
+
+   NEITHER ANSWER IS COLOURED AS GOOD. A do-not-train verdict is this
+   product's most valuable output and a TRAIN verdict is not a prize, so the
+   name takes the neutral ink in both cases and only the accent EDGE changes -
+   enough to tell them apart at a glance, not enough to congratulate anyone. */
+.jrn__verdict {
+  border: 1px solid var(--edge);
+  border-left: 2px solid var(--info);
+  border-radius: var(--r-14);
+  background: var(--surface-2);
+  padding: var(--sp-10) var(--sp-12);
+}
+.jrn__verdict[data-trains] { border-left-color: var(--accent); }
+.jrn__vline { display: flex; align-items: baseline; gap: var(--sp-8); }
+.jrn__vname {
+  font-family: var(--font-mono);
+  font-size: var(--t-12);
+  font-weight: 500;
+  color: var(--ink-1);
+  letter-spacing: .02em;
+}
+.jrn__vgates {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--num);
+  font-size: var(--t-10);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.jrn__vsays { margin: var(--sp-6) 0 0; font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-2); max-width: 60ch; }
+
+/* WHAT HAPPENED WHEN YOU TRIED. No red, no cross, no "failed": bare
+   right/wrong feedback measures d = 0.05 in a guided task and DISCOURAGING
+   feedback is negative at -0.14, while saying why and what next measures 0.49.
+   The refusals in this product are already written as remedies, so the job
+   here is to carry one without dressing it as an alarm. The eyebrow says
+   `tried` in the same neutral mono every other label on this surface uses. */
+.jrn__tried { color: var(--ink-2); }
+.jrn__triedmark {
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-right: var(--sp-6);
+}
+
+/* Picking a route. A quiet bordered control rather than a second accent: the
+   accent is spent on the step you are on (§3.4, one per screen), and five
+   filled buttons in a list would be five things claiming the product needs
+   you. Height comes from --tap-min so it clears the 24px floor without
+   copying its geometry from the list text beside it - which is exactly how
+   eleven other controls in this app ended up under it. */
+.jrn__pick {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--sp-8);
+  margin: 1px 0;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-10);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font: 500 var(--t-12)/1 var(--font-sans);
+  cursor: pointer;
+}
+.jrn__pick:hover { border-color: var(--edge-strong); background: var(--state-hover); }
+.jrn__routes ul { list-style: none; padding-left: 0; display: flex; flex-wrap: wrap; gap: var(--sp-6); }
+
+/* The confirm for a step that asks first. Not a dialog: a dialog would take
+   the route off screen at the moment a person most needs to see which step
+   they are on. It is two controls and a sentence, in place. */
+.jrn__confirm {
+  margin-top: var(--sp-6);
+  padding: var(--sp-8) var(--sp-10);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-14);
+  background: var(--surface-2);
+}
+.jrn__confirmsay { margin: 0 0 var(--sp-8); font-size: var(--t-11); line-height: var(--lh-11); color: var(--ink-2); }
+.jrn__confirmsay b { color: var(--ink-1); font-family: var(--font-mono); font-weight: 500; }
+.jrn__confirmrow { display: flex; gap: var(--sp-6); flex-wrap: wrap; }
+.jrn__do[disabled] { opacity: .7; cursor: default; }
+
+/* THE RULE THAT STOPPED THE ROUTE. The research lane's built shape: a mono
+   block of key/value lines, sunk into the well rather than raised, because it
+   is evidence rather than a card of its own. Never red - a refusal is the
+   honest answer, and Law One reserves the hues for claims. */
+.jrn__rule {
+  margin-top: var(--sp-8);
+  padding: var(--sp-8) var(--sp-10);
+  background: var(--bg-base);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-4);
+  font-family: var(--font-mono);
+  font-size: var(--t-10);
+  line-height: var(--lh-11);
+  color: var(--ink-2);
+  overflow-x: auto;
+}
+/* Wraps rather than crushes: at the pane's real 240px a long gate name and the
+   count cannot share a line, and a flex row with no wrap resolves that by
+   breaking the count's words apart. Wrapping moves it down whole instead. */
+.jrn__rulerow { display: flex; flex-wrap: wrap; gap: var(--sp-8); align-items: baseline; }
+.jrn__rulek { display: inline-block; min-width: 21ch; color: var(--ink-3); flex: 0 0 auto; }
+.jrn__rule b { color: var(--ink-1); font-weight: 500; }
+.jrn__ruleorigin { color: var(--fits); letter-spacing: .08em; }
+.jrn__unmeasured { color: var(--ink-3); }
+
+/* A gate that was never reached is a different claim from one that failed, so
+   it does not borrow the failure's weight: same structure, quieter rule. */
+.jrn__rule--unreached {
+  border-left-color: var(--line);
+}
+
+.jrn__rulecount {
+  /* Measured at 240px, the pane's real width: "0 of 5 gates checked" broke
+     across three lines and read as three separate scraps. It is one fact, so
+     it wraps as one - to its own line when the gate name leaves no room, never
+     mid-phrase. */
+  margin-left: auto;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-size: 10px;
+  font-variant-numeric: var(--num);
+}
+
+.jrn__rulenote {
+  color: var(--ink-3);
+  font-size: 11px;
+  line-height: 1.45;
+  padding: 2px 0 4px;
+}
+
+/* The denominator is part of the number, not a footnote: same line, quieter. */
+.jrn__oden {
+  color: var(--ink-3);
+  font-size: 10px;
+  font-variant-numeric: var(--num);
+}
+
+.jrn__onext {
+  color: var(--ink-2);
+  font-size: 11px;
+  line-height: 1.45;
+  margin: 2px 0 0;
+}
+
+/* The verdict that has not happened yet. Same frame as a real verdict so the
+   eye finds it in the same place, quieter, and carrying no status hue - an
+   absence is not a state to colour. */
+.jrn__verdict--none .jrn__vname { color: var(--ink-3); }
+.jrn__verdict--none { border-left-color: var(--line); }

@@ -1,0 +1,700 @@
+{
+ "tool": "measure_retriever_recall",
+ "result": {
+  "ok": true,
+  "index_id": 12,
+  "index_name": "ui-vocab-glossary-full",
+  "eval_path": "C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl",
+  "question_field": "q",
+  "ground_truth_field": "concept",
+  "ground_truth_chosen_how": "named in the call",
+  "ground_truth_level": "document",
+  "levels": {
+   "document": 30
+  },
+  "matched_by": {
+   "doc_key": 30
+  },
+  "k": 5,
+  "questions_scored": 30,
+  "questions_eligible": 30,
+  "rows_seen": 30,
+  "rows_read": 30,
+  "hit_row_cap": false,
+  "unlabelled_rows": [],
+  "unlabelled_n": 0,
+  "unlabelled_by_reason": {},
+  "tie_decided_rows": [],
+  "tie_decided_n": 0,
+  "hits": 29,
+  "recall_at_k": 0.9666666666666667,
+  "recall_curve": [
+   {
+    "k": 1,
+    "hits": 27,
+    "of": 30,
+    "recall": 0.9,
+    "tie_decided": 0
+   },
+   {
+    "k": 2,
+    "hits": 29,
+    "of": 30,
+    "recall": 0.9666666666666667,
+    "tie_decided": 0
+   },
+   {
+    "k": 3,
+    "hits": 29,
+    "of": 30,
+    "recall": 0.9666666666666667,
+    "tie_decided": 0
+   },
+   {
+    "k": 4,
+    "hits": 29,
+    "of": 30,
+    "recall": 0.9666666666666667,
+    "tie_decided": 0
+   },
+   {
+    "k": 5,
+    "hits": 29,
+    "of": 30,
+    "recall": 0.9666666666666667,
+    "tie_decided": 0
+   }
+  ],
+  "unresolved_ground_truth": [],
+  "unresolved_n": 0,
+  "rows": [
+   {
+    "row": 0,
+    "question": "Name one operational rule of a button.",
+    "ground_truth": "button",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "button#0",
+    "returned": [
+     "button#0",
+     "divider#0",
+     "hero#0",
+     "gate-ledger#0",
+     "tooltip#0"
+    ]
+   },
+   {
+    "row": 1,
+    "question": "Define a chip for a new designer.",
+    "ground_truth": "chip",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "chip#0",
+    "returned": [
+     "chip#0",
+     "placeholder#0",
+     "avatar#0",
+     "popover#0",
+     "sidebar#0"
+    ]
+   },
+   {
+    "row": 2,
+    "question": "State a behavior detail of a strip.",
+    "ground_truth": "strip",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "strip#0",
+    "returned": [
+     "strip#0",
+     "emptystate#0",
+     "checkbox#0",
+     "navbar#0",
+     "toggle#0"
+    ]
+   },
+   {
+    "row": 3,
+    "question": "What does a card do that people rely on?",
+    "ground_truth": "card",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "card#0",
+    "returned": [
+     "card#0",
+     "toast#0",
+     "popover#0",
+     "spinner#0",
+     "breadcrumb#0"
+    ]
+   },
+   {
+    "row": 4,
+    "question": "How would you describe a rail to a teammate?",
+    "ground_truth": "rail",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "rail#0",
+    "returned": [
+     "rail#0",
+     "gate-ledger#0",
+     "spinner#0",
+     "provenance-tag#0",
+     "scrollbar#0"
+    ]
+   },
+   {
+    "row": 5,
+    "question": "When should a designer reach for a toast?",
+    "ground_truth": "toast",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "toast#0",
+    "returned": [
+     "toast#0",
+     "spinner#0",
+     "focusring#0",
+     "button#0",
+     "tooltip#0"
+    ]
+   },
+   {
+    "row": 6,
+    "question": "How does a badge actually behave in use?",
+    "ground_truth": "badge",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "badge#0",
+    "returned": [
+     "badge#0",
+     "popover#0",
+     "progressbar#0",
+     "toast#0",
+     "strip#0"
+    ]
+   },
+   {
+    "row": 7,
+    "question": "State a behavior detail of a breadcrumb.",
+    "ground_truth": "breadcrumb",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "breadcrumb#0",
+    "returned": [
+     "breadcrumb#0",
+     "strip#0",
+     "emptystate#0",
+     "checkbox#0",
+     "toggle#0"
+    ]
+   },
+   {
+    "row": 8,
+    "question": "What does a tab do that people rely on?",
+    "ground_truth": "tab",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": null,
+    "best_possible_rank": 8,
+    "worst_possible_rank": 8,
+    "tie_decided_at_k": [],
+    "top_passage": "toast#0",
+    "returned": [
+     "toast#0",
+     "popover#0",
+     "spinner#0",
+     "breadcrumb#0",
+     "strip#0"
+    ]
+   },
+   {
+    "row": 9,
+    "question": "How would you describe a accordion to a teammate?",
+    "ground_truth": "accordion",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "accordion#0",
+    "returned": [
+     "accordion#0",
+     "gate-ledger#0",
+     "spinner#0",
+     "provenance-tag#0",
+     "scrollbar#0"
+    ]
+   },
+   {
+    "row": 10,
+    "question": "Define a checkbox for a new designer.",
+    "ground_truth": "checkbox",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "checkbox#0",
+    "returned": [
+     "checkbox#0",
+     "placeholder#0",
+     "avatar#0",
+     "popover#0",
+     "sidebar#0"
+    ]
+   },
+   {
+    "row": 11,
+    "question": "How does a checkbox actually behave in use?",
+    "ground_truth": "checkbox",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "checkbox#0",
+    "returned": [
+     "checkbox#0",
+     "popover#0",
+     "progressbar#0",
+     "toast#0",
+     "strip#0"
+    ]
+   },
+   {
+    "row": 12,
+    "question": "Tell me one interaction rule for a toggle.",
+    "ground_truth": "toggle",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "toggle#0",
+    "returned": [
+     "toggle#0",
+     "divider#0",
+     "gate-ledger#0",
+     "elevation#0",
+     "tab#0"
+    ]
+   },
+   {
+    "row": 13,
+    "question": "What does a divider do that people rely on?",
+    "ground_truth": "divider",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "divider#0",
+    "returned": [
+     "divider#0",
+     "toast#0",
+     "popover#0",
+     "spinner#0",
+     "breadcrumb#0"
+    ]
+   },
+   {
+    "row": 14,
+    "question": "What problem calls for a carousel?",
+    "ground_truth": "carousel",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "carousel#0",
+    "returned": [
+     "carousel#0",
+     "gate-ledger#0",
+     "spinner#0",
+     "transcript#0",
+     "placeholder#0"
+    ]
+   },
+   {
+    "row": 15,
+    "question": "State a behavior detail of a carousel.",
+    "ground_truth": "carousel",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "carousel#0",
+    "returned": [
+     "carousel#0",
+     "strip#0",
+     "emptystate#0",
+     "checkbox#0",
+     "toggle#0"
+    ]
+   },
+   {
+    "row": 16,
+    "question": "How would you describe a navbar to a teammate?",
+    "ground_truth": "navbar",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "navbar#0",
+    "returned": [
+     "navbar#0",
+     "gate-ledger#0",
+     "spinner#0",
+     "provenance-tag#0",
+     "scrollbar#0"
+    ]
+   },
+   {
+    "row": 17,
+    "question": "Where does a navbar belong in a design?",
+    "ground_truth": "navbar",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 2,
+    "best_possible_rank": 2,
+    "worst_possible_rank": 2,
+    "tie_decided_at_k": [],
+    "top_passage": "popover#0",
+    "returned": [
+     "popover#0",
+     "navbar#0",
+     "emptystate#0",
+     "monospace#0",
+     "stepper#0"
+    ]
+   },
+   {
+    "row": 18,
+    "question": "Tell me one interaction rule for a navbar.",
+    "ground_truth": "navbar",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "navbar#0",
+    "returned": [
+     "navbar#0",
+     "divider#0",
+     "gate-ledger#0",
+     "elevation#0",
+     "tab#0"
+    ]
+   },
+   {
+    "row": 19,
+    "question": "What is a footer, in interface terms?",
+    "ground_truth": "footer",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "footer#0",
+    "returned": [
+     "footer#0",
+     "spinner#0",
+     "transcript#0",
+     "gate-ledger#0",
+     "monospace#0"
+    ]
+   },
+   {
+    "row": 20,
+    "question": "What is a snackbar, in interface terms?",
+    "ground_truth": "snackbar",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "snackbar#0",
+    "returned": [
+     "snackbar#0",
+     "spinner#0",
+     "transcript#0",
+     "gate-ledger#0",
+     "monospace#0"
+    ]
+   },
+   {
+    "row": 21,
+    "question": "When should a designer reach for a snackbar?",
+    "ground_truth": "snackbar",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "snackbar#0",
+    "returned": [
+     "snackbar#0",
+     "spinner#0",
+     "focusring#0",
+     "button#0",
+     "tooltip#0"
+    ]
+   },
+   {
+    "row": 22,
+    "question": "Name one operational rule of a snackbar.",
+    "ground_truth": "snackbar",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "snackbar#0",
+    "returned": [
+     "snackbar#0",
+     "divider#0",
+     "button#0",
+     "gate-ledger#0",
+     "tooltip#0"
+    ]
+   },
+   {
+    "row": 23,
+    "question": "When is a focusring the right choice on a page?",
+    "ground_truth": "focusring",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 2,
+    "best_possible_rank": 2,
+    "worst_possible_rank": 2,
+    "tie_decided_at_k": [],
+    "top_passage": "checkbox#0",
+    "returned": [
+     "checkbox#0",
+     "focusring#0",
+     "composer#0",
+     "radio#0",
+     "breadcrumb#0"
+    ]
+   },
+   {
+    "row": 24,
+    "question": "What does a focusring do that people rely on?",
+    "ground_truth": "focusring",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "focusring#0",
+    "returned": [
+     "focusring#0",
+     "toast#0",
+     "popover#0",
+     "spinner#0",
+     "breadcrumb#0"
+    ]
+   },
+   {
+    "row": 25,
+    "question": "When should a designer reach for a elevation?",
+    "ground_truth": "elevation",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "elevation#0",
+    "returned": [
+     "elevation#0",
+     "spinner#0",
+     "focusring#0",
+     "button#0",
+     "tooltip#0"
+    ]
+   },
+   {
+    "row": 26,
+    "question": "Define a gutter for a new designer.",
+    "ground_truth": "gutter",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "gutter#0",
+    "returned": [
+     "gutter#0",
+     "placeholder#0",
+     "avatar#0",
+     "popover#0",
+     "sidebar#0"
+    ]
+   },
+   {
+    "row": 27,
+    "question": "How does a gutter actually behave in use?",
+    "ground_truth": "gutter",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "gutter#0",
+    "returned": [
+     "gutter#0",
+     "popover#0",
+     "progressbar#0",
+     "toast#0",
+     "strip#0"
+    ]
+   },
+   {
+    "row": 28,
+    "question": "What problem calls for ellipsis?",
+    "ground_truth": "ellipsis",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "ellipsis#0",
+    "returned": [
+     "ellipsis#0",
+     "gate-ledger#0",
+     "chip#0",
+     "spinner#0",
+     "transcript#0"
+    ]
+   },
+   {
+    "row": 29,
+    "question": "Where does a gate-ledger belong in a design?",
+    "ground_truth": "gate-ledger",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": 1,
+    "best_possible_rank": 1,
+    "worst_possible_rank": 1,
+    "tie_decided_at_k": [],
+    "top_passage": "gate-ledger#0",
+    "returned": [
+     "gate-ledger#0",
+     "popover#0",
+     "emptystate#0",
+     "monospace#0",
+     "stepper#0"
+    ]
+   }
+  ],
+  "misses": [
+   {
+    "row": 8,
+    "question": "What does a tab do that people rely on?",
+    "ground_truth": "tab",
+    "level": "document",
+    "matched_by": "doc_key",
+    "found_at_rank": null,
+    "best_possible_rank": 8,
+    "worst_possible_rank": 8,
+    "tie_decided_at_k": [],
+    "top_passage": "toast#0",
+    "returned": [
+     "toast#0",
+     "popover#0",
+     "spinner#0",
+     "breadcrumb#0",
+     "strip#0"
+    ]
+   }
+  ],
+  "answer_in_passage": null,
+  "resolution": {
+   "n": 30,
+   "ci_95": [
+    0.8332960900859082,
+    0.9940914096183874
+   ],
+   "half_width_points": 8.039765976623958,
+   "resolves_a_difference_of_at_least_points": 25.303026237633198,
+   "rows_for_a_10_point_difference": 193,
+   "more_rows_needed_for_10_points": 163,
+   "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+   "says": "30 rows put this score between 83% and 99% with 95% confidence (+-8.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+  },
+  "stampable": true,
+  "scorer": "BM25, k1=1.5, b=0.75, over 45 passages. No model was asked anything and nothing left this machine.",
+  "decides_nothing": "This is a measurement of the retriever alone. It does not say the answer would be right, it does not set retrieval_tried - which is yours to say - and it opens no gate by itself.",
+  "summary": "29 of 30 questions had a passage from the right document in the top 5 (97%), measured against ui-vocab-glossary-full - 45 passages from 45 documents, BM25, on this machine. Ground truth came from the 'concept' column, named in the call. Recall rises with k and here is the whole curve: k=1 27/30, k=2 29/30, k=3 29/30, k=4 29/30, k=5 29/30. 30 rows put this score between 83% and 99% with 95% confidence (+-8.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have.",
+  "measured": [
+   {
+    "fact": "retriever_recall_at_k",
+    "value": 0.9666666666666667,
+    "origin": "MEASURED",
+    "how": "29 of 30 questions in C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl had a passage from the right document in the top 5 of index 'ui-vocab-glossary-full' (12), which holds 45 passages scored by BM25 on this machine; ground truth read from the 'concept' column, named in the call; 95% interval 83%-99%. RECALL RISES WITH K and this number is at k=5"
+   }
+  ],
+  "not_measured": "",
+  "recorded": "retriever_recall_at_k = 0.9667 MEASURED, at k=5, scoped to this conversation. The k is in the record because the fact's name does not carry it and the engine's bar is a flat 0.8.",
+  "measured_facts": [
+   {
+    "fact": "retriever_recall_at_k",
+    "value": 0.9666666666666667,
+    "origin": "MEASURED",
+    "how": "29 of 30 questions in C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl had a passage from the right document in the top 5 of index 'ui-vocab-glossary-full' (12), which holds 45 passages scored by BM25 on this machine; ground truth read from the 'concept' column, named in the call; 95% interval 83%-99%. RECALL RISES WITH K and this number is at k=5"
+   }
+  ]
+ }
+}

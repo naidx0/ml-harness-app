@@ -1,0 +1,40 @@
+{
+  "situation": "A refusal: the column named as holding the answers is not in the file. Nothing was written, and `nothing_was_written` is literally true rather than reassuring - every check runs before the one call that creates anything.",
+  "dataset": "The same 400 distinct rows as 01, asked for a column it does not have.",
+  "produced_by": {
+    "tool": "carve_eval_set",
+    "arguments": {
+      "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\tickets.jsonl",
+      "into": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\03-refused-no-such-column_out",
+      "answer_column": "verdict"
+    },
+    "thread_id": 1,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\scratch.db",
+    "captured_at_utc": "2026-08-21T12:17:14+00:00",
+    "engine": "e1a3117ca6fa7d7d65c9e1272d5c22482b978eca71950bceaab9efa317e73a52"
+  },
+  "shape": {
+    "top_level_keys": 7,
+    "rows_a_flat_table_would_draw": 7,
+    "rows_the_payload_actually_holds": 7,
+    "max_nesting_depth": 2,
+    "containers_summarised_away_at_depth_3": 0,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {},
+    "strings_past_320_chars_that_get_a_show_all_button": 0,
+    "longest_string_chars": 127,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": false,
+    "error": "no_such_column",
+    "summary": "There is no column called 'verdict' in tickets.jsonl. The columns are: text, answer. Nothing was split and nothing was written.",
+    "nothing_was_written": true,
+    "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\tickets.jsonl",
+    "answer_column": "verdict",
+    "columns": [
+      "text",
+      "answer"
+    ]
+  }
+}

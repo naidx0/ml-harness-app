@@ -1,0 +1,88 @@
+# A recipe is a directory the harness owns. `docs/ARCHITECTURE.md` section 4.11.
+#
+# This one exists to close `NO_TRAIN__QUANTIZE`, whose own recorded reason in
+# `propose.NOT_COVERED` names its remedy: *"a quantising backend - a recipe,
+# not a proposer."* `jobspec.KINDS` already admitted `"convert"` and
+# `propose.THE_SCORING_KINDS` was already `("eval", "convert")`, so nothing in
+# the engine changes. Only this directory is new.
+#
+# ## WHY bitsandbytes AND NOT GGUF, WHICH IS WHAT THE OUTCOME NAMES
+#
+# The outcome recommends Q4_K_M, and `llama-quantize.exe` ships beside Ollama
+# on this machine, so GGUF was available and was rejected on MEASUREMENT
+# grounds rather than convenience.
+#
+# `recipes/hf-peft-lora/entrypoint.py` states the rule this recipe inherits:
+# the control arm and the treated arm must differ **by one thing**. There the
+# control is the same loaded weights with `disable_adapter()` - not the
+# tokenizer, not the dtype, not the decoding. A GGUF arm cannot meet that bar.
+# Scoring a `.gguf` means running llama.cpp while the control runs
+# `transformers`, so the delta between them carries a different tokenizer, a
+# different sampler and a different attention implementation as well as the
+# quantisation. It would be a real number about two inference stacks, offered
+# as a number about quantisation.
+#
+# bitsandbytes loads THE SAME CHECKPOINT twice - once through
+# `BitsAndBytesConfig`, once not - in one process, one tokenizer, one prompt,
+# one greedy decode, one seed. The arms differ by the numeric representation of
+# the weights and by nothing else, which is the only way the resulting delta is
+# about quantisation.
+#
+# The honest limit, recorded rather than glossed: this is NOT the same artefact
+# a person would deploy to Ollama. A GGUF converter is a second recipe and a
+# separate decision, and it is worth having. What this one answers is the
+# question the LEDGER asks - *what does quantising cost you* - and it answers it
+# with a comparison that means what it says.
+#
+# ## WHY IT DECLARES BOTH `convert` AND `eval`
+#
+# Same decision as `hf-peft-lora`, for the same reason: the thing that scores a
+# quantised model has to be the environment that made it. A 4-bit bitsandbytes
+# model is not an OpenAI-compatible endpoint and it is not Ollama, and those are
+# the only two connections `app/providers` has, so nothing outside a sandbox can
+# put one in front of text. `eval` generates one answer per row into
+# `predictions.jsonl` and **grades nothing** - `app/tools/evals.py::grade` does
+# that, on the same rows, with the same normalisation that graded the baseline.
+# Two graders would be two instruments and the comparison would mean nothing.
+
+name = "hf-quantize"
+kinds = ["convert", "eval"]
+entrypoint = "entrypoint.py"
+description = "Quantise a Hugging Face causal LM to 4-bit or 8-bit with bitsandbytes, in this recipe's own pinned virtualenv, and score the quantised weights against the full-precision weights on the same rows in the same process."
+
+# The knobs, declared where both readers can see them - the entrypoint and the
+# journey overview - exactly as `hf-peft-lora` does it. One copy.
+[defaults]
+bits = 4
+quant_type = "nf4"
+double_quant = true
+compute_dtype = "float16"
+max_new_tokens = 64
+max_seq_len = 512
+
+# ## HOW THIS RECIPE'S ENVIRONMENT IS BUILT, DECLARED RATHER THAN DESCRIBED
+#
+# Every recipe used to carry these steps as prose in its `requirements.lock`
+# header, in three different phrasings, and a newcomer had to read a comment and
+# retype four commands per recipe. Nothing checked the prose, and one of the
+# three said python 3.12 for an environment that is 3.11.15.
+#
+# `scripts/build_recipe_env.py` executes what is below, so the instructions and
+# the thing that runs them cannot drift.
+#
+# `verify` is the part that matters and it is not decoration. PyPI's torch wheel
+# for Windows is CPU-only; the CUDA build only exists on download.pytorch.org.
+# A person who gets the wrong one COMPLETES EVERY SETUP STEP without an error
+# and then trains at a crawl - so the builder imports torch at the end and
+# refuses to call the environment ready unless CUDA is really there.
+[environment]
+python = "3.11"
+
+[[environment.before_lock]]
+requirement = "torch==2.6.0"
+index_url = "https://download.pytorch.org/whl/cu124"
+why = "the CUDA build of torch exists only on this index; PyPI's Windows wheel is CPU-only and fails silently by being slow"
+
+[environment.verify]
+import_module = "torch"
+expect_cuda = true

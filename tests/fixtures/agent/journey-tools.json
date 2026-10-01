@@ -1,0 +1,40 @@
+[
+  {
+    "type": "function",
+    "name": "search_web",
+    "description": "Search the public web for pages matching a query and return the top results with titles and URLs.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": { "type": "string", "description": "The search query." },
+        "limit": { "type": "integer", "description": "Maximum results to return." }
+      },
+      "required": ["query"]
+    }
+  },
+  {
+    "type": "function",
+    "name": "fetch_ticket",
+    "description": "Fetch one support ticket by id from the helpdesk system.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "ticket_id": { "type": "string" }
+      },
+      "required": ["ticket_id"]
+    }
+  },
+  {
+    "type": "function",
+    "name": "rank_docs",
+    "description": "Rank knowledge-base passages against a query.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": { "type": "string", "description": "The user's question." },
+        "k": { "type": "integer" }
+      },
+      "required": ["query"]
+    }
+  }
+]

@@ -1,0 +1,4039 @@
+{
+ "thread_id": 33,
+ "project_id": 10,
+ "baseline_run_id": 42,
+ "runs": [
+  {
+   "run_id": 42,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": true,
+   "provider": "Ollama",
+   "model": "granite4-hermes:latest",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 4,
+   "score": 0.13333333333333333,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.13333333333333333
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.053096554840547455,
+     0.296813266820363
+    ],
+    "half_width_points": 12.185835598990778,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 5% and 30% with 95% confidence (+-12.2 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": true,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded its own answers. A model asked whether it was right will tend to say yes, and that is the failure this whole product exists to survive. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "granite4-hermes:latest scores 13% on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 5% and 30% with 95% confidence (+-12.2 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 26 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "Answer the question. Reply with the answer only - no preamble, no explanation, no punctuation that is not part of the answer.",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 43,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "sandbox:adapter",
+   "model": "HuggingFaceTB/SmolLM2-1.7B + adapter (LoRA)",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 2,
+   "score": 0.06666666666666667,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.06666666666666667
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.018477023791270378,
+     0.2132345836261692
+    ],
+    "half_width_points": 9.737877991744941,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 2% and 21% with 95% confidence (+-9.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": false,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded another model's answers. That is weaker self-assessment than a model grading itself, and it is still a model rather than a rule. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "HuggingFaceTB/SmolLM2-1.7B + adapter (LoRA) scores 7% on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 2% and 21% with 95% confidence (+-9.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 28 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "{input}",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 44,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "sandbox:base",
+   "model": "HuggingFaceTB/SmolLM2-1.7B (adapter disabled)",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 1,
+   "score": 0.03333333333333333,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.03333333333333333
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.005908590381612455,
+     0.16670390991409173
+    ],
+    "half_width_points": 8.039765976623963,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 1% and 17% with 95% confidence (+-8.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": false,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded another model's answers. That is weaker self-assessment than a model grading itself, and it is still a model rather than a rule. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "HuggingFaceTB/SmolLM2-1.7B (adapter disabled) scores 3% on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 1% and 17% with 95% confidence (+-8.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 29 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "{input}",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 45,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "Ollama",
+   "model": "granite4-hermes:latest",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 9,
+   "score": 0.3,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.3
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.1666474826824379,
+     0.47875787458714947
+    ],
+    "half_width_points": 15.60551959523558,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 17% and 48% with 95% confidence (+-15.6 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": true,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded its own answers. A model asked whether it was right will tend to say yes, and that is the failure this whole product exists to survive. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "granite4-hermes:latest scores 30% on 30 rows of C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 17% and 48% with 95% confidence (+-15.6 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 21 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "You are answering questions about user-interface design vocabulary inside a product design system. Every term - button, chip, rail, strip, toast, badge, breadcr",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 46,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "Ollama",
+   "model": "granite4-hermes:latest",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 7,
+   "score": 0.23333333333333334,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.23333333333333334
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.11792388144489496,
+     0.40928326158122164
+    ],
+    "half_width_points": 14.567969006816334,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 12% and 41% with 95% confidence (+-14.6 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": true,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded its own answers. A model asked whether it was right will tend to say yes, and that is the failure this whole product exists to survive. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "granite4-hermes:latest scores 23% on 30 rows of C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 12% and 41% with 95% confidence (+-14.6 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 23 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "You are answering questions about this design system's interface vocabulary. Use ONLY the glossary below. Answer in one plain sentence in the glossary's own ter",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 47,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "sandbox:adapter",
+   "model": "HuggingFaceTB/SmolLM2-1.7B + adapter (LoRA)",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 1,
+   "score": 0.03333333333333333,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.03333333333333333
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.005908590381612455,
+     0.16670390991409173
+    ],
+    "half_width_points": 8.039765976623963,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 1% and 17% with 95% confidence (+-8.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": false,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded another model's answers. That is weaker self-assessment than a model grading itself, and it is still a model rather than a rule. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "HuggingFaceTB/SmolLM2-1.7B + adapter (LoRA) scores 3% on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 1% and 17% with 95% confidence (+-8.0 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 29 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "{input}",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 48,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "sandbox:base",
+   "model": "HuggingFaceTB/SmolLM2-1.7B (adapter disabled)",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 0,
+   "score": 0.0,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.0
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.0,
+     0.11351339317396876
+    ],
+    "half_width_points": 5.675669658698438,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 0% and 11% with 95% confidence (+-5.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": false,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded another model's answers. That is weaker self-assessment than a model grading itself, and it is still a model rather than a rule. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "HuggingFaceTB/SmolLM2-1.7B (adapter disabled) scores 0% on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 0% and 11% with 95% confidence (+-5.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 30 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "{input}",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 49,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "Ollama",
+   "model": "granite4-hermes:latest",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 22,
+   "graded": 22,
+   "correct": 6,
+   "score": 0.2727272727272727,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.2727272727272727
+   },
+   "trivial_baseline_score": 0.045454545454545456,
+   "resolution": {
+    "n": 22,
+    "ci_95": [
+     0.13150760287989469,
+     0.4815173401240238
+    ],
+    "half_width_points": 17.500486862206454,
+    "resolves_a_difference_of_at_least_points": 29.54756881513314,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 171,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "22 rows put this score between 13% and 48% with 95% confidence (+-17.5 points). Two separate runs on a set this size cannot be told apart unless they differ by about 30 points. To resolve a 10-point difference this way you would need 193 rows, which is 171 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 22,
+    "is_the_model_that_answered": true,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded its own answers. A model asked whether it was right will tend to say yes, and that is the failure this whole product exists to survive. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "granite4-hermes:latest scores 27% on 22 rows of C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl, graded by model_graded. Always answering 'the last breadcrumb names the current page and is the only one that is not a link' scores 5% on the same rows. 22 rows put this score between 13% and 48% with 95% confidence (+-17.5 points). Two separate runs on a set this size cannot be told apart unless they differ by about 30 points. To resolve a 10-point difference this way you would need 193 rows, which is 171 more than you have. 16 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "You are answering questions about user-interface design vocabulary inside a product design system. Every term - button, chip, rail, strip, toast, badge, breadcr",
+   "rows": [
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  },
+  {
+   "run_id": 50,
+   "complete": true,
+   "reused": false,
+   "eval_path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+   "eval_fingerprint": "d6dfaf4a9b9497f8e6ac3b87fa7806b4f17bb4b78dde7416b5cd232151ea294c",
+   "metric": "model_graded",
+   "prompt_is_default": false,
+   "provider": "sandbox:adapter",
+   "model": "HuggingFaceTB/SmolLM2-1.7B + adapter (LoRA)",
+   "locality": "local",
+   "judge_model": "granite4-hermes:latest",
+   "planned": 30,
+   "graded": 30,
+   "correct": 2,
+   "score": 0.06666666666666667,
+   "partial_score": null,
+   "scores": {
+    "exact_match": 0.0,
+    "contains": 0.0,
+    "model_graded": 0.06666666666666667
+   },
+   "trivial_baseline_score": 0.03333333333333333,
+   "resolution": {
+    "n": 30,
+    "ci_95": [
+     0.018477023791270378,
+     0.2132345836261692
+    ],
+    "half_width_points": 9.737877991744941,
+    "resolves_a_difference_of_at_least_points": 25.303026237633198,
+    "rows_for_a_10_point_difference": 193,
+    "more_rows_needed_for_10_points": 163,
+    "method": "Wilson score interval, 95%, two-sided. The difference figure is the worst case (p=0.5) for two INDEPENDENT runs; two runs over the same rows are compared pairwise with McNemar's exact test, which needs fewer rows. Neither figure is a quoted rule of thumb - both are computed from n.",
+    "says": "30 rows put this score between 2% and 21% with 95% confidence (+-9.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have."
+   },
+   "failure_histogram": {},
+   "self_graded": {
+    "judge_model": "granite4-hermes:latest",
+    "rows_judged": 30,
+    "is_the_model_that_answered": false,
+    "deterministic_scores_on_the_same_rows": {
+     "exact_match": 0.0,
+     "contains": 0.0
+    },
+    "warning": "granite4-hermes:latest graded another model's answers. That is weaker self-assessment than a model grading itself, and it is still a model rather than a rule. The exact-match and contains scores above were computed on the same rows for free; read the gap between them and the judge before believing the judge."
+   },
+   "summary": "HuggingFaceTB/SmolLM2-1.7B + adapter (LoRA) scores 7% on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, graded by model_graded. Always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same rows. 30 rows put this score between 2% and 21% with 95% confidence (+-9.7 points). Two separate runs on a set this size cannot be told apart unless they differ by about 25 points. To resolve a 10-point difference this way you would need 193 rows, which is 163 more than you have. 28 failure(s) could not be bucketed by rule and are left out of the histogram rather than guessed at.",
+   "prompt": "{input}",
+   "rows": [
+    {
+     "row_index": 0,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 1,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 2,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 3,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 4,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 5,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 6,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 7,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 8,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 9,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 10,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 11,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 12,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 13,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 14,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 15,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 16,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 17,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 18,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 19,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 20,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 21,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 22,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 23,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 24,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 25,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 26,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 27,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 28,
+     "correct": true,
+     "failure_mode": null,
+     "bucketed_by": "rules"
+    },
+    {
+     "row_index": 29,
+     "correct": false,
+     "failure_mode": "unclassified",
+     "bucketed_by": "rules"
+    }
+   ]
+  }
+ ],
+ "comparisons": {
+  "43": {
+   "run_id": 43,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.06666666666666667,
+   "score_against": 0.13333333333333333,
+   "delta": -0.06666666666666667,
+   "correct": 2,
+   "correct_against": 4,
+   "improved": 2,
+   "regressed": 4,
+   "changed": 6,
+   "p_value": 0.6875,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 433,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "44": {
+   "run_id": 44,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.03333333333333333,
+   "score_against": 0.13333333333333333,
+   "delta": -0.1,
+   "correct": 1,
+   "correct_against": 4,
+   "improved": 1,
+   "regressed": 4,
+   "changed": 5,
+   "p_value": 0.375,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 193,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "45": {
+   "run_id": 45,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.3,
+   "score_against": 0.13333333333333333,
+   "delta": 0.16666666666666666,
+   "correct": 9,
+   "correct_against": 4,
+   "improved": 6,
+   "regressed": 1,
+   "changed": 7,
+   "p_value": 0.125,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 70,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "46": {
+   "run_id": 46,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.23333333333333334,
+   "score_against": 0.13333333333333333,
+   "delta": 0.1,
+   "correct": 7,
+   "correct_against": 4,
+   "improved": 5,
+   "regressed": 2,
+   "changed": 7,
+   "p_value": 0.453125,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 193,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "47": {
+   "run_id": 47,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.03333333333333333,
+   "score_against": 0.13333333333333333,
+   "delta": -0.1,
+   "correct": 1,
+   "correct_against": 4,
+   "improved": 1,
+   "regressed": 4,
+   "changed": 5,
+   "p_value": 0.375,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 193,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "48": {
+   "run_id": 48,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.0,
+   "score_against": 0.13333333333333333,
+   "delta": -0.13333333333333333,
+   "correct": 0,
+   "correct_against": 4,
+   "improved": 0,
+   "regressed": 4,
+   "changed": 4,
+   "p_value": 0.125,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 109,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "49": {
+   "run_id": 49,
+   "against": 42,
+   "paired_rows": 22,
+   "same_rows": false,
+   "score": 0.2727272727272727,
+   "score_against": 0.18181818181818182,
+   "delta": 0.09090909090909088,
+   "correct": 6,
+   "correct_against": 4,
+   "improved": 4,
+   "regressed": 2,
+   "changed": 6,
+   "p_value": 0.6875,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 233,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  },
+  "50": {
+   "run_id": 50,
+   "against": 42,
+   "paired_rows": 30,
+   "same_rows": true,
+   "score": 0.06666666666666667,
+   "score_against": 0.13333333333333333,
+   "delta": -0.06666666666666667,
+   "correct": 2,
+   "correct_against": 4,
+   "improved": 2,
+   "regressed": 4,
+   "changed": 6,
+   "p_value": 0.6875,
+   "test": "McNemar, two-sided exact binomial over the rows that changed",
+   "resolved": false,
+   "verdict": "no_evidence",
+   "rows_that_would_resolve_this_delta": 433,
+   "improved_rows": [],
+   "regressed_rows": [],
+   "measured_on": "the rows both runs graded, which is the only set on which a difference between them means anything"
+  }
+ },
+ "sandboxes": [
+  {
+   "ok": true,
+   "name": "practical-ml",
+   "purpose": "train SmolLM2-1.7B on this workspace's real UI-vocabulary rows",
+   "created_at": "2026-09-01T18:28:11+00:00",
+   "path": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml",
+   "work_dir": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\work",
+   "fingerprint": "c4f5132c4a2c932bf2bb24ab822a699dfcc58f5b8d8b26b4182b0fbb82e1c951",
+   "pinned": {
+    "installs": [
+     "accelerate==1.10.1",
+     "aiohappyeyeballs==2.7.1",
+     "aiohttp==3.14.3",
+     "aiosignal==1.4.0",
+     "attrs==26.1.0",
+     "certifi==2026.7.22",
+     "charset-normalizer==3.5.1",
+     "colorama==0.4.6",
+     "datasets==4.0.0",
+     "dill==0.3.8",
+     "filelock==3.32.3",
+     "frozenlist==1.8.0",
+     "fsspec==2025.3.0",
+     "huggingface-hub==0.36.2",
+     "idna==3.19",
+     "jinja2==3.1.6",
+     "markupsafe==3.0.3",
+     "mpmath==1.3.0",
+     "multidict==6.7.1",
+     "multiprocess==0.70.16",
+     "networkx==3.6.1",
+     "numpy==2.4.6",
+     "packaging==26.3",
+     "pandas==3.0.5",
+     "peft==0.17.1",
+     "propcache==0.5.2",
+     "psutil==7.2.2",
+     "pyarrow==25.0.1",
+     "python-dateutil==2.9.0.post0",
+     "pyyaml==6.0.3",
+     "regex==2026.7.19",
+     "requests==2.34.2",
+     "safetensors==0.8.0",
+     "six==1.17.0",
+     "sympy==1.13.1",
+     "tokenizers==0.22.2",
+     "torch==2.6.0+cu124",
+     "tqdm==4.70.0",
+     "transformers==4.57.1",
+     "trl==0.24.0",
+     "typing-extensions==4.16.0",
+     "tzdata==2026.3",
+     "urllib3==2.7.0",
+     "xxhash==4.0.1",
+     "yarl==1.24.5"
+    ],
+    "interpreter": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\recipes\\hf-peft-lora\\.venv\\Scripts\\python.exe",
+    "interpreter_is": "the hf-peft-lora virtualenv's own interpreter",
+    "kinds": [
+     "train",
+     "eval"
+    ],
+    "lock_digest": "47791b34816e8e4a33544811af2b120a6a9d938a033499668f52974b89e13945",
+    "lockfile": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\recipes\\hf-peft-lora\\requirements.lock",
+    "pinned": true,
+    "python": "3.11",
+    "python_source": "read from C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\recipes\\hf-peft-lora\\.venv\\pyvenv.cfg",
+    "recipe": "hf-peft-lora",
+    "why": ""
+   },
+   "snapshotted": [
+    {
+     "bytes": 19488.0,
+     "copied": true,
+     "copied_to": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\data\\00_ui-vocab.train.jsonl",
+     "digest": "b3c2c86d883a6d85c9b9042b44b7977d0349790ca42185cb080083aabe015806",
+     "how": "stat() reported 19488 bytes for C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.train.jsonl",
+     "modified_at": "2026-09-01T18:23:03+00:00",
+     "path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.train.jsonl",
+     "provenance": {
+      "bytes": "measured",
+      "modified_at": "measured"
+     },
+     "why": ""
+    },
+    {
+     "bytes": 5473.0,
+     "copied": true,
+     "copied_to": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\data\\01_ui-vocab.eval.jsonl",
+     "digest": "196fe45d95caae42d235fb979cf345ebf83da688a5a2108863d43f9c935d04db",
+     "how": "stat() reported 5473 bytes for C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+     "modified_at": "2026-09-01T18:23:03+00:00",
+     "path": "C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+     "provenance": {
+      "bytes": "measured",
+      "modified_at": "measured"
+     },
+     "why": ""
+    }
+   ],
+   "snapshot_bytes": 24961.0,
+   "snapshot_provenance": "measured by stat() on each file as it was copied",
+   "reach": {
+    "egress": false,
+    "egress_reason": "",
+    "enforced": [
+     "The run inherits none of the engine's environment: no provider API key, no HF_TOKEN, nothing exported into the shell that started this harness. app/jobspec.py builds the environment from a fixed passthrough list.",
+     "The working directory is this sandbox's work/ folder and TEMP, TMP and TMPDIR point at its tmp/ folder, so relative writes and scratch files land inside the sandbox.",
+     "HF_HUB_OFFLINE, TRANSFORMERS_OFFLINE and HF_DATASETS_OFFLINE are set, along with the telemetry switches, which huggingface_hub and transformers obey."
+    ],
+    "not_enforced": [
+     "The interpreter that runs a job in here HAS THIS PRODUCT INSTALLED IN IT, so a job can `import app.security`, read engine.json and take the engine's token, then `import app.db` and read the path to your real database - without being handed any of it. Withholding the address and the token does nothing when the code that finds them is on the job's import path. This is the state of an INSTALLED copy: a checkout is not installed into its own interpreter, which is why the same product does not say this when run from one. `app/jobspec.py` says the fix in its own words - `interpreter` becomes the recipe's own pinned virtualenv (M7, docs/ARCHITECTURE.md 4.11) - and until it does, this is reported rather than promised away.",
+     "The operating system is not stopping a socket. Code that runs in here can connect anywhere this machine can reach. There is no network namespace, no firewall rule and no container - a Python process cannot deny another process the network on Windows without one.",
+     "The filesystem is not a jail. cwd is where a run lands, not where it is confined; an absolute path reads the whole disk.",
+     "So 'it cannot reach anything it was not given' is true of what this hands a run, and false as a statement about what the run can do. If you need the second one, the sandbox has to be a container or a virtual machine, and this is not one."
+    ],
+    "say": "This sandbox has no egress, which here means it is handed no credentials, no address for this harness's API and no network defaults - it does NOT mean the operating system is stopping it from opening a socket. Read `not_enforced`."
+   },
+   "delete_with": "delete_sandbox('practical-ml')",
+   "say": "practical-ml is at C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml. It pins the hf-peft-lora environment: 45 locked requirements from C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\recipes\\hf-peft-lora\\requirements.lock, run by C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\recipes\\hf-peft-lora\\.venv\\Scripts\\python.exe (Python 3.11, read from C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\recipes\\hf-peft-lora\\.venv\\pyvenv.cfg). It holds 2 copied file(s) as they were, and records 0 more where they are. It is handed no credentials, no address for this harness's API and no network defaults. That is what 'no egress' means here; the operating system is not stopping it from opening a socket, and anything that says otherwise is overclaiming. Delete it with delete_sandbox('practical-ml'); nothing outside it goes with it.",
+   "runs": [
+    {
+     "name": "run_1",
+     "kind": "train",
+     "recipe": "hf-peft-lora",
+     "base_model": "HuggingFaceTB/SmolLM2-1.7B",
+     "max_steps": 500,
+     "steps": 500,
+     "elapsed_seconds": 3383.31,
+     "peak_vram_gb": 6.65,
+     "final_loss": 2.2260569260120393,
+     "adapter_dir": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\runs\\run_1\\adapter",
+     "curve": [
+      {
+       "step": 1,
+       "loss": 5.2766
+      },
+      {
+       "step": 5,
+       "loss": 4.6207
+      },
+      {
+       "step": 9,
+       "loss": 4.2006
+      },
+      {
+       "step": 13,
+       "loss": 4.8176
+      },
+      {
+       "step": 17,
+       "loss": 5.0429
+      },
+      {
+       "step": 21,
+       "loss": 4.7841
+      },
+      {
+       "step": 25,
+       "loss": 4.2532
+      },
+      {
+       "step": 29,
+       "loss": 4.5097
+      },
+      {
+       "step": 33,
+       "loss": 4.587
+      },
+      {
+       "step": 37,
+       "loss": 4.3948
+      },
+      {
+       "step": 41,
+       "loss": 3.8305
+      },
+      {
+       "step": 45,
+       "loss": 2.9064
+      },
+      {
+       "step": 49,
+       "loss": 2.8602
+      },
+      {
+       "step": 53,
+       "loss": 3.8722
+      },
+      {
+       "step": 57,
+       "loss": 2.3241
+      },
+      {
+       "step": 61,
+       "loss": 2.5688
+      },
+      {
+       "step": 65,
+       "loss": 3.3267
+      },
+      {
+       "step": 69,
+       "loss": 2.3678
+      },
+      {
+       "step": 73,
+       "loss": 3.182
+      },
+      {
+       "step": 77,
+       "loss": 4.8273
+      },
+      {
+       "step": 81,
+       "loss": 2.0608
+      },
+      {
+       "step": 85,
+       "loss": 3.9698
+      },
+      {
+       "step": 89,
+       "loss": 3.3597
+      },
+      {
+       "step": 93,
+       "loss": 2.2483
+      },
+      {
+       "step": 97,
+       "loss": 1.9682
+      },
+      {
+       "step": 101,
+       "loss": 2.5796
+      },
+      {
+       "step": 105,
+       "loss": 2.9401
+      },
+      {
+       "step": 109,
+       "loss": 2.9303
+      },
+      {
+       "step": 113,
+       "loss": 2.1163
+      },
+      {
+       "step": 117,
+       "loss": 3.0735
+      },
+      {
+       "step": 121,
+       "loss": 3.2699
+      },
+      {
+       "step": 125,
+       "loss": 2.2698
+      },
+      {
+       "step": 129,
+       "loss": 2.8585
+      },
+      {
+       "step": 133,
+       "loss": 2.5125
+      },
+      {
+       "step": 137,
+       "loss": 3.2189
+      },
+      {
+       "step": 141,
+       "loss": 2.1842
+      },
+      {
+       "step": 145,
+       "loss": 1.7879
+      },
+      {
+       "step": 149,
+       "loss": 2.442
+      },
+      {
+       "step": 153,
+       "loss": 3.0352
+      },
+      {
+       "step": 157,
+       "loss": 2.0314
+      },
+      {
+       "step": 161,
+       "loss": 2.5632
+      },
+      {
+       "step": 165,
+       "loss": 2.7004
+      },
+      {
+       "step": 169,
+       "loss": 3.4957
+      },
+      {
+       "step": 173,
+       "loss": 1.4813
+      },
+      {
+       "step": 177,
+       "loss": 2.1674
+      },
+      {
+       "step": 181,
+       "loss": 2.0594
+      },
+      {
+       "step": 185,
+       "loss": 2.3899
+      },
+      {
+       "step": 189,
+       "loss": 2.5415
+      },
+      {
+       "step": 193,
+       "loss": 2.8072
+      },
+      {
+       "step": 197,
+       "loss": 2.8181
+      },
+      {
+       "step": 201,
+       "loss": 2.3148
+      },
+      {
+       "step": 205,
+       "loss": 2.3655
+      },
+      {
+       "step": 209,
+       "loss": 2.4363
+      },
+      {
+       "step": 213,
+       "loss": 1.4092
+      },
+      {
+       "step": 217,
+       "loss": 1.1545
+      },
+      {
+       "step": 221,
+       "loss": 2.0912
+      },
+      {
+       "step": 225,
+       "loss": 2.0544
+      },
+      {
+       "step": 229,
+       "loss": 2.6155
+      },
+      {
+       "step": 233,
+       "loss": 2.9679
+      },
+      {
+       "step": 237,
+       "loss": 2.0989
+      },
+      {
+       "step": 241,
+       "loss": 2.1165
+      },
+      {
+       "step": 245,
+       "loss": 1.0325
+      },
+      {
+       "step": 249,
+       "loss": 1.9666
+      },
+      {
+       "step": 253,
+       "loss": 1.2226
+      },
+      {
+       "step": 257,
+       "loss": 1.7124
+      },
+      {
+       "step": 261,
+       "loss": 2.3158
+      },
+      {
+       "step": 265,
+       "loss": 1.6136
+      },
+      {
+       "step": 269,
+       "loss": 1.8828
+      },
+      {
+       "step": 273,
+       "loss": 1.7011
+      },
+      {
+       "step": 277,
+       "loss": 2.2926
+      },
+      {
+       "step": 281,
+       "loss": 2.8735
+      },
+      {
+       "step": 285,
+       "loss": 1.062
+      },
+      {
+       "step": 289,
+       "loss": 1.6659
+      },
+      {
+       "step": 293,
+       "loss": 3.0914
+      },
+      {
+       "step": 297,
+       "loss": 2.1325
+      },
+      {
+       "step": 301,
+       "loss": 3.3499
+      },
+      {
+       "step": 305,
+       "loss": 1.2174
+      },
+      {
+       "step": 309,
+       "loss": 2.0296
+      },
+      {
+       "step": 313,
+       "loss": 2.2736
+      },
+      {
+       "step": 317,
+       "loss": 0.9223
+      },
+      {
+       "step": 321,
+       "loss": 1.5251
+      },
+      {
+       "step": 325,
+       "loss": 1.5308
+      },
+      {
+       "step": 329,
+       "loss": 1.3245
+      },
+      {
+       "step": 333,
+       "loss": 0.5291
+      },
+      {
+       "step": 337,
+       "loss": 0.7441
+      },
+      {
+       "step": 341,
+       "loss": 1.9081
+      },
+      {
+       "step": 345,
+       "loss": 3.0962
+      },
+      {
+       "step": 349,
+       "loss": 1.435
+      },
+      {
+       "step": 353,
+       "loss": 1.6864
+      },
+      {
+       "step": 357,
+       "loss": 1.6811
+      },
+      {
+       "step": 361,
+       "loss": 1.1546
+      },
+      {
+       "step": 365,
+       "loss": 1.5746
+      },
+      {
+       "step": 369,
+       "loss": 1.2768
+      },
+      {
+       "step": 373,
+       "loss": 1.0539
+      },
+      {
+       "step": 377,
+       "loss": 0.8383
+      },
+      {
+       "step": 381,
+       "loss": 1.2168
+      },
+      {
+       "step": 385,
+       "loss": 1.0407
+      },
+      {
+       "step": 389,
+       "loss": 2.4326
+      },
+      {
+       "step": 393,
+       "loss": 2.1074
+      },
+      {
+       "step": 397,
+       "loss": 1.9441
+      },
+      {
+       "step": 401,
+       "loss": 0.9074
+      },
+      {
+       "step": 405,
+       "loss": 2.3454
+      },
+      {
+       "step": 409,
+       "loss": 2.0747
+      },
+      {
+       "step": 413,
+       "loss": 2.9404
+      },
+      {
+       "step": 417,
+       "loss": 1.8807
+      },
+      {
+       "step": 421,
+       "loss": 1.6407
+      },
+      {
+       "step": 425,
+       "loss": 0.9648
+      },
+      {
+       "step": 429,
+       "loss": 1.2042
+      },
+      {
+       "step": 433,
+       "loss": 1.603
+      },
+      {
+       "step": 437,
+       "loss": 2.2066
+      },
+      {
+       "step": 441,
+       "loss": 0.8512
+      },
+      {
+       "step": 445,
+       "loss": 0.6278
+      },
+      {
+       "step": 449,
+       "loss": 0.7665
+      },
+      {
+       "step": 453,
+       "loss": 0.4422
+      },
+      {
+       "step": 457,
+       "loss": 1.5728
+      },
+      {
+       "step": 461,
+       "loss": 1.6472
+      },
+      {
+       "step": 465,
+       "loss": 1.0978
+      },
+      {
+       "step": 469,
+       "loss": 2.3992
+      },
+      {
+       "step": 473,
+       "loss": 2.4916
+      },
+      {
+       "step": 477,
+       "loss": 0.641
+      },
+      {
+       "step": 481,
+       "loss": 0.8683
+      },
+      {
+       "step": 485,
+       "loss": 0.9106
+      },
+      {
+       "step": 489,
+       "loss": 1.3058
+      },
+      {
+       "step": 493,
+       "loss": 1.1082
+      },
+      {
+       "step": 497,
+       "loss": 0.68
+      },
+      {
+       "step": 500,
+       "loss": 1.1758
+      }
+     ],
+     "events": 506,
+     "has_adapter": true,
+     "has_predictions": false
+    },
+    {
+     "name": "run_2",
+     "kind": "eval",
+     "recipe": "hf-peft-lora",
+     "base_model": "HuggingFaceTB/SmolLM2-1.7B",
+     "max_steps": null,
+     "steps": null,
+     "elapsed_seconds": 123.98,
+     "peak_vram_gb": 3.39,
+     "final_loss": null,
+     "adapter_dir": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\runs\\run_1\\adapter",
+     "curve": [],
+     "events": 10,
+     "has_adapter": false,
+     "has_predictions": true
+    },
+    {
+     "name": "run_3",
+     "kind": "eval",
+     "recipe": "hf-peft-lora",
+     "base_model": "HuggingFaceTB/SmolLM2-1.7B",
+     "max_steps": null,
+     "steps": null,
+     "elapsed_seconds": 63.53,
+     "peak_vram_gb": 3.39,
+     "final_loss": null,
+     "adapter_dir": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\runs\\run_1\\adapter",
+     "curve": [],
+     "events": 10,
+     "has_adapter": false,
+     "has_predictions": true
+    },
+    {
+     "name": "run_4",
+     "kind": "train",
+     "recipe": "hf-peft-lora",
+     "base_model": "HuggingFaceTB/SmolLM2-1.7B",
+     "max_steps": 200,
+     "steps": 200,
+     "elapsed_seconds": 46.47,
+     "peak_vram_gb": 6.65,
+     "final_loss": 3.1158760410547255,
+     "adapter_dir": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\runs\\run_4\\adapter",
+     "curve": [
+      {
+       "step": 1,
+       "loss": 5.2766
+      },
+      {
+       "step": 2,
+       "loss": 4.4936
+      },
+      {
+       "step": 3,
+       "loss": 3.8247
+      },
+      {
+       "step": 4,
+       "loss": 4.6758
+      },
+      {
+       "step": 5,
+       "loss": 4.6197
+      },
+      {
+       "step": 6,
+       "loss": 4.8257
+      },
+      {
+       "step": 7,
+       "loss": 4.8077
+      },
+      {
+       "step": 8,
+       "loss": 5.2874
+      },
+      {
+       "step": 9,
+       "loss": 4.1982
+      },
+      {
+       "step": 10,
+       "loss": 2.685
+      },
+      {
+       "step": 11,
+       "loss": 4.4815
+      },
+      {
+       "step": 12,
+       "loss": 4.7755
+      },
+      {
+       "step": 13,
+       "loss": 4.824
+      },
+      {
+       "step": 14,
+       "loss": 4.2666
+      },
+      {
+       "step": 15,
+       "loss": 3.0181
+      },
+      {
+       "step": 16,
+       "loss": 4.2252
+      },
+      {
+       "step": 17,
+       "loss": 5.0547
+      },
+      {
+       "step": 18,
+       "loss": 4.9183
+      },
+      {
+       "step": 19,
+       "loss": 5.197
+      },
+      {
+       "step": 20,
+       "loss": 4.9485
+      },
+      {
+       "step": 21,
+       "loss": 4.8101
+      },
+      {
+       "step": 22,
+       "loss": 3.5831
+      },
+      {
+       "step": 23,
+       "loss": 5.1469
+      },
+      {
+       "step": 24,
+       "loss": 3.6202
+      },
+      {
+       "step": 25,
+       "loss": 4.277
+      },
+      {
+       "step": 26,
+       "loss": 3.9512
+      },
+      {
+       "step": 27,
+       "loss": 4.2052
+      },
+      {
+       "step": 28,
+       "loss": 5.145
+      },
+      {
+       "step": 29,
+       "loss": 4.5453
+      },
+      {
+       "step": 30,
+       "loss": 3.4946
+      },
+      {
+       "step": 31,
+       "loss": 5.1202
+      },
+      {
+       "step": 32,
+       "loss": 4.0608
+      },
+      {
+       "step": 33,
+       "loss": 4.6077
+      },
+      {
+       "step": 34,
+       "loss": 3.0587
+      },
+      {
+       "step": 35,
+       "loss": 4.5714
+      },
+      {
+       "step": 36,
+       "loss": 5.3042
+      },
+      {
+       "step": 37,
+       "loss": 4.4833
+      },
+      {
+       "step": 38,
+       "loss": 4.102
+      },
+      {
+       "step": 39,
+       "loss": 3.5923
+      },
+      {
+       "step": 40,
+       "loss": 2.6021
+      },
+      {
+       "step": 41,
+       "loss": 3.9061
+      },
+      {
+       "step": 42,
+       "loss": 3.9532
+      },
+      {
+       "step": 43,
+       "loss": 3.7425
+      },
+      {
+       "step": 44,
+       "loss": 2.5496
+      },
+      {
+       "step": 45,
+       "loss": 2.9789
+      },
+      {
+       "step": 46,
+       "loss": 3.0683
+      },
+      {
+       "step": 47,
+       "loss": 3.2722
+      },
+      {
+       "step": 48,
+       "loss": 2.6806
+      },
+      {
+       "step": 49,
+       "loss": 2.9654
+      },
+      {
+       "step": 50,
+       "loss": 4.1689
+      },
+      {
+       "step": 51,
+       "loss": 5.0696
+      },
+      {
+       "step": 52,
+       "loss": 2.6348
+      },
+      {
+       "step": 53,
+       "loss": 3.9901
+      },
+      {
+       "step": 54,
+       "loss": 2.6118
+      },
+      {
+       "step": 55,
+       "loss": 3.1509
+      },
+      {
+       "step": 56,
+       "loss": 4.1367
+      },
+      {
+       "step": 57,
+       "loss": 2.4548
+      },
+      {
+       "step": 58,
+       "loss": 3.2833
+      },
+      {
+       "step": 59,
+       "loss": 2.1657
+      },
+      {
+       "step": 60,
+       "loss": 3.3677
+      },
+      {
+       "step": 61,
+       "loss": 2.7048
+      },
+      {
+       "step": 62,
+       "loss": 2.8549
+      },
+      {
+       "step": 63,
+       "loss": 2.5308
+      },
+      {
+       "step": 64,
+       "loss": 2.6711
+      },
+      {
+       "step": 65,
+       "loss": 3.3763
+      },
+      {
+       "step": 66,
+       "loss": 4.3198
+      },
+      {
+       "step": 67,
+       "loss": 2.5623
+      },
+      {
+       "step": 68,
+       "loss": 2.8057
+      },
+      {
+       "step": 69,
+       "loss": 2.4752
+      },
+      {
+       "step": 70,
+       "loss": 3.2396
+      },
+      {
+       "step": 71,
+       "loss": 2.2292
+      },
+      {
+       "step": 72,
+       "loss": 2.2858
+      },
+      {
+       "step": 73,
+       "loss": 3.1775
+      },
+      {
+       "step": 74,
+       "loss": 3.9868
+      },
+      {
+       "step": 75,
+       "loss": 3.258
+      },
+      {
+       "step": 76,
+       "loss": 2.7611
+      },
+      {
+       "step": 77,
+       "loss": 4.8792
+      },
+      {
+       "step": 78,
+       "loss": 2.5648
+      },
+      {
+       "step": 79,
+       "loss": 2.0489
+      },
+      {
+       "step": 80,
+       "loss": 3.0593
+      },
+      {
+       "step": 81,
+       "loss": 2.2035
+      },
+      {
+       "step": 82,
+       "loss": 3.0973
+      },
+      {
+       "step": 83,
+       "loss": 3.6506
+      },
+      {
+       "step": 84,
+       "loss": 2.9449
+      },
+      {
+       "step": 85,
+       "loss": 3.9677
+      },
+      {
+       "step": 86,
+       "loss": 2.7041
+      },
+      {
+       "step": 87,
+       "loss": 2.1112
+      },
+      {
+       "step": 88,
+       "loss": 2.8379
+      },
+      {
+       "step": 89,
+       "loss": 3.47
+      },
+      {
+       "step": 90,
+       "loss": 4.3605
+      },
+      {
+       "step": 91,
+       "loss": 2.8308
+      },
+      {
+       "step": 92,
+       "loss": 3.0177
+      },
+      {
+       "step": 93,
+       "loss": 2.3197
+      },
+      {
+       "step": 94,
+       "loss": 3.4438
+      },
+      {
+       "step": 95,
+       "loss": 2.8616
+      },
+      {
+       "step": 96,
+       "loss": 2.9255
+      },
+      {
+       "step": 97,
+       "loss": 1.9941
+      },
+      {
+       "step": 98,
+       "loss": 3.1353
+      },
+      {
+       "step": 99,
+       "loss": 3.8654
+      },
+      {
+       "step": 100,
+       "loss": 2.5677
+      },
+      {
+       "step": 101,
+       "loss": 2.6657
+      },
+      {
+       "step": 102,
+       "loss": 2.9023
+      },
+      {
+       "step": 103,
+       "loss": 2.6233
+      },
+      {
+       "step": 104,
+       "loss": 3.0073
+      },
+      {
+       "step": 105,
+       "loss": 3.0299
+      },
+      {
+       "step": 106,
+       "loss": 2.5975
+      },
+      {
+       "step": 107,
+       "loss": 1.6855
+      },
+      {
+       "step": 108,
+       "loss": 3.5702
+      },
+      {
+       "step": 109,
+       "loss": 2.9426
+      },
+      {
+       "step": 110,
+       "loss": 4.3857
+      },
+      {
+       "step": 111,
+       "loss": 2.9441
+      },
+      {
+       "step": 112,
+       "loss": 2.2642
+      },
+      {
+       "step": 113,
+       "loss": 2.327
+      },
+      {
+       "step": 114,
+       "loss": 2.8404
+      },
+      {
+       "step": 115,
+       "loss": 3.7585
+      },
+      {
+       "step": 116,
+       "loss": 2.6893
+      },
+      {
+       "step": 117,
+       "loss": 3.1337
+      },
+      {
+       "step": 118,
+       "loss": 3.0835
+      },
+      {
+       "step": 119,
+       "loss": 2.8852
+      },
+      {
+       "step": 120,
+       "loss": 1.7943
+      },
+      {
+       "step": 121,
+       "loss": 3.2635
+      },
+      {
+       "step": 122,
+       "loss": 2.7914
+      },
+      {
+       "step": 123,
+       "loss": 2.6038
+      },
+      {
+       "step": 124,
+       "loss": 2.4161
+      },
+      {
+       "step": 125,
+       "loss": 2.5028
+      },
+      {
+       "step": 126,
+       "loss": 1.9308
+      },
+      {
+       "step": 127,
+       "loss": 1.5569
+      },
+      {
+       "step": 128,
+       "loss": 2.1497
+      },
+      {
+       "step": 129,
+       "loss": 3.2787
+      },
+      {
+       "step": 130,
+       "loss": 3.1515
+      },
+      {
+       "step": 131,
+       "loss": 2.4828
+      },
+      {
+       "step": 132,
+       "loss": 2.6041
+      },
+      {
+       "step": 133,
+       "loss": 2.6579
+      },
+      {
+       "step": 134,
+       "loss": 1.6634
+      },
+      {
+       "step": 135,
+       "loss": 2.8159
+      },
+      {
+       "step": 136,
+       "loss": 1.9668
+      },
+      {
+       "step": 137,
+       "loss": 3.1259
+      },
+      {
+       "step": 138,
+       "loss": 2.2499
+      },
+      {
+       "step": 139,
+       "loss": 2.0968
+      },
+      {
+       "step": 140,
+       "loss": 2.2401
+      },
+      {
+       "step": 141,
+       "loss": 2.1846
+      },
+      {
+       "step": 142,
+       "loss": 3.4527
+      },
+      {
+       "step": 143,
+       "loss": 2.0039
+      },
+      {
+       "step": 144,
+       "loss": 2.4186
+      },
+      {
+       "step": 145,
+       "loss": 1.8502
+      },
+      {
+       "step": 146,
+       "loss": 3.4445
+      },
+      {
+       "step": 147,
+       "loss": 2.81
+      },
+      {
+       "step": 148,
+       "loss": 3.0758
+      },
+      {
+       "step": 149,
+       "loss": 2.5032
+      },
+      {
+       "step": 150,
+       "loss": 2.5021
+      },
+      {
+       "step": 151,
+       "loss": 3.2641
+      },
+      {
+       "step": 152,
+       "loss": 3.7373
+      },
+      {
+       "step": 153,
+       "loss": 3.2579
+      },
+      {
+       "step": 154,
+       "loss": 1.7356
+      },
+      {
+       "step": 155,
+       "loss": 2.6703
+      },
+      {
+       "step": 156,
+       "loss": 2.6107
+      },
+      {
+       "step": 157,
+       "loss": 2.1547
+      },
+      {
+       "step": 158,
+       "loss": 1.8004
+      },
+      {
+       "step": 159,
+       "loss": 2.5299
+      },
+      {
+       "step": 160,
+       "loss": 4.3143
+      },
+      {
+       "step": 161,
+       "loss": 2.5664
+      },
+      {
+       "step": 162,
+       "loss": 1.8388
+      },
+      {
+       "step": 163,
+       "loss": 3.0393
+      },
+      {
+       "step": 164,
+       "loss": 2.6737
+      },
+      {
+       "step": 165,
+       "loss": 2.9632
+      },
+      {
+       "step": 166,
+       "loss": 3.4121
+      },
+      {
+       "step": 167,
+       "loss": 2.8019
+      },
+      {
+       "step": 168,
+       "loss": 3.4503
+      },
+      {
+       "step": 169,
+       "loss": 3.7452
+      },
+      {
+       "step": 170,
+       "loss": 2.0396
+      },
+      {
+       "step": 171,
+       "loss": 1.5963
+      },
+      {
+       "step": 172,
+       "loss": 3.4423
+      },
+      {
+       "step": 173,
+       "loss": 1.6156
+      },
+      {
+       "step": 174,
+       "loss": 2.4013
+      },
+      {
+       "step": 175,
+       "loss": 3.3894
+      },
+      {
+       "step": 176,
+       "loss": 2.8696
+      },
+      {
+       "step": 177,
+       "loss": 2.3566
+      },
+      {
+       "step": 178,
+       "loss": 2.5864
+      },
+      {
+       "step": 179,
+       "loss": 1.7822
+      },
+      {
+       "step": 180,
+       "loss": 2.6514
+      },
+      {
+       "step": 181,
+       "loss": 2.1189
+      },
+      {
+       "step": 182,
+       "loss": 1.7027
+      },
+      {
+       "step": 183,
+       "loss": 1.9198
+      },
+      {
+       "step": 184,
+       "loss": 2.1185
+      },
+      {
+       "step": 185,
+       "loss": 2.4552
+      },
+      {
+       "step": 186,
+       "loss": 1.6941
+      },
+      {
+       "step": 187,
+       "loss": 3.2555
+      },
+      {
+       "step": 188,
+       "loss": 3.2527
+      },
+      {
+       "step": 189,
+       "loss": 2.5426
+      },
+      {
+       "step": 190,
+       "loss": 1.8344
+      },
+      {
+       "step": 191,
+       "loss": 2.7368
+      },
+      {
+       "step": 192,
+       "loss": 2.0567
+      },
+      {
+       "step": 193,
+       "loss": 2.8007
+      },
+      {
+       "step": 194,
+       "loss": 2.7483
+      },
+      {
+       "step": 195,
+       "loss": 2.7208
+      },
+      {
+       "step": 196,
+       "loss": 2.0449
+      },
+      {
+       "step": 197,
+       "loss": 2.877
+      },
+      {
+       "step": 198,
+       "loss": 2.1963
+      },
+      {
+       "step": 199,
+       "loss": 1.9829
+      },
+      {
+       "step": 200,
+       "loss": 2.9586
+      }
+     ],
+     "events": 206,
+     "has_adapter": true,
+     "has_predictions": false
+    },
+    {
+     "name": "run_5",
+     "kind": "eval",
+     "recipe": "hf-peft-lora",
+     "base_model": "HuggingFaceTB/SmolLM2-1.7B",
+     "max_steps": null,
+     "steps": null,
+     "elapsed_seconds": 21.61,
+     "peak_vram_gb": 3.39,
+     "final_loss": null,
+     "adapter_dir": "C:\\Users\\example\\OneDrive\\Documents\\GitHub\\ml-harness\\runs\\d3b225bb983a42389ac896d894f19017\\sandboxes\\practical-ml\\runs\\run_4\\adapter",
+     "curve": [],
+     "events": 7,
+     "has_adapter": false,
+     "has_predictions": true
+    }
+   ]
+  }
+ ],
+ "gpu": {
+  "occupancy": {
+   "used_gb": 0.75,
+   "total_gb": 8.0,
+   "resident": [],
+   "source": "nvidia-smi --query-gpu=memory.used,memory.total; ollama /api/ps"
+  },
+  "guard": null,
+  "crowded_above_gb": 1.0
+ },
+ "diagnosis": {
+  "thread_id": 33,
+  "thread_name": null,
+  "ledger": "C:\\Users\\example\\Projects\\ml-harness\\docs\\diagnosis_engine.yaml",
+  "generated_at": "2026-09-02T04:56:48+00:00",
+  "verdict": {
+   "outcome": "NO_TRAIN__RAG",
+   "say": "Under roughly 100M domain tokens, continued pretraining buys less than a good retriever and costs far more.",
+   "gates": {
+    "G0_EVAL_SET": {
+     "node": "S0_NO_EVAL_SET",
+     "status": "PASSED",
+     "row": "any",
+     "clause": "eval_size_n >= 30"
+    },
+    "G1_BASELINE_MEASURED": {
+     "node": "S1_UNMEASURED",
+     "status": "PASSED",
+     "row": "any",
+     "clause": "baseline_measured and baseline_score is not null and trivial_baseline_score is not null"
+    },
+    "G2_PROMPT_EXHAUSTED": {
+     "node": "S5_PROMPT_NOT_EXHAUSTED",
+     "status": "NOT_REACHED",
+     "row": null,
+     "clause": null
+    },
+    "G3_RETRIEVAL_CONSIDERED": {
+     "node": "S3_RETRIEVAL_NOT_CONSIDERED",
+     "status": "PASSED",
+     "row": "llm_weights",
+     "clause": "retrieval_tried"
+    },
+    "G4_CHEAPER_MODEL_CONSIDERED": {
+     "node": "S6_MODEL_SWAP_UNTRIED",
+     "status": "NOT_REACHED",
+     "row": null,
+     "clause": null
+    }
+   },
+   "fact_origins": {
+    "goal_text": "DEFAULTED",
+    "modality": "STATED",
+    "task_family": "STATED",
+    "need_type": "DEFAULTED",
+    "eval_size_n": "MEASURED",
+    "baseline_measured": "MEASURED",
+    "baseline_score": "MEASURED",
+    "trivial_baseline_score": "MEASURED",
+    "target_score": "STATED",
+    "failure_histogram": "MEASURED",
+    "prompt_iterations": "STATED",
+    "fewshot_tried": "STATED",
+    "constrained_decoding_tried": "DEFAULTED",
+    "retrieval_tried": "STATED",
+    "retriever_recall_at_k": "MEASURED",
+    "prompt_optimizer_tried": "DEFAULTED",
+    "model_swap_tried": "STATED",
+    "agent_scaffold_tried": "DEFAULTED",
+    "labeled_examples_n": "MEASURED",
+    "preference_pairs_n": "DEFAULTED",
+    "unlabeled_domain_tokens": "DEFAULTED",
+    "corpus_tokens": "DEFAULTED",
+    "knowledge_volatility": "STATED",
+    "data_quality": "DEFAULTED",
+    "label_source": "DEFAULTED",
+    "classes_n": "MEASURED",
+    "tabular_rows": "DEFAULTED",
+    "tabular_features": "DEFAULTED",
+    "privacy": "STATED",
+    "needs_citations": "DEFAULTED",
+    "latency_budget_ms": "DEFAULTED",
+    "calls_per_day": "DEFAULTED",
+    "deployment": "DEFAULTED",
+    "quality_loss_tolerance": "DEFAULTED",
+    "teacher_license_permits_distillation": "DEFAULTED",
+    "accelerator": "MEASURED",
+    "vram_gb": "MEASURED",
+    "ram_gb": "MEASURED",
+    "disk_free_gb": "MEASURED",
+    "can_rent_cloud": "DEFAULTED",
+    "budget_usd": "DEFAULTED",
+    "time_budget_days": "DEFAULTED",
+    "reranker_tried": "DEFAULTED",
+    "labeled_query_positive_pairs": "DEFAULTED",
+    "query_rewriting_tried": "DEFAULTED",
+    "schema_compliance": "DEFAULTED",
+    "schema_expressible": "DEFAULTED",
+    "metric_is_programmatic": "DEFAULTED",
+    "user_can_rank_but_not_write": "DEFAULTED",
+    "reward_is_programmatic": "DEFAULTED",
+    "task_is_multistep": "DEFAULTED",
+    "quantization_tried": "DEFAULTED",
+    "caching_enabled": "DEFAULTED",
+    "current_precision": "DEFAULTED",
+    "has_free_text_columns": "DEFAULTED",
+    "has_high_cardinality_sequence": "DEFAULTED",
+    "needs_multimodal_fusion": "DEFAULTED",
+    "labels_are_closed_set": "DEFAULTED",
+    "requires_multistep_reasoning": "DEFAULTED",
+    "hparam_search_trials": "DEFAULTED",
+    "feature_work_considered": "DEFAULTED",
+    "offtheshelf_measured": "DEFAULTED",
+    "no_suitable_open_weight_base_exists": "DEFAULTED",
+    "tokens_available": "DEFAULTED",
+    "target_params": "DEFAULTED",
+    "enterprise_cluster_available": "DEFAULTED",
+    "user_requested_from_scratch": "DEFAULTED",
+    "goal_is_learning": "DEFAULTED",
+    "judge_score": "DEFAULTED"
+   }
+  },
+  "facts": [
+   {
+    "fact": "accelerator",
+    "value": "nvidia",
+    "origin": "MEASURED",
+    "tool": "inspect_hardware",
+    "how": "nvidia-smi --query-gpu=name,memory.total named 'NVIDIA GeForce RTX 2060 SUPER'",
+    "written_at": null
+   },
+   {
+    "fact": "baseline_measured",
+    "value": true,
+    "origin": "MEASURED",
+    "tool": "run_eval",
+    "how": "eval run 42 scored granite4-hermes:latest on 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl, and every row is on disk",
+    "written_at": null
+   },
+   {
+    "fact": "baseline_score",
+    "value": 0.13333333333333333,
+    "origin": "MEASURED",
+    "tool": "run_eval",
+    "how": "granite4-hermes:latest answered 4 of 30 rows of C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl correctly under the default baseline prompt, graded by granite4-hermes:latest, a model, judging its own answers; 95% interval 5%-30%",
+    "written_at": null
+   },
+   {
+    "fact": "classes_n",
+    "value": 45,
+    "origin": "MEASURED",
+    "tool": "assess_the_data",
+    "how": "counted 45 distinct values in the 'concept' column of C:\\Users\\example\\Desktop\\practical-ml-workspace\\ui-vocab.jsonl",
+    "written_at": null
+   },
+   {
+    "fact": "disk_free_gb",
+    "value": 507.8,
+    "origin": "MEASURED",
+    "tool": "inspect_hardware",
+    "how": "read from shutil.disk_usage(model cache volume)",
+    "written_at": null
+   },
+   {
+    "fact": "eval_size_n",
+    "value": 30,
+    "origin": "MEASURED",
+    "tool": "measure_eval_set",
+    "how": "counted 30 rows in C:\\Users\\example\\Desktop\\practical-ml-workspace\\split\\ui-vocab.eval.jsonl",
+    "written_at": null
+   },
+   {
+    "fact": "failure_histogram",
+    "value": {
+     "wrong_facts": 21
+    },
+    "origin": "MEASURED",
+    "tool": "rebucket_failures",
+    "how": "21 of 21 failing rows of eval run 45 re-tallied, 21 of them re-bucketed by the person who read them: wrong_facts 21",
+    "written_at": null
+   },
+   {
+    "fact": "fewshot_tried",
+    "value": true,
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "knowledge_volatility",
+    "value": "static",
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "labeled_examples_n",
+    "value": 135,
+    "origin": "MEASURED",
+    "tool": "assess_the_data",
+    "how": "counted 135 rows carrying a value in the 'concept' column of C:\\Users\\example\\Desktop\\practical-ml-workspace\\ui-vocab.jsonl",
+    "written_at": null
+   },
+   {
+    "fact": "modality",
+    "value": "text",
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "model_swap_tried",
+    "value": true,
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "privacy",
+    "value": "on_prem_only",
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "prompt_iterations",
+    "value": 3,
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "ram_gb",
+    "value": 15.9,
+    "origin": "MEASURED",
+    "tool": "inspect_hardware",
+    "how": "read from kernel32.GlobalMemoryStatusEx",
+    "written_at": null
+   },
+   {
+    "fact": "retrieval_tried",
+    "value": true,
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "retriever_recall_at_k",
+    "value": 0.9666666666666667,
+    "origin": "MEASURED",
+    "tool": "measure_retriever_recall",
+    "how": "29 of 30 questions in C:/Users/example/Desktop/practical-ml-workspace/split/ui-vocab.eval.jsonl had a passage from the right document in the top 5 of index 'ui-vocab-glossary-full' (12), which holds 45 passages scored by BM25 on this machine; ground truth read from the 'concept' column, named in the call; 95% interval 83%-99%. RECALL RISES WITH K and this number is at k=5",
+    "written_at": null
+   },
+   {
+    "fact": "target_score",
+    "value": 0.6,
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "task_family",
+    "value": "extraction",
+    "origin": "STATED",
+    "tool": "state_facts",
+    "how": "the user said so, through state_facts",
+    "written_at": null
+   },
+   {
+    "fact": "trivial_baseline_score",
+    "value": 0.03333333333333333,
+    "origin": "MEASURED",
+    "tool": "run_eval",
+    "how": "always answering 'its label states the action, and after firing it reports the outcome in the same words' scores 3% on the same 30 rows",
+    "written_at": null
+   },
+   {
+    "fact": "vram_gb",
+    "value": 8.0,
+    "origin": "MEASURED",
+    "tool": "inspect_hardware",
+    "how": "read from nvidia-smi --query-gpu=name,memory.total",
+    "written_at": null
+   }
+  ],
+  "storms": []
+ },
+ "reads": {
+  "runs": "evals.runs_in + evals.read + evals.results_for",
+  "comparisons": "evals.compare, paired against baseline_run_id",
+  "sandboxes": "sandbox.every + each run's job.json and MLH_EVENT lines",
+  "gpu": "sandbox._gpu_occupancy - nvidia-smi and ollama /api/ps",
+  "diagnosis": "journey_report.build"
+ }
+}

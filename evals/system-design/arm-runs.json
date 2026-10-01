@@ -1,0 +1,149 @@
+[
+  {
+    "arm": "arm-components-bare",
+    "n": 60,
+    "thread_id": 57,
+    "seconds": 142.4,
+    "rows_path": "evals/system-design/runs/arm-components-bare-baseline-20260909T151954.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-bare",
+    "n": 52,
+    "thread_id": 58,
+    "seconds": 18.1,
+    "rows_path": "evals/system-design/runs/arm-missing_component-bare-baseline-20260909T152012.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-bare",
+    "n": 52,
+    "thread_id": 59,
+    "seconds": 9.7,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-bare-baseline-20260909T152021.jsonl"
+  },
+  {
+    "arm": "arm-components-naming",
+    "n": 60,
+    "thread_id": 60,
+    "seconds": 121.5,
+    "rows_path": "evals/system-design/runs/arm-components-naming-baseline-20260909T152353.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-naming",
+    "n": 52,
+    "thread_id": 61,
+    "seconds": 36.6,
+    "rows_path": "evals/system-design/runs/arm-missing_component-naming-baseline-20260909T152430.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-naming",
+    "n": 52,
+    "thread_id": 62,
+    "seconds": 41.6,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-naming-baseline-20260909T152512.jsonl"
+  },
+  {
+    "arm": "arm-components-terse",
+    "n": 60,
+    "thread_id": 63,
+    "seconds": 22.8,
+    "rows_path": "evals/system-design/runs/arm-components-terse-baseline-20260909T152747.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-terse",
+    "n": 52,
+    "thread_id": 64,
+    "seconds": 16.4,
+    "rows_path": "evals/system-design/runs/arm-missing_component-terse-baseline-20260909T152803.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-terse",
+    "n": 52,
+    "thread_id": 65,
+    "seconds": 10.9,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-terse-baseline-20260909T152814.jsonl"
+  },
+  {
+    "arm": "arm-components-canonical",
+    "n": 60,
+    "thread_id": 66,
+    "seconds": 31.1,
+    "rows_path": "evals/system-design/runs/arm-components-canonical-baseline-20260909T152845.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-canonical",
+    "n": 52,
+    "thread_id": 67,
+    "seconds": 46.6,
+    "rows_path": "evals/system-design/runs/arm-missing_component-canonical-baseline-20260909T152932.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-canonical",
+    "n": 52,
+    "thread_id": 68,
+    "seconds": 30.9,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-canonical-baseline-20260909T153003.jsonl"
+  },
+  {
+    "arm": "arm-components-S-short",
+    "n": 60,
+    "thread_id": 69,
+    "seconds": 39.2,
+    "rows_path": "evals/system-design/runs/arm-components-S-short-baseline-20260909T225845.jsonl"
+  },
+  {
+    "arm": "arm-components-V-long",
+    "n": 60,
+    "thread_id": 70,
+    "seconds": 28.4,
+    "rows_path": "evals/system-design/runs/arm-components-V-long-baseline-20260909T225913.jsonl"
+  },
+  {
+    "arm": "arm-components-C-content",
+    "n": 60,
+    "thread_id": 71,
+    "seconds": 34.2,
+    "rows_path": "evals/system-design/runs/arm-components-C-content-baseline-20260909T225947.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-S-short",
+    "n": 52,
+    "thread_id": 72,
+    "seconds": 24.0,
+    "rows_path": "evals/system-design/runs/arm-missing_component-S-short-baseline-20260909T230011.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-V-long",
+    "n": 52,
+    "thread_id": 73,
+    "seconds": 26.0,
+    "rows_path": "evals/system-design/runs/arm-missing_component-V-long-baseline-20260909T230038.jsonl"
+  },
+  {
+    "arm": "arm-missing_component-C-content",
+    "n": 52,
+    "thread_id": 74,
+    "seconds": 35.5,
+    "rows_path": "evals/system-design/runs/arm-missing_component-C-content-baseline-20260909T230113.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-S-short",
+    "n": 52,
+    "thread_id": 75,
+    "seconds": 15.9,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-S-short-baseline-20260909T230129.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-V-long",
+    "n": 52,
+    "thread_id": 76,
+    "seconds": 16.8,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-V-long-baseline-20260909T230146.jsonl"
+  },
+  {
+    "arm": "arm-pattern_name-C-content",
+    "n": 52,
+    "thread_id": 77,
+    "seconds": 23.7,
+    "rows_path": "evals/system-design/runs/arm-pattern_name-C-content-baseline-20260909T230209.jsonl"
+  }
+]

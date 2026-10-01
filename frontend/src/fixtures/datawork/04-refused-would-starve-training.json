@@ -1,0 +1,40 @@
+{
+  "situation": "A refusal that carries arithmetic: holding out the rows G0 asks for would leave fewer than dataquality.MIN_ROWS_FOR_TRAINING to train on. It is the refusal whose extra fields a card cannot know in advance - would_hold_out, would_leave, minimum_to_train_on - and it is why the refusal card draws whatever the payload carried under the engine's own names rather than a closed table of twelve shapes.",
+  "dataset": "60 distinct rows, which is too few to give up an eval set from.",
+  "produced_by": {
+    "tool": "carve_eval_set",
+    "arguments": {
+      "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\small.jsonl",
+      "into": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\04-refused-would-starve-training_out",
+      "answer_column": "answer"
+    },
+    "thread_id": 1,
+    "database": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\scratch.db",
+    "captured_at_utc": "2026-08-21T12:17:14+00:00",
+    "engine": "e1a3117ca6fa7d7d65c9e1272d5c22482b978eca71950bceaab9efa317e73a52"
+  },
+  "shape": {
+    "top_level_keys": 10,
+    "rows_a_flat_table_would_draw": 10,
+    "rows_the_payload_actually_holds": 10,
+    "max_nesting_depth": 1,
+    "containers_summarised_away_at_depth_3": 0,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {},
+    "strings_past_320_chars_that_get_a_show_all_button": 1,
+    "longest_string_chars": 325,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "payload": {
+    "ok": false,
+    "error": "would_starve_training",
+    "summary": "Holding out 30 of 60 rows leaves 30 to train on, and below about 100 rows a fine-tune learns the examples rather than the task. Nothing was written. If you are not training on this file and want the whole of it as the eval set, that is not a carve: run measure_eval_set on the file itself and the gate is asked on that count.",
+    "nothing_was_written": true,
+    "path": "C:\\Users\\example\\AppData\\Local\\Temp\\dw_fx\\small.jsonl",
+    "rows_read": 60,
+    "would_hold_out": 30,
+    "would_leave": 30,
+    "minimum_to_train_on": 100,
+    "threshold_is": "our policy, declared in app/dataquality.py, not a property of your data"
+  }
+}

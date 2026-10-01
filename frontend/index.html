@@ -1,0 +1,44 @@
+<!doctype html>
+<!--
+  The app ships with data-theme="dark" set on first run — docs/DESIGN_SYSTEM.md
+  §1. It is set here rather than by React so the first paint is already the
+  right theme; src/components/Chrome.tsx takes over on mount and honours a
+  stored choice, including "system", which removes the attribute entirely.
+-->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- No CDN, no network request from the UI layer at all. §3.1: "a
+         local-first product that blocks first paint on a CDN is contradicting
+         itself". The brand faces are BUNDLED woff2 files imported in
+         src/main.tsx — they ship inside dist/ and load from disk. -->
+    <title>ML Harness</title>
+    <script>
+      /* Apply the stored choice before first paint, so a user who chose light
+         never sees a dark frame. "system" removes the attribute and lets the
+         media query decide — the third of §1's three states. */
+      try {
+        var t = localStorage.getItem('mlh.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        else if (t === 'system')
+          /* Resolved here, not left to a media query. There is no
+             `prefers-color-scheme` block in the token layer and bare :root is
+             the DARK palette, so removing the attribute - which is what this
+             line did until 2026-09-05 - made "system" mean "dark" on every
+             machine. Chrome.tsx keeps it following after mount. */
+          document.documentElement.setAttribute(
+            'data-theme',
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light' : 'dark');
+        if (localStorage.getItem('mlh.rows') === 'compact')
+          document.documentElement.setAttribute('data-rows', 'compact');
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

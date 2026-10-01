@@ -1,0 +1,55 @@
+{
+  "01-carved-and-clean": {
+    "top_level_keys": 22,
+    "rows_a_flat_table_would_draw": 83,
+    "rows_the_payload_actually_holds": 92,
+    "max_nesting_depth": 5,
+    "containers_summarised_away_at_depth_3": 1,
+    "rows_hidden_behind_those_summaries": 9,
+    "what_is_summarised_away": {
+      "leakage.findings[]": 1
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 2,
+    "longest_string_chars": 526,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "02-carved-and-leaking": {
+    "top_level_keys": 22,
+    "rows_a_flat_table_would_draw": 83,
+    "rows_the_payload_actually_holds": 186,
+    "max_nesting_depth": 7,
+    "containers_summarised_away_at_depth_3": 4,
+    "rows_hidden_behind_those_summaries": 103,
+    "what_is_summarised_away": {
+      "leakage.examples[]": 3,
+      "leakage.findings[]": 1
+    },
+    "strings_past_320_chars_that_get_a_show_all_button": 2,
+    "longest_string_chars": 1221,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "03-refused-no-such-column": {
+    "top_level_keys": 7,
+    "rows_a_flat_table_would_draw": 7,
+    "rows_the_payload_actually_holds": 7,
+    "max_nesting_depth": 2,
+    "containers_summarised_away_at_depth_3": 0,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {},
+    "strings_past_320_chars_that_get_a_show_all_button": 0,
+    "longest_string_chars": 127,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  },
+  "04-refused-would-starve-training": {
+    "top_level_keys": 10,
+    "rows_a_flat_table_would_draw": 10,
+    "rows_the_payload_actually_holds": 10,
+    "max_nesting_depth": 1,
+    "containers_summarised_away_at_depth_3": 0,
+    "rows_hidden_behind_those_summaries": 0,
+    "what_is_summarised_away": {},
+    "strings_past_320_chars_that_get_a_show_all_button": 1,
+    "longest_string_chars": 325,
+    "how": "Counted by a transcription of ResultView.tsx's own recursion (MAX_DEPTH = 3, LONG_TEXT = 320): one row per entry of every object it draws, none for a container at or past the depth cap. Depth counts containers, so the top-level object is 1."
+  }
+}
