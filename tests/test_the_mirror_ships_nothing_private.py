@@ -47,8 +47,8 @@ class TheMirrorShipsNothingPrivateTest(unittest.TestCase):
         for path, expect in (
             ("runs/abc123/sandboxes/practical-ml/adapter/README.md", "excluded tree runs/"),
             (".claude/worktrees/anything/AGENTS.md", "excluded tree .claude/"),
-            ("recipes/hf-peft-lora/recipe.toml", "excluded tree recipes/"),
             ("lab/handoff.md", "excluded tree lab/"),
+            ("card_owner/the_lock.py", "excluded tree card_owner/"),
             ("docs/judge_runs/some-private-run.md", "docs deny-by-default"),
             ("docs/overnight/2026-09-02-overnight.md", "docs deny-by-default"),
         ):
@@ -56,6 +56,13 @@ class TheMirrorShipsNothingPrivateTest(unittest.TestCase):
                 keep, why = policy.decide(path)
                 self.assertFalse(keep, f"{path} would ship")
                 self.assertEqual(why, expect)
+
+    def test_the_recipes_ship(self):
+        """Changed 2026-10-01: recipes/ and packages/ ship (288 KB, no private
+        string), because the mirror's own suite tests the recipes."""
+        for path in ("recipes/hf-peft-lora/recipe.toml", "packages/four_asserts/README.md"):
+            with self.subTest(path):
+                self.assertEqual(policy.decide(path), (True, "source"))
 
     def test_the_agent_instructions_never_ship(self):
         """They point at every internal document in the tree, so shipping them
