@@ -8,7 +8,7 @@
 
 `packages/four_asserts` is a **copy**. No submodule, no subtree, no nested
 `.git` - plain vendored files whose `pyproject.toml` names
-`Source = https://github.com/naidx0/four-asserts`. Cloning that repository and
+`Source = https://github.com/naidx0/research/tree/main/frameworks/four-asserts`. Cloning that repository and
 diffing it against this tree as it stood at `18fc9dc`:
 
 * **11 files identical**, including every module the harness imports
@@ -146,7 +146,12 @@ def why_the_tree_does_not_match_the_record() -> list[str]:
 
 
 def upstream_now(url: str) -> tuple[str, dict[str, str]] | None:
-    """Clone the published repository shallowly and digest it. NETWORK."""
+    """Clone the published repository shallowly and digest it. NETWORK.
+
+    The package now lives in a folder of a larger repository; the record's
+    `subdirectory` names where it sits, and the digest covers that folder only.
+    """
+    subdirectory = the_record().get("subdirectory") or ""
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
         done = subprocess.run(
             ["git", "clone", "--depth", "1", "-q", url, tmp + "/up"],
@@ -155,9 +160,13 @@ def upstream_now(url: str) -> tuple[str, dict[str, str]] | None:
         if done.returncode != 0:
             print(f"could not reach {url}: {done.stderr.strip()[:200]}", file=sys.stderr)
             return None
-        root = Path(tmp) / "up"
-        sha = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+        clone = Path(tmp) / "up"
+        sha = subprocess.run(["git", "-C", str(clone), "rev-parse", "HEAD"],
                              capture_output=True, text=True).stdout.strip()
+        root = clone / subdirectory if subdirectory else clone
+        if not root.is_dir():
+            print(f"{url} has no folder {subdirectory}", file=sys.stderr)
+            return None
         found = {}
         for path in sorted(root.rglob("*")):
             if not path.is_file() or any(part in NOT_OURS for part in path.parts):
@@ -170,7 +179,7 @@ def upstream_now(url: str) -> tuple[str, dict[str, str]] | None:
 
 def compare_with_upstream() -> int:
     record = the_record()
-    url = record.get("source") or "https://github.com/naidx0/four-asserts"
+    url = record.get("source") or "https://github.com/naidx0/research"
     got = upstream_now(url)
     if got is None:
         #: UNREACHABLE IS NOT UNCHANGED. Saying "no drift" because the network
@@ -230,7 +239,8 @@ def record_it(sha: str) -> int:
     THE_RECORD.write_text(
         json.dumps(
             {
-                "source": existing.get("source") or "https://github.com/naidx0/four-asserts",
+                "source": existing.get("source") or "https://github.com/naidx0/research",
+                "subdirectory": existing.get("subdirectory") or "frameworks/four-asserts",
                 "upstream": sha,
                 "diverged": existing.get("diverged") or {},
                 "files": ours(),

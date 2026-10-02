@@ -21,7 +21,7 @@ module named 'four_asserts'`.
 
 It said *"the tests exist had been doing the work of the tests pass"*. **That is
 a claim about the world and this can only see one gate.** `pyproject.toml` names
-`Source = https://github.com/naidx0/four-asserts`: the package is published from
+`Source = https://github.com/naidx0/research/tree/main/frameworks/four-asserts`: the package is published from
 a DIFFERENT repository, and if that repository gates these tests then they were
 running all along and only THIS gate was blind to them. Nothing in this checkout
 can tell the difference, so the claim is withdrawn and the scoped one kept:

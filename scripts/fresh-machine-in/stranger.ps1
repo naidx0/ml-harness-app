@@ -12,7 +12,10 @@ $ErrorActionPreference = "Continue"
 $out  = "C:\Users\WDAGUtilityAccount\Desktop\out"
 $page = Join-Path $out "stranger.txt"
 $py   = "C:\Users\WDAGUtilityAccount\Desktop\python\python.exe"
-$zip  = "https://github.com/naidx0/four-asserts/archive/refs/heads/main.zip"
+# The package lives in a folder of naidx0/research; pip takes the folder from the
+# `#subdirectory=` fragment and the source tree is that folder inside the zip.
+$zip  = "https://github.com/naidx0/research/archive/refs/heads/main.zip"
+$pkg  = "four-asserts @ $zip#subdirectory=frameworks/four-asserts"
 
 function Run($label, $block) {
     "" | Out-File -Append -Encoding utf8 $page
@@ -41,7 +44,7 @@ function Run($label, $block) {
 $venv = "C:\Users\WDAGUtilityAccount\Desktop\venv"
 Run "python -m venv venv" { & $py -m venv $venv }
 $py = "$venv\Scripts\python.exe"
-Run "python -m pip install $zip" { & $py -m pip install --no-cache-dir --quiet $zip }
+Run "python -m pip install $pkg" { & $py -m pip install --no-cache-dir --quiet $pkg }
 Run "python -c ""import four_asserts; print(four_asserts.__version__)""" { & $py -c "import four_asserts; print(four_asserts.__version__)" }
 
 # The tests are not part of the installed package, so a stranger who wants to
@@ -50,7 +53,7 @@ Run "does pip install bring the tests?" { & $py -c "import four_asserts, pathlib
 
 Invoke-WebRequest -Uri $zip -OutFile "$out\src.zip" -UseBasicParsing
 Expand-Archive -Path "$out\src.zip" -DestinationPath "$out\src" -Force
-$src = (Get-ChildItem "$out\src" -Directory | Select-Object -First 1).FullName
+$src = Join-Path (Get-ChildItem "$out\src" -Directory | Select-Object -First 1).FullName "frameworksour-asserts"
 
 Run "python -m unittest discover -s tests -t tests   (from the downloaded source)" {
     Push-Location $src

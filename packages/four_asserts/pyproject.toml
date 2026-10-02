@@ -20,7 +20,7 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Source = "https://github.com/naidx0/four-asserts"
+Source = "https://github.com/naidx0/research/tree/main/frameworks/four-asserts"
 
 [tool.setuptools.packages.find]
 include = ["four_asserts*"]
