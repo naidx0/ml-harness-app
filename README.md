@@ -1,8 +1,61 @@
-# ML Harness
+<p align="center">
+  <img src="src-tauri/icons/icon.svg" width="104" alt="ML Harness logo">
+</p>
+
+<h1 align="center">ML Harness</h1>
+
+<p align="center"><b>Should you train a model at all? It measures first, then does the cheapest thing that works.</b></p>
+
+<p align="center">
+  <a href="https://github.com/naidx0/ml-harness-app/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/naidx0/ml-harness-app?label=release&color=4f63c9"></a>
+  <a href="https://github.com/naidx0/ml-harness-app/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/naidx0/ml-harness-app/total?color=4f63c9"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
+  <img alt="Platform: Windows 10 and 11" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D4">
+  <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-black">
+</p>
+
+<p align="center">
+  <a href="https://www.usebastion.io/media/ml-harness/app.mp4"><img src="assets/readme/app-demo.gif" width="900" alt="ML Harness profiles a biopsy dataset, carves an eval set, returns a Do not train diagnosis with its five-gate ledger, then opens the evidence behind it"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/naidx0/ml-harness-app/releases/latest"><b>Download for Windows</b></a> ·
+  <a href="https://www.usebastion.io/products/ml-harness">Product page</a> ·
+  <a href="https://www.usebastion.io/media/ml-harness/app.mp4">Full demo video</a> ·
+  <a href="#before-and-after">Results</a> ·
+  <a href="https://www.usebastion.io">Bastion</a>
+</p>
 
 ML Harness is a desktop app that helps you decide whether to train a machine learning model, and then does the work it decided on. You describe what you want in plain words. It looks at your data, measures where you stand today, and tells you the cheapest thing that will actually work. Often that is a better prompt or a small script, not a fine-tune.
 
 It runs on your own computer, with a model you choose (a local one through Ollama, or any OpenAI-compatible API). Your files stay on your machine.
+
+The clip above is 14 seconds of the [app video](https://www.usebastion.io/media/ml-harness/app.mp4) (click it for the whole 26 seconds): asked to predict a diagnosis column, it profiles the data, carves an eval set, and answers *do not train* with the reason and the gate ledger.
+
+## Results at a glance
+
+| What was measured | Before | After | n | Source |
+|---|---:|---:|---|---|
+| Small ML tasks finished | 7 / 10 | **8 / 10** (9 / 10 without Git) | 10 runs per arm, small local model | [Before and after](#before-and-after) |
+| Failed shell commands per run | 2.0 | **0.0** | the same 10 runs | [Before and after](#before-and-after) |
+| Time per run | 119 s | **85 s** | the same 10 runs | lab log, H-shell A5, published on the [product page](https://www.usebastion.io/products/ml-harness) |
+| Judge wrongly keeping a rewrite that is not worse | 19 / 72 | **4 / 72** | 72 rewrites, in-sample | [Checking the judge](#checking-the-judge-a-before-and-after-eval) |
+| Tool router hits with 4 tools shown | 101 | **132** | of 140 steps, learned router vs BM25, p = 7.9e-9 | lab log, H1b, on the [product page](https://www.usebastion.io/products/ml-harness) |
+| Final reports with an invented number | 28 / 90 | **6 / 90** | number check plus one repair call, p = 0.031 | lab log, E11, on the [product page](https://www.usebastion.io/products/ml-harness) |
+
+Ten runs a side is a small sample, and each fix tried alone did worse than the baseline; only the combination was kept. The lab log is not part of this public copy; the product page lists the same numbers with their sources.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><a href="assets/readme/screen-diagnosis.png"><img src="assets/readme/screen-diagnosis.png" alt="A diagnosis reading Do not train, NO_ML__STATISTICS_OR_MORE_DATA, with a gate ledger showing 1 of 5 gates passed: an eval set exists, measured"></a><br><sub><b>The diagnosis.</b> Under 1,000 rows, it says do not train, and shows which of the five gates have passed and what would move it.</sub></td>
+    <td width="50%"><a href="assets/readme/screen-evidence.png"><img src="assets/readme/screen-evidence.png" alt="The Evidence panel beside the chat: the gate ledger and nine facts, each marked STATED or MEASURED with the tool and time that recorded it"></a><br><sub><b>The evidence.</b> Every fact it acts on is marked STATED (you said so) or MEASURED (counted from a file), with where it came from.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="assets/readme/screen-journey.png"><img src="assets/readme/screen-journey.png" alt="The Journey panel: route or classify, step 4 of 6, with attach context, assess the data (569 of 569 rows usable), carve eval set (114 rows held out) and measure baseline"></a><br><sub><b>The journey.</b> The route it chose, step by step: attach the data, assess it (569 of 569 rows usable), hold out 114 rows as an eval set, then measure the baseline.</sub></td>
+  </tr>
+</table>
 
 ## ⬇️ Download
 
@@ -186,3 +239,10 @@ Under the launcher the engine is `python -m uvicorn app.main:app --host 127.0.0.
 - [four-asserts](https://github.com/naidx0/four-asserts): four of this project's self-checks, packaged as a small library.
 
 MIT licensed.
+
+---
+
+<p align="center">
+  <a href="https://www.usebastion.io"><img src="assets/readme/bastion-mark.svg" width="40" alt="Bastion"></a><br>
+  <sub>ML Harness is a <a href="https://www.usebastion.io">Bastion</a> product. More on the <a href="https://www.usebastion.io/products/ml-harness">product page</a>.</sub>
+</p>
