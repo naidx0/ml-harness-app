@@ -236,7 +236,6 @@ Under the launcher the engine is `python -m uvicorn app.main:app --host 127.0.0.
 - [docs/VISION.md](docs/VISION.md): the longer story of what this is for.
 - [docs/how-to-verify.md](docs/how-to-verify.md): the rules the project holds its own checks to.
 - [The judge record](docs/judge_runs/THE-JUDGE.md): what happened when a model was used to grade other models, including every time its grade was withdrawn.
-- [four-asserts](https://github.com/naidx0/four-asserts): four of this project's self-checks, packaged as a small library.
 
 MIT licensed.
 
