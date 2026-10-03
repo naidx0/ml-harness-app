@@ -19,12 +19,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/naidx0/ml-harness-app/releases/latest"><b>Download for Windows</b></a> ·
+  <a href="#install">Install</a> ·
   <a href="https://www.usebastion.io/products/ml-harness">Product page</a> ·
   <a href="https://www.usebastion.io/media/ml-harness/app.mp4">Full demo video</a> ·
   <a href="#before-and-after">Results</a> ·
   <a href="https://www.usebastion.io">Bastion</a>
 </p>
+
+**Install on Windows 10 or 11.** Paste this into PowerShell. It installs the app, [Ollama](https://ollama.com) and a local model (about 5 GB in all), then opens the app with the model connected:
+
+```powershell
+irm https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.ps1 | iex
+```
+
+Or [download the installer](https://github.com/naidx0/ml-harness-app/releases/latest) (35 MB) and set up a model from the app's first screen. [More on both](#install).
 
 ML Harness is a desktop app that helps you decide whether to train a machine learning model, and then does the work it decided on. You describe what you want in plain words. It looks at your data, measures where you stand today, and tells you the cheapest thing that will actually work. Often that is a better prompt or a small script, not a fine-tune.
 
@@ -57,7 +65,21 @@ Ten runs a side is a small sample, and each fix tried alone did worse than the b
   </tr>
 </table>
 
-## ⬇️ Download
+## Install
+
+### One line in PowerShell
+
+Open PowerShell (Start menu, type *PowerShell*) and paste:
+
+```powershell
+irm https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.ps1 | iex
+```
+
+It downloads the latest release and checks its SHA-256 against the release's `SHA256SUMS.txt`, installs it for your user only, installs Ollama with [Ollama's own installer](https://ollama.com/download/windows) if you do not have it, pulls the model `qwen3.5:4b`, then opens ML Harness with that model connected. Type your question and press Enter. Running the line again skips whatever is already done. Read the script first if you like: [install.ps1](install.ps1).
+
+Options go before the line, for example `$env:MLH_MODEL = "qwen3.5:2b"; irm ... | iex`. `MLH_MODEL` picks another Ollama model, `MLH_NO_OLLAMA=1` installs only the app (for an API key instead), `MLH_NO_LAUNCH=1` does not open it at the end.
+
+### Download the installer
 
 <p>
   <a href="https://github.com/naidx0/ml-harness-app/releases/download/v0.1.0/ML-Harness-Setup-0.1.0-x64.exe"><img alt="Download for Windows (installer)" src="https://img.shields.io/badge/Download-Windows%20installer%20(.exe)-0078D4?style=for-the-badge&logo=windows&logoColor=white"></a>
@@ -70,7 +92,7 @@ Ten runs a side is a small sample, and each fix tried alone did worse than the b
 | 1️⃣ | **Download** | Click the blue **Windows installer** button above. It is one file of about 35 MB. |
 | 2️⃣ | **Install** | Double-click it. The installer is not signed yet, so Windows may say *"Windows protected your PC"*. Click **More info**, then **Run anyway**. It installs for your user only and needs no admin rights. |
 | 3️⃣ | **Open** | Click the **ML Harness** icon on your desktop or in the Start menu. The first launch sets up its own Python, so it needs internet. On a clean test machine that took 11 seconds. |
-| 4️⃣ | **Connect a model** | ML Harness ships no model. Click **Connect a model** and pick one your local [Ollama](https://ollama.com/download) already has, or paste an OpenAI-compatible endpoint and key. A key goes to the Windows credential store, never to a file. |
+| 4️⃣ | **Connect a model** | ML Harness ships no model. Click **New chat**. If your local [Ollama](https://ollama.com/download) has models, click one. If Ollama is missing or has no models, the screen says which and gives the one line above to paste into PowerShell; the model shows up by itself when it is ready. Or click **Use an API key instead** and paste an OpenAI-compatible endpoint and key. A key goes to the Windows credential store, never to a file. |
 | 5️⃣ | **Ask** | Type what you want. For example: *"Train a logistic regression on scikit-learn's iris dataset with an 80/20 split and tell me the test accuracy."* |
 
 **You need:** 🪟 Windows 10 or 11, 64-bit · 🌐 internet on the first launch.
