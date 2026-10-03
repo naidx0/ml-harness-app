@@ -436,3 +436,19 @@ h2.settings-tab-title {
     animation: none;
   }
 }
+
+/* The one primary action on a screen (Home's New chat, the new-chat card's
+   first road): the harness accent, not their contrast grey, which read as a
+   disabled button in light mode (looked at, 2026-10-03). */
+[data-harness-primary] {
+  background-color: var(--harness-accent) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+[data-harness-primary] [data-slot="icon-svg"],
+[data-harness-primary] svg {
+  color: #fff !important;
+}
+[data-harness-primary]:hover {
+  background-color: color-mix(in srgb, var(--harness-accent) 86%, black) !important;
+}

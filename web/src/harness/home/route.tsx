@@ -50,7 +50,8 @@ export function Home() {
             <Show when={sessions.session.canCreate() && sessions.data.groups().length > 0}>
               <Button
                 data-action="harness-home-new-chat"
-                variant="contrast"
+                data-harness-primary
+                variant="neutral"
                 size="normal"
                 icon="edit"
                 class="shrink-0"

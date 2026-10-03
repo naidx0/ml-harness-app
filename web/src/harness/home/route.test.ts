@@ -27,4 +27,9 @@ describe("Home is one column (Jaden, 2026-10-03)", () => {
     expect(read("src/harness/home/home.css")).toMatch(/\[data-component="harness-home"\] \[data-action="home-new-session"\] \{\s*display: none;/)
     expect(ours).toContain("sessions.data.groups().length > 0")
   })
+
+  it("draws New chat as the one primary button, in the harness accent", () => {
+    expect(read("src/harness/home/route.tsx")).toMatch(/data-action="harness-home-new-chat"\s+data-harness-primary/)
+    expect(read("src/brand/identity.css")).toMatch(/\[data-harness-primary\] \{\s*background-color: var\(--harness-accent\)/)
+  })
 })

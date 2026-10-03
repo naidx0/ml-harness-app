@@ -144,6 +144,8 @@ describe("the new-chat card's model check", () => {
     expect(card.textContent).toContain("Connect a model to start")
     const buttons = [...card.querySelectorAll("button")].map((one) => one.textContent?.trim())
     expect(buttons).toEqual(["Use a model on this computer", "Use an API key"])
+    // The first road is the primary one, in the harness accent (identity.css).
+    expect(card.querySelector("button")?.hasAttribute("data-harness-primary")).toBe(true)
     expect(card.querySelector("code")).toBeNull()
   })
 

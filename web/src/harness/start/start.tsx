@@ -125,7 +125,7 @@ export function HarnessStart(props: { composer: ComposerModel }) {
           <Show when={openModels}>
             {(open) => (
               <div class="flex flex-wrap justify-center gap-2">
-                <Button size="normal" variant="contrast" icon="monitor" onClick={() => open()("local")}>
+                <Button size="normal" variant="neutral" icon="monitor" data-harness-primary onClick={() => open()("local")}>
                   Use a model on this computer
                 </Button>
                 <Button size="normal" variant="neutral" icon="key" onClick={() => open()("api")}>
