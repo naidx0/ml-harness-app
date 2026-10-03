@@ -3,12 +3,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 const harness = vi.fn<(path: string) => Promise<unknown>>()
 vi.mock("../engine", () => ({ harness: (path: string) => harness(path) }))
-/** What `listLocalModels` finds on this machine. */
-let localModels: { name: string }[] = []
+/** What `listLocalModels` finds on this machine, or the error it throws when Ollama does not answer. */
+let localModels: { name: string }[] | Error = []
+let localReads = 0
 vi.mock("../providers/local", async (original) => ({
   ...(await original<typeof import("../providers/local")>()),
   connectLocal: async () => undefined,
-  listLocalModels: async () => localModels,
+  listLocalModels: async () => {
+    localReads += 1
+    if (localModels instanceof Error) throw localModels
+    return localModels
+  },
 }))
 vi.mock("@/workspaces/location", () => ({ useWorkspaceLocation: () => () => ({ directory: "C:/work" }) }))
 vi.mock("@/providers/connect/dialog", () => ({ DialogConnectProvider: () => null }))
@@ -204,5 +209,91 @@ describe("the new-chat card's model check", () => {
     handlers.get("model.updated")!()
     await tick()
     expect(providerReads).toBe(before + 2)
+  })
+})
+
+describe("the new-chat card when there is no local model to pick", () => {
+  const INSTALL = "irm https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.ps1 | iex"
+  afterEach(() => {
+    localModels = []
+    vi.useRealTimers()
+  })
+
+  it("says Ollama is not answering, shows its words, and offers the one-line fix", async () => {
+    localModels = new Error("connection refused at 127.0.0.1:11434")
+    providers = async () => []
+    const host = await mount()
+    await tick()
+    const card = host.querySelector<HTMLElement>('[data-slot="start-no-local"]')!
+    expect(card.dataset.missing).toBe("ollama")
+    expect(card.textContent).toContain("Ollama is not answering on this computer")
+    expect(card.textContent).toContain("connection refused at 127.0.0.1:11434")
+    expect(card.querySelector("code")?.textContent).toBe(INSTALL)
+  })
+
+  it("says Ollama has no model yet, and offers the same line, which pulls one and connects it", async () => {
+    localModels = []
+    providers = async () => []
+    const host = await mount()
+    await tick()
+    const card = host.querySelector<HTMLElement>('[data-slot="start-no-local"]')!
+    expect(card.dataset.missing).toBe("model")
+    expect(card.textContent).toContain("Ollama is running and has no models yet")
+    expect(card.textContent).toContain("qwen3.5:4b")
+    expect(card.querySelector("code")?.textContent).toBe(INSTALL)
+    expect(card.textContent).not.toContain("not answering")
+  })
+
+  it("copies the line", async () => {
+    localModels = new Error("refused")
+    providers = async () => []
+    const writeText = vi.fn(async () => undefined)
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+    const host = await mount()
+    await tick()
+    const copy = [...host.querySelectorAll("button")].find((one) => one.textContent === "Copy")!
+    copy.click()
+    await tick()
+    expect(writeText).toHaveBeenCalledWith(INSTALL)
+    expect(copy.textContent).toBe("Copied")
+  })
+
+  it("selects the line and says how to copy it when the clipboard refuses", async () => {
+    localModels = new Error("refused")
+    providers = async () => []
+    const writeText = vi.fn(async () => {
+      throw new Error("Write permission denied.")
+    })
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+    const host = await mount()
+    await tick()
+    const copy = [...host.querySelectorAll("button")].find((one) => one.textContent === "Copy")!
+    copy.click()
+    await tick()
+    await tick()
+    expect(copy.textContent).toBe("Click the line, then Ctrl+C")
+    expect(window.getSelection()?.toString()).toBe(INSTALL)
+  })
+
+  it("looks again on a click, and by itself every few seconds, until a model appears", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    localModels = new Error("refused")
+    providers = async () => []
+    const host = await mount()
+    await tick()
+    const before = localReads
+    const again = [...host.querySelectorAll("button")].find((one) => one.textContent === "Look again")!
+    again.click()
+    await tick()
+    expect(localReads).toBe(before + 1)
+    localModels = [{ name: "qwen3.5:4b" }]
+    await vi.advanceTimersByTimeAsync(5_000)
+    await tick()
+    expect(localReads).toBeGreaterThan(before + 1)
+    expect(host.querySelector('[data-slot="start-no-local"]')).toBeNull()
+    expect([...host.querySelectorAll("button")].map((one) => one.textContent)).toContain("qwen3.5 4b")
+    const settled = localReads
+    await vi.advanceTimersByTimeAsync(15_000)
+    expect(localReads).toBe(settled)
   })
 })

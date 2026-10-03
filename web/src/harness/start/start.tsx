@@ -11,6 +11,7 @@ import { useCommand } from "@/shell/commands/command"
 import { unsupportedCommandOverrides } from "../session/unsupported"
 import { useHarnessRead } from "../ui"
 import { HarnessSurfaceMarks } from "../session/marks"
+import { DEFAULT_LOCAL_MODEL, INSTALL_LINE, whatIsMissing, type LocalRead } from "./setup"
 
 /**
  * What a new chat shows under the composer (patch P14).
@@ -75,7 +76,38 @@ export function HarnessStart(props: { composer: ComposerModel }) {
   const sdk = useServerSDK()
   onCleanup(sdk.event.on("provider.updated", () => void refetch()))
   onCleanup(sdk.event.on("model.updated", () => void refetch()))
-  const [local] = createResource(noModel, () => listLocalModels().catch(() => []))
+  // A failed read is Ollama not answering, which is not the same as Ollama
+  // answering with no models: each has its own sentence below, and the error
+  // is shown in Ollama's own words rather than dropped.
+  const [local, { refetch: lookAgain }] = createResource(noModel, () =>
+    listLocalModels().then(
+      (models): LocalRead => ({ models }),
+      (error): LocalRead => ({ models: [], error: error instanceof Error ? error.message : String(error) }),
+    ),
+  )
+  const missing = () => whatIsMissing(local.latest)
+  // While nothing can be picked, look again every few seconds, so a model
+  // pulled in another window (or by the install line) appears by itself.
+  const poll = setInterval(() => {
+    if (noModel() && missing() && !local.loading) void lookAgain()
+  }, 5_000)
+  onCleanup(() => clearInterval(poll))
+  // A refused clipboard write (a webview can deny it) says how to copy by
+  // hand - one click on the line selects all of it - instead of doing nothing.
+  const [copied, setCopied] = createSignal<"copied" | "selected">()
+  let line: HTMLElement | undefined
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(INSTALL_LINE)
+      setCopied("copied")
+    } catch {
+      const range = document.createRange()
+      if (line) range.selectNodeContents(line)
+      window.getSelection()?.removeAllRanges()
+      window.getSelection()?.addRange(range)
+      setCopied("selected")
+    }
+  }
   const [busy, setBusy] = createSignal<string>()
   const [failure, setFailure] = createSignal<string>()
 
@@ -141,17 +173,44 @@ export function HarnessStart(props: { composer: ComposerModel }) {
         <div class="flex w-full flex-col items-center gap-2 rounded-[10px] bg-v2-background-bg-layer-01 p-3">
           <div class="text-[13px] [font-weight:530] text-v2-text-text-base">Pick a model to start</div>
           <Show
-            when={(local() ?? []).length > 0}
+            when={(local.latest?.models ?? []).length > 0}
             fallback={
-              <div class="text-12-regular text-v2-text-text-muted">
-                {local.loading
-                  ? "Looking for models on this computer…"
-                  : "No models found on this computer. Install Ollama and pull one, or use an API key."}
-              </div>
+              <Show
+                when={missing()}
+                fallback={<div class="text-12-regular text-v2-text-text-muted">Looking for models on this computer…</div>}
+              >
+                {(what) => (
+                  <div data-slot="start-no-local" data-missing={what()} class="flex w-full max-w-[560px] flex-col items-center gap-2">
+                    <div class="text-12-regular text-v2-text-text-muted">
+                      {what() === "ollama"
+                        ? "Ollama is not answering on this computer, so there is no local model to pick. If it is installed, open it from the Start menu. If not, run this line in PowerShell: it installs Ollama and the model " +
+                          DEFAULT_LOCAL_MODEL +
+                          " (about 5 GB) and connects it."
+                        : "Ollama is running and has no models yet. Run this line in PowerShell: it pulls " +
+                          DEFAULT_LOCAL_MODEL +
+                          " (about 3.4 GB) and connects it. A model you pull yourself appears here too."}
+                    </div>
+                    <div class="flex w-full items-center gap-2 rounded-[8px] bg-v2-background-bg-layer-02 px-2 py-1 text-left">
+                      <code ref={line} class="min-w-0 flex-1 select-all break-all font-mono text-[12px] text-v2-text-text-base">
+                        {INSTALL_LINE}
+                      </code>
+                      <Button size="small" variant="outline" onClick={() => void copy()}>
+                        {copied() === "copied" ? "Copied" : copied() === "selected" ? "Click the line, then Ctrl+C" : "Copy"}
+                      </Button>
+                    </div>
+                    <Show when={local.latest?.error}>
+                      {(error) => <div class="font-mono text-[11px] text-v2-text-text-faint">Ollama: {error()}</div>}
+                    </Show>
+                    <Button size="small" variant="ghost" onClick={() => void lookAgain()}>
+                      Look again
+                    </Button>
+                  </div>
+                )}
+              </Show>
             }
           >
             <div class="flex flex-wrap justify-center gap-2">
-              <For each={local()}>
+              <For each={local.latest?.models}>
                 {(model) => (
                   <Button
                     size="small"
