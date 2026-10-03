@@ -111,8 +111,11 @@ fn portfile_candidates() -> Vec<PathBuf> {
         }
     }
 
-    if let Ok(local) = std::env::var("LOCALAPPDATA") {
-        found.push(PathBuf::from(local).join("ml-harness").join("engine.json"));
+    // The installed data root on this platform: LOCALAPPDATA on Windows,
+    // ~/.local/share on a Mac. Reading LOCALAPPDATA alone left a Mac app
+    // unable to find its own engine (engine::installed_data_root).
+    if let Some(root) = engine::installed_data_root() {
+        found.push(root.join("engine.json"));
     }
 
     // The checkout, when this is running out of one. `src-tauri/` sits beside

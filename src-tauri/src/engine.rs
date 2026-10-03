@@ -124,6 +124,10 @@ pub fn interpreters() -> Vec<(String, PathBuf)> {
     }
 
     found.push(("python on PATH".into(), PathBuf::from("python")));
+    // A Mac ships `python3` and no `python`.
+    if !cfg!(windows) {
+        found.push(("python3 on PATH".into(), PathBuf::from("python3")));
+    }
     found
 }
 
@@ -139,12 +143,27 @@ fn data_root() -> Option<PathBuf> {
             return Some(PathBuf::from(named));
         }
     }
-    if cfg!(windows) {
-        std::env::var("LOCALAPPDATA")
-            .ok()
-            .map(|local| PathBuf::from(local).join("ml-harness"))
+    installed_data_root()
+}
+
+/// The per-user data root of an installed copy, with no override: what
+/// `app/paths.py` picks on this platform. `lib.rs::portfile_candidates` reads
+/// it too, so the shell finds the engine.json the engine writes on a Mac.
+pub(crate) fn installed_data_root() -> Option<PathBuf> {
+    data_root_for(
+        cfg!(windows),
+        std::env::var("LOCALAPPDATA").ok(),
+        std::env::var("HOME").ok(),
+    )
+}
+
+/// The rule itself, with the platform and the environment passed in, so the
+/// branch for the platform this was NOT built on is still tested.
+fn data_root_for(windows: bool, local: Option<String>, home: Option<String>) -> Option<PathBuf> {
+    if windows {
+        local.map(|local| PathBuf::from(local).join("ml-harness"))
     } else {
-        std::env::var("HOME").ok().map(|home| {
+        home.map(|home| {
             PathBuf::from(home)
                 .join(".local")
                 .join("share")
@@ -260,6 +279,20 @@ mod payload_tests {
 
     fn a_wheel(beside: &Path, name: &str) {
         std::fs::write(beside.join("resources").join(name), b"not really a wheel").unwrap();
+    }
+
+    #[test]
+    fn the_installed_data_root_on_each_platform() {
+        // macOS and Linux: the XDG folder app/paths.py uses, not LOCALAPPDATA.
+        assert_eq!(
+            data_root_for(false, None, Some("/Users/sam".into())),
+            Some(PathBuf::from("/Users/sam").join(".local").join("share").join("ml-harness"))
+        );
+        assert_eq!(
+            data_root_for(true, Some("C:/Users/sam/AppData/Local".into()), Some("C:/Users/sam".into())),
+            Some(PathBuf::from("C:/Users/sam/AppData/Local").join("ml-harness"))
+        );
+        assert_eq!(data_root_for(false, Some("x".into()), None), None);
     }
 
     #[test]
