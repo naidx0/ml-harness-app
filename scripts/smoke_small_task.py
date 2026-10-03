@@ -2,6 +2,7 @@
 
     python scripts/smoke_small_task.py            # iris, against the running engine
     python scripts/smoke_small_task.py --task csv # linear regression on a bundled CSV
+    python scripts/smoke_small_task.py --no-folder # iris, as a first chat with no project folder chosen
 
 It reads engine.json (the portfile the app writes), opens a Full session in a
 fresh empty folder, sends the task, waits for the turn to end, and passes only
@@ -95,6 +96,10 @@ def main() -> int:
     parser.add_argument("--task", choices=sorted(TASKS), default="iris")
     parser.add_argument("--budget", type=int, default=900, help="seconds to wait for the turn")
     parser.add_argument("--out", help="write the transcript here")
+    parser.add_argument(
+        "--no-folder", action="store_true",
+        help="send no location, as a first chat on a fresh install does (iris only)",
+    )
     args = parser.parse_args()
 
     found = portfile()
@@ -115,12 +120,18 @@ def main() -> int:
             return json.loads(raw) if raw else None
 
     task = TASKS[args.task]
-    folder = Path(tempfile.mkdtemp(prefix=f"mlh-smoke-{args.task}-"))
-    if args.task == "csv":
-        (folder / "data.csv").write_bytes(the_csv().encode())
-    session = call("POST", "/api/session", {
-        "agent": "full", "title": f"smoke {args.task}", "location": {"directory": str(folder)},
-    })["data"]["id"]
+    if args.no_folder and args.task == "csv":
+        print("--no-folder needs a task with no input file", file=sys.stderr)
+        return 2
+    folder: Path | None = None
+    request: dict = {"agent": "full", "title": f"smoke {args.task}"}
+    if not args.no_folder:
+        folder = Path(tempfile.mkdtemp(prefix=f"mlh-smoke-{args.task}-"))
+        if args.task == "csv":
+            (folder / "data.csv").write_bytes(the_csv().encode())
+        request["location"] = {"directory": str(folder)}
+    created = call("POST", "/api/session", request)["data"]
+    session = created["id"]
     call("POST", f"/api/session/{session}/prompt", {"text": task["prompt"]})
     started = time.time()
     messages: list[dict] = []
@@ -131,7 +142,8 @@ def main() -> int:
         if any(m.get("type") == "idle" for m in messages):
             break
     verdict = score(messages, re.compile(task["truth"]))
-    verdict.update(task=args.task, session=session, folder=str(folder), seconds=round(time.time() - started))
+    where = str(folder) if folder else (created.get("location") or {}).get("directory")
+    verdict.update(task=args.task, session=session, folder=where, seconds=round(time.time() - started))
     if args.out:
         Path(args.out).write_text(json.dumps({"verdict": verdict, "messages": messages}, indent=1), encoding="utf-8")
     print(json.dumps(verdict))
