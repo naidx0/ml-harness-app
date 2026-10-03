@@ -10,7 +10,7 @@
   <a href="https://github.com/naidx0/ml-harness-app/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/naidx0/ml-harness-app?label=release&color=4f63c9"></a>
   <a href="https://github.com/naidx0/ml-harness-app/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/naidx0/ml-harness-app/total?color=4f63c9"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
-  <img alt="Platform: Windows 10 and 11" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D4">
+  <img alt="Platform: Windows 10 and 11, macOS 11 and later" src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS-0078D4">
   <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-black">
 </p>
 
@@ -26,13 +26,21 @@
   <a href="https://www.usebastion.io">Bastion</a>
 </p>
 
-**Install on Windows 10 or 11.** Paste this into PowerShell. It installs the app, [Ollama](https://ollama.com) and a local model (about 5 GB in all), then opens the app with the model connected:
+**Install.** One line installs the app, [Ollama](https://ollama.com) and a local model (about 5 GB in all), then opens the app with the model connected.
+
+On **Windows 10 or 11**, paste this into PowerShell:
 
 ```powershell
 irm https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.ps1 | iex
 ```
 
-Or [download the installer](https://github.com/naidx0/ml-harness-app/releases/latest) (35 MB) and set up a model from the app's first screen. [More on both](#install).
+On a **Mac** (macOS 11 or later, Apple Silicon or Intel), paste this into Terminal:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.sh | sh
+```
+
+Or [download the installer](https://github.com/naidx0/ml-harness-app/releases/latest) (`.exe` for Windows, `.dmg` for Mac) and set up a model from the app's first screen. [More on both](#install).
 
 ML Harness is a desktop app that helps you decide whether to train a machine learning model, and then does the work it decided on. You describe what you want in plain words. It looks at your data, measures where you stand today, and tells you the cheapest thing that will actually work. Often that is a better prompt or a small script, not a fine-tune.
 
@@ -79,6 +87,16 @@ It downloads the latest release and checks its SHA-256 against the release's `SH
 
 Options go before the line, for example `$env:MLH_MODEL = "qwen3.5:2b"; irm ... | iex`. `MLH_MODEL` picks another Ollama model, `MLH_NO_OLLAMA=1` installs only the app (for an API key instead), `MLH_NO_LAUNCH=1` does not open it at the end.
 
+### One line in Terminal (Mac)
+
+Open Terminal (Applications > Utilities > Terminal) and paste:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.sh | sh
+```
+
+It does the same five things as the Windows line: downloads the latest `.dmg` for your Mac and checks its SHA-256, copies ML Harness into Applications (no password), installs Ollama from ollama.com if you do not have it, pulls `qwen3.5:4b`, and opens ML Harness with that model connected. The same options work: `curl -fsSL ... | MLH_MODEL=qwen3.5:2b sh`. Read it first if you like: [install.sh](install.sh).
+
 ### Download the installer
 
 <p>
@@ -92,7 +110,7 @@ Options go before the line, for example `$env:MLH_MODEL = "qwen3.5:2b"; irm ... 
 | 1️⃣ | **Download** | Click the blue **Windows installer** button above. It is one file of about 35 MB. |
 | 2️⃣ | **Install** | Double-click it. The installer is not signed yet, so Windows may say *"Windows protected your PC"*. Click **More info**, then **Run anyway**. It installs for your user only and needs no admin rights. |
 | 3️⃣ | **Open** | Click the **ML Harness** icon on your desktop or in the Start menu. The first launch sets up its own Python, so it needs internet. On a clean test machine that took 11 seconds. |
-| 4️⃣ | **Connect a model** | ML Harness ships no model. Click **New chat**. If your local [Ollama](https://ollama.com/download) has models, click one. If Ollama is missing or has no models, the screen says which and gives the one line above to paste into PowerShell; the model shows up by itself when it is ready. Or click **Use an API key instead** and paste an OpenAI-compatible endpoint and key. A key goes to the Windows credential store, never to a file. |
+| 4️⃣ | **Connect a model** | ML Harness ships no model. Click **New chat**, then **Use a model on this computer** or **Use an API key**. Both open Settings > Models. Click a model your local [Ollama](https://ollama.com/download) has, or pick OpenAI, OpenRouter or another server and paste a key. If Ollama is missing or has no models, the page says which and gives the one line above. A key goes to the Windows credential store, never to a file. |
 | 5️⃣ | **Ask** | Type what you want. For example: *"Train a logistic regression on scikit-learn's iris dataset with an 80/20 split and tell me the test accuracy."* |
 
 **You need:** 🪟 Windows 10 or 11, 64-bit · 🌐 internet on the first launch.
@@ -100,6 +118,8 @@ Options go before the line, for example `$env:MLH_MODEL = "qwen3.5:2b"; irm ... 
 
 🔐 **Check the file.** Each release lists the SHA-256 of every download. In PowerShell: `Get-FileHash .\ML-Harness-Setup-0.1.0-x64.exe -Algorithm SHA256`
 🧹 **Uninstall.** Windows Settings → Apps → ML Harness → Uninstall.
+
+**On a Mac, from the .dmg:** open it and drag **ML Harness** into Applications. The Mac build is not signed with an Apple Developer ID yet, so the first time, right-click ML Harness in Applications and choose **Open**, then **Open** again. The one line above does not hit this, because a file `curl` downloads is not quarantined. Keys go to the macOS Keychain. To uninstall, drag ML Harness from Applications to the Trash; its data is in `~/.local/share/ml-harness`.
 
 ## See it run
 

@@ -99,8 +99,15 @@ describe("what is already running here, when the read fails", () => {
   })
 })
 
-describe("when there is no local model to pick", () => {
+describe("when there is no local model to pick (on Windows)", () => {
   const INSTALL = "irm https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.ps1 | iex"
+  const agent = navigator.userAgent
+  beforeEach(() => {
+    Object.defineProperty(navigator, "userAgent", { value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", configurable: true })
+  })
+  afterEach(() => {
+    Object.defineProperty(navigator, "userAgent", { value: agent, configurable: true })
+  })
 
   it("says Ollama is not answering, shows its words, and offers the one-line fix", async () => {
     listLocalModels.mockRejectedValue(new Error("connection refused at 127.0.0.1:11434"))
@@ -120,5 +127,28 @@ describe("when there is no local model to pick", () => {
     expect(card.textContent).toContain("Ollama is running and has no models yet")
     expect(card.textContent).toContain("qwen3.5:4b")
     expect(card.querySelector("code")?.textContent).toBe(INSTALL)
+  })
+})
+
+describe("when there is no local model to pick (on a Mac)", () => {
+  const agent = navigator.userAgent
+  beforeEach(() => {
+    Object.defineProperty(navigator, "userAgent", { value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5)", configurable: true })
+  })
+  afterEach(() => {
+    Object.defineProperty(navigator, "userAgent", { value: agent, configurable: true })
+  })
+
+  it("gives the Terminal line and says Applications, not PowerShell and the Start menu", async () => {
+    listLocalModels.mockRejectedValue(new Error("connection refused"))
+    const host = await mount(() => <LocalModels connections={[]} busy={false} run={async () => true} />)
+    const card = host.querySelector<HTMLElement>('[data-slot="local-missing"]')!
+    expect(card.querySelector("code")?.textContent).toBe(
+      "curl -fsSL https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.sh | sh",
+    )
+    expect(card.textContent).toContain("Terminal")
+    expect(card.textContent).toContain("Applications")
+    expect(card.textContent).not.toContain("PowerShell")
+    expect(card.textContent).not.toContain("Start menu")
   })
 })

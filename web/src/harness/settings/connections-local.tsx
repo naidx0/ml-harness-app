@@ -8,7 +8,7 @@ import { inUseModel, modelList, reachable, type Candidate } from "./connections-
 import { EmptyLine, message, SettingsSection } from "./connections-parts"
 import type { Run } from "./connections"
 import { InstallLine } from "../start/install-line"
-import { DEFAULT_LOCAL_MODEL } from "../start/setup"
+import { DEFAULT_LOCAL_MODEL, hostOS, installFor } from "../start/setup"
 
 /**
  * What a local model's capabilities say about tool calling. No list at all
@@ -33,6 +33,9 @@ export function toolCallingOf(capabilities: readonly string[] | null | undefined
  */
 
 export function LocalModels(props: { connections: Connection[] | undefined; busy: boolean; run: Run }) {
+  // The install line and its wording for this computer: PowerShell on
+  // Windows, Terminal on a Mac (start/setup.ts).
+  const setup = () => installFor(hostOS())
   // OUR OWN IN-FLIGHT COUNT, as `useHarnessRead` keeps one (ui.tsx): a raw
   // resource's `loading` stays true inside their transitions, so "Looking…"
   // never came back. `useHarnessRead` itself reads a GET path, and this list
@@ -94,11 +97,17 @@ export function LocalModels(props: { connections: Connection[] | undefined; busy
             {/* Not running Ollama is an ordinary choice, not a fault. */}
             <div data-slot="local-missing" data-missing="ollama" class="flex flex-col gap-2 px-3 py-3 text-[13px] text-v2-text-text-muted">
               <span>
-                Ollama is not answering on this computer. If it is installed, open it from the Start menu. If not, run
-                this line in PowerShell: it installs Ollama and {DEFAULT_LOCAL_MODEL} (about 5 GB) and connects it. Or
-                use an API key below.
+                Ollama is not answering on this computer. If it is installed, open it from {setup()?.apps ?? "your apps"}.
+                <Show when={setup()} fallback={<> If not, install it from ollama.com, or use an API key below.</>}>
+                  {(how) => (
+                    <>
+                      {" "}If not, run this line in {how().shell}: it installs Ollama and {DEFAULT_LOCAL_MODEL} (about 5
+                      GB) and connects it. Or use an API key below.
+                    </>
+                  )}
+                </Show>
               </span>
-              <InstallLine />
+              <Show when={setup()}>{(how) => <InstallLine line={how().line} />}</Show>
               <span class="font-mono text-[11px] text-v2-text-text-faint">
                 Ollama: {models.error instanceof Error ? models.error.message : String(models.error)}
               </span>
@@ -110,10 +119,17 @@ export function LocalModels(props: { connections: Connection[] | undefined; busy
           <Match when={(list() ?? []).length === 0}>
             <div data-slot="local-missing" data-missing="model" class="flex flex-col gap-2 px-3 py-3 text-[13px] text-v2-text-text-muted">
               <span>
-                Ollama is running and has no models yet. Run this line in PowerShell: it pulls {DEFAULT_LOCAL_MODEL}
-                (about 3.4 GB) and connects it. A model you pull yourself appears here after Look again.
+                Ollama is running and has no models yet.
+                <Show when={setup()} fallback={<> Pull one with ollama pull {DEFAULT_LOCAL_MODEL}, then Look again.</>}>
+                  {(how) => (
+                    <>
+                      {" "}Run this line in {how().shell}: it pulls {DEFAULT_LOCAL_MODEL} (about 3.4 GB) and connects it.
+                      A model you pull yourself appears here after Look again.
+                    </>
+                  )}
+                </Show>
               </span>
-              <InstallLine />
+              <Show when={setup()}>{(how) => <InstallLine line={how().line} />}</Show>
             </div>
           </Match>
           <Match when={true}>
