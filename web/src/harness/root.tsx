@@ -1,9 +1,7 @@
 import { createEffect } from "solid-js"
 import type { TimelineDetail } from "@opencode/session-ui/timeline/detail"
 import { useSettings } from "@/settings/model"
-import { useCommand } from "@/shell/commands/command"
-import { useLanguage } from "@/runtime/i18n/language"
-import { tabLayoutCommand } from "./rail/layout"
+import { keepVertical } from "./rail/layout"
 
 /**
  * Harness defaults applied to their settings, once per install.
@@ -92,14 +90,13 @@ function record(key: string) {
 
 export function HarnessRoot() {
   const settings = useSettings()
-  const language = useLanguage()
 
-  // Tabs across the top or the session rail, one key from anywhere (the
-  // owner, 2026-09-23; rail/layout.ts). Here because this root is mounted in
-  // both layouts, and the rail only in one.
-  useCommand().register("harness.layout", () => [
-    tabLayoutCommand(settings, language.t("command.category.view")),
-  ])
+  // One layout, the left sidebar (rail/layout.ts): put back whenever anything
+  // sets it otherwise.
+  createEffect(() => {
+    if (!settings.ready()) return
+    keepVertical(settings)
+  })
 
   createEffect(() => {
     if (!settings.ready()) return

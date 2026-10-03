@@ -29,6 +29,7 @@ import { MobileDrawer, MobileDrawerContent, MobileDrawerLabel, MobileDrawerTrigg
 import { sessionTabTitle } from "./tab-title"
 import { SessionTabAvatar } from "@/shell/layout/session-tab-avatar"
 import { HarnessRail } from "@harness/rail/rail"
+import { HarnessSidebarSettings } from "@harness/rail/settings-link"
 import { SessionProgressIndicatorV2 } from "@opencode/session-ui/v2/session-progress-indicator-v2"
 import { projectForSession } from "@/shell/layout/helpers"
 import { useSettingsDialog } from "@/settings/command"
@@ -668,6 +669,7 @@ export function Titlebar(props: {
                                 <bdi dir="ltr">{command.keybind("tab.new")}</bdi>
                               </span>
                             </button>
+                            <HarnessSidebarSettings />
                             <div class="h-4 w-full shrink-0" aria-hidden="true" />
                             <HarnessRail />
                             <div class="flex min-h-0 flex-1 flex-col gap-1">

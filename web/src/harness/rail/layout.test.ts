@@ -1,7 +1,9 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { describe, expect, it } from "vitest"
-import { otherTabLayout, tabLayoutCommand, TAB_LAYOUT_COMMAND, TAB_LAYOUT_KEYBIND, type TabLayout } from "./layout"
+import { keepVertical, type TabLayout } from "./layout"
 
-// A settings double owned by this test: the one field the command reads and writes.
+// A settings double owned by this test: the one field the layout reads and writes.
 function settings(start: TabLayout) {
   let value = start
   return {
@@ -12,32 +14,25 @@ function settings(start: TabLayout) {
   }
 }
 
-describe("the tab layout switch (the owner, 2026-09-23)", () => {
-  it("flips between the two layouts and back", () => {
-    expect(otherTabLayout("vertical")).toBe("horizontal")
-    expect(otherTabLayout("horizontal")).toBe("vertical")
-  })
-
-  it("is one palette command with one shortcut, titled for where the person is", () => {
-    const store = settings("vertical")
-    const first = tabLayoutCommand(store, "View")
-    expect(first).toMatchObject({ id: TAB_LAYOUT_COMMAND, keybind: TAB_LAYOUT_KEYBIND, category: "View" })
-    expect(first.title).toBe("Show open chats as tabs across the top")
-    first.onSelect()
-    expect(store.appearance.tabLayout()).toBe("horizontal")
-    const back = tabLayoutCommand(store, "View")
-    expect(back.title).toBe("Show the session rail")
-    // The same id and key from either side: one shortcut, both directions.
-    expect([back.id, back.keybind]).toEqual([first.id, first.keybind])
-    back.onSelect()
+describe("the layout is always the left sidebar (Jaden, 2026-10-03)", () => {
+  it("puts a horizontal layout back to vertical", () => {
+    const store = settings("horizontal")
+    expect(keepVertical(store)).toBe(true)
     expect(store.appearance.tabLayout()).toBe("vertical")
   })
 
-  it("reads the setting when chosen, not when the palette was built", () => {
+  it("leaves a vertical layout alone", () => {
     const store = settings("vertical")
-    const stale = tabLayoutCommand(store, "View")
-    store.appearance.setTabLayout("horizontal")
-    stale.onSelect()
+    expect(keepVertical(store)).toBe(false)
     expect(store.appearance.tabLayout()).toBe("vertical")
+  })
+
+  it("offers no switch: no palette command, no shortcut, no rail button", () => {
+    const here = (path: string) => readFileSync(resolve(process.cwd(), "src", "harness", path), "utf-8")
+    for (const file of ["root.tsx", "rail/rail.tsx"]) {
+      expect(here(file)).not.toContain("harness.layout")
+      expect(here(file)).not.toContain("harness-rail-tab-layout")
+      expect(here(file)).not.toContain('setTabLayout("horizontal")')
+    }
   })
 })

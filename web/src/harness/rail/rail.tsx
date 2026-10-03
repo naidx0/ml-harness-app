@@ -15,8 +15,6 @@ import { createEffect, createMemo, createResource, createSignal, on, Show, start
 import { createHomeController } from "@/home/model"
 import { shouldOpenSessionInBackground } from "@/home/sessions/open"
 import { useLanguage } from "@/runtime/i18n/language"
-import { useSettings } from "@/settings/model"
-import { useCommand } from "@/shell/commands/command"
 import { ServerConnection } from "@/runtime/server/registry"
 import type { ServerCtx } from "@/runtime/server/runtime"
 import { sessionHref } from "@/shell/routes/session"
@@ -47,7 +45,6 @@ import {
   type RailPrefs,
   type RailRow,
 } from "./model"
-import { TAB_LAYOUT_COMMAND, tabLayoutTitle } from "./layout"
 
 /**
  * THE SESSION RAIL, in OpenCode's vertical-tabs sidebar.
@@ -132,8 +129,6 @@ export function HarnessRail() {
   const language = useLanguage()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const settings = useSettings()
-  const command = useCommand()
 
   const conn = home.server.focused
   const ctx = home.server.focusedContext
@@ -281,8 +276,7 @@ export function HarnessRail() {
   // draws across the top, what Ctrl+W closes and Ctrl+Shift+T reopens, and
   // where a chat keeps its review pane and unsent text. So the mark stays,
   // says so on hover, and the menu can clear the tabs he never sees.
-  const shortcut = () => command.keybind(TAB_LAYOUT_COMMAND)
-  const openHint = () => `Open as a tab in this window. ${shortcut()} shows your tabs across the top.`
+  const openHint = () => "Open as a tab in this window."
   const otherTabs = (sessionID: string) => {
     const server = serverKey()
     return server ? otherSessionTabIndexes(tabs.store, server, sessionID) : []
@@ -709,19 +703,6 @@ export function HarnessRail() {
               />
             </Show>
           </label>
-          {/* The one-click form of the layout switch (layout.ts): this rail
-              lives in the vertical layout, so from here it only goes one way. */}
-          <Tooltip placement="right" value={`${tabLayoutTitle("vertical")} (${shortcut()})`}>
-            <IconButton
-              type="button"
-              data-action="harness-rail-tab-layout"
-              variant="ghost-muted"
-              size="small"
-              icon={<Icon name="layout-bottom" class="rotate-180" />}
-              aria-label={tabLayoutTitle("vertical")}
-              onClick={() => settings.appearance.setTabLayout("horizontal")}
-            />
-          </Tooltip>
         </div>
         <div class="mt-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden">
           {/* KEYED, NOT <For>. Every re-list builds new folder and row objects;

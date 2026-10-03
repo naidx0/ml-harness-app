@@ -778,6 +778,29 @@ PATCHES = (
             "    if (opt.id in UNSUPPORTED_COMMANDS) continue // Harness: switched off here (S12).",
         ]),
     ),
+    # P44: SETTINGS AT THE TOP LEFT (Jaden, 2026-10-03: "a settings bar top
+    # left not on home"). Under their Home and New chat in the sidebar, in the
+    # same row style, ahead of the spacer and the rail (P20-P21).
+    (
+        "packages/app/src/shell/titlebar/titlebar.tsx",
+        'import { HarnessRail } from "@harness/rail/rail"',
+        chr(10).join([
+            'import { HarnessRail } from "@harness/rail/rail"',
+            'import { HarnessSidebarSettings } from "@harness/rail/settings-link"',
+        ]),
+    ),
+    (
+        "packages/app/src/shell/titlebar/titlebar.tsx",
+        chr(10).join([
+            '                            <div class="h-4 w-full shrink-0" aria-hidden="true" />',
+            "                            <HarnessRail />",
+        ]),
+        chr(10).join([
+            "                            <HarnessSidebarSettings />",
+            '                            <div class="h-4 w-full shrink-0" aria-hidden="true" />',
+            "                            <HarnessRail />",
+        ]),
+    ),
 )
 
 
