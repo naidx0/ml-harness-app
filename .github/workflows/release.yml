@@ -263,6 +263,26 @@ jobs:
           echo "$rows" | tr '{' '\n' | grep '"model": *"qwen3.5:0.8b"' | grep -q '"is_active": *1'
           echo "engine answered at $base and qwen3.5:0.8b is the model in use" >> "$GITHUB_STEP_SUMMARY"
 
+      # When the engine did not answer: what the app left behind, so the next
+      # fix is read from the Mac rather than guessed on Windows.
+      - name: What the app left behind (on failure)
+        if: failure()
+        run: |
+          root="$HOME/.local/share/ml-harness"
+          echo "== data root"; find "$root" -maxdepth 2 2>/dev/null | head -60 || true
+          for f in "$root"/logs/* "$root"/*.log; do [ -f "$f" ] && { echo "== $f"; tail -80 "$f"; }; done || true
+          echo "== bundle"; ls -la "/Applications/ML Harness.app/Contents/MacOS" "/Applications/ML Harness.app/Contents/Resources" || true
+          echo "== processes"; ps aux | grep -i -E "ml-harness|ML Harness|uvicorn|/uv " | grep -v grep || true
+          echo "== the shell, run from a terminal for 150 s"
+          exe=$(ls "/Applications/ML Harness.app/Contents/MacOS/" | grep -v -E "^uv" | head -n 1)
+          pkill -f "ML Harness.app/Contents/MacOS" || true
+          sleep 2
+          ("/Applications/ML Harness.app/Contents/MacOS/$exe" > shell-run.log 2>&1 &)
+          sleep 150
+          tail -120 shell-run.log || true
+          echo "== data root after"; find "$root" -maxdepth 2 2>/dev/null | head -60 || true
+          for f in "$root"/logs/*; do [ -f "$f" ] && { echo "== $f"; tail -80 "$f"; }; done || true
+
       # A first task on the runner's CPU with the small model. Reported, not
       # gated: a 0.8B model on a shared CPU is a weaker bar than a person's Mac.
       - name: A first task (iris), with no project folder
@@ -279,5 +299,6 @@ jobs:
           path: |
             out/*
             install.log
+            shell-run.log
             iris.json
           if-no-files-found: warn
