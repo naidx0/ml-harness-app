@@ -28,6 +28,14 @@
  *   about      - their colophon: wordmark, contributors, trademark, website.
  *                Replaced by the harness's own About (about.tsx).
  *
+ * Jaden, 2026-10-03: three settings pages for one job (their Providers, their
+ * Models, the harness's Connections) was the hard part of a first run.
+ *
+ *   providers  - their provider list and connect dialog. Replaced by the
+ *                harness's Models page (slots.tsx), which adds a model on
+ *                this computer or with an API key.
+ *   models     - their per-model visibility toggles over the same catalogue.
+ *
  * Hidden, not deleted: their pages stay byte-identical.
  */
 export const UNBACKED_SETTINGS: ReadonlySet<string> = new Set([
@@ -37,6 +45,8 @@ export const UNBACKED_SETTINGS: ReadonlySet<string> = new Set([
   "pairing",
   "appearance",
   "about",
+  "providers",
+  "models",
 ])
 
 export function harnessUnbackedSetting(tab: string): boolean {

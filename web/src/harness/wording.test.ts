@@ -139,6 +139,8 @@ const HIDDEN_PAGE_FILES: Record<string, string[]> = {
   pairing: ["settings/pairing/"],
   appearance: ["settings/appearance/"],
   about: ["settings/about/"],
+  providers: ["settings/providers/providers.tsx"],
+  models: ["settings/models/"],
 }
 /** Blocks drawn hidden inside a page that shows, by key prefix, with the patch that hides them. */
 const HIDDEN_BLOCKS: Record<string, string> = {

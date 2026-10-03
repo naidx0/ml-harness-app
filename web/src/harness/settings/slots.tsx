@@ -6,11 +6,11 @@ import { harnessUnbackedSetting } from "./unbacked"
 
 /**
  * The harness's own settings, as a group in their Settings screen (patches
- * P9-P12). Their Providers and Models pages stay as they are; these hold
- * what the harness has and they do not.
+ * P9-P12). Their Providers and Models pages are hidden (unbacked.ts):
+ * Models here is the one place a model is added.
  *
- *   Connections - every model connection: use, re-check, edit, rename,
- *                 forget, add by hand, and where keys are kept.
+ *   Models      - every model connection: on this computer, with an API key,
+ *                 and where keys are kept (tab value harness:connections).
  *   Tools       - sub-agents at once, and tool packs with their token cost.
  *   Controls    - every tool, run by hand (moved out of the side panel).
  *   This machine- every hardware field, with where it came from.
@@ -24,7 +24,7 @@ import { harnessUnbackedSetting } from "./unbacked"
 type Section = { value: string; label: string; icon: SettingsNavGroup["items"][number]["icon"]; component: Component }
 
 const SECTIONS: Section[] = [
-  { value: "harness:connections", label: "Connections", icon: "branch", component: lazy(() => import("./connections")) },
+  { value: "harness:connections", label: "Models", icon: "cube", component: lazy(() => import("./connections")) },
   { value: "harness:tools", label: "Tools", icon: "outline-sliders", component: lazy(() => import("./tools")) },
   { value: CONTROLS_SETTINGS_TAB, label: "Controls", icon: "window-cursor", component: lazy(() => import("./controls")) },
   { value: "harness:machine", label: "This machine", icon: "monitor", component: lazy(() => import("./machine")) },

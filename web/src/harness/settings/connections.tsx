@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from "solid-js"
+import { createSignal, For, onCleanup, onMount, Show } from "solid-js"
 import { Badge } from "@opencode/ui/badge"
 import { Button } from "@opencode/ui/button"
 import { TextInput } from "@opencode/ui/text-input"
@@ -20,12 +20,19 @@ import {
   type Keychain,
 } from "./connections-model"
 import { BusyText, EmptyLine, ErrorText, Field, PageHeader, SettingsSection } from "./connections-parts"
-import { AlreadyRunning, LocalModels } from "./connections-local"
+import { LocalModels } from "./connections-local"
 import { AddByHand } from "./connections-add"
 import { Keys } from "./connections-keys"
+import { takeModelsSection } from "./models-open"
 
 /**
- * Settings > Connections: every model connection the harness can think with.
+ * Settings > Models: every model connection the harness can think with.
+ *
+ * Laid out like the outgoing app's "Connect a model" (Jaden, 2026-10-03: "look
+ * at the old format onboarding and implement it into this new kind of UI"):
+ * the models you already have, then the two roads in - one on this computer,
+ * or one with an API key - then where keys are kept. Their own Providers and
+ * Models pages are hidden (unbacked.ts), so this is the one place for the job.
  *
  * Carried over from the outgoing Settings (Models, Keys) and the connect
  * dialog (PARITY 4.2-4.7, 8.1, 8.3). The harness ships no AI; the person lends
@@ -64,15 +71,27 @@ export default function Section() {
     }
   }
 
+  // A button elsewhere (the new-chat card) asked for one road: bring it into view.
+  let page: HTMLDivElement | undefined
+  onMount(() => {
+    const section = takeModelsSection()
+    if (!section) return
+    // Twice: once now, and once after the local list has answered and pushed
+    // the sections below it down.
+    const reveal = () => page?.querySelector(`[data-models-section="${section}"]`)?.scrollIntoView({ block: "start" })
+    const timers = [setTimeout(reveal, 0), setTimeout(reveal, 600)]
+    onCleanup(() => timers.forEach(clearTimeout))
+  })
+
   return (
     <>
       <PageHeader
-        title="Connections"
-        description="The models the harness can think with. Exactly one is active at a time, and every turn goes through it."
+        title="Models"
+        description="ML Harness ships no AI. It thinks with a model you lend it: one on this computer, or one you reach with an API key. One is in use at a time."
       />
-      <div class="settings-tab-body settings-tab-body--sectioned settings-providers">
+      <div ref={page} class="settings-tab-body settings-tab-body--sectioned settings-providers">
         <SettingsSection
-          title="Your connections"
+          title="Your models"
           action={
             <Button
               size="small"
@@ -104,7 +123,7 @@ export default function Section() {
                         </span>
                       )
                     if (phase === "reading" || connections.data.loading) return "Reading your connections…"
-                    return "Nothing is connected yet. Connect a model on this computer below, or add one by hand."
+                    return "Nothing is connected yet. Pick a model on this computer, or add one with an API key, below."
                   })()}
                 </EmptyLine>
               }
@@ -116,11 +135,13 @@ export default function Section() {
           </SettingsList>
         </SettingsSection>
 
-        <LocalModels connections={rows()} busy={busy() !== undefined} run={run} />
+        <div data-models-section="local" class="scroll-mt-24">
+          <LocalModels connections={rows()} busy={busy() !== undefined} run={run} />
+        </div>
 
-        <AlreadyRunning />
-
-        <AddByHand presets={presetList()} keychain={keys()} busy={busy() !== undefined} run={run} />
+        <div data-models-section="api" class="scroll-mt-24">
+          <AddByHand presets={presetList()} keychain={keys()} busy={busy() !== undefined} run={run} />
+        </div>
 
         <Keys
           keychain={keys()}

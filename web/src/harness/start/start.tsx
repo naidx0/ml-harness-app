@@ -1,17 +1,15 @@
-import { createResource, createSignal, For, onCleanup, Show } from "solid-js"
+import { createResource, For, onCleanup, Show } from "solid-js"
 import { Button } from "@opencode/ui/button"
-import { useDialog } from "@opencode/ui/context/dialog"
 import type { ComposerModel } from "@/composer/model"
 import { useServerSDK } from "@/runtime/server/client"
-import { useWorkspaceLocation } from "@/workspaces/location"
 import { harness } from "../engine"
-import { connectionLabel, connectLocal, listLocalModels, localModelLabel, type Connection } from "../providers/local"
+import { connectionLabel, type Connection } from "../providers/local"
 import { useLocal } from "@/providers/models/selection"
 import { useCommand } from "@/shell/commands/command"
 import { unsupportedCommandOverrides } from "../session/unsupported"
 import { useHarnessRead } from "../ui"
 import { HarnessSurfaceMarks } from "../session/marks"
-import { DEFAULT_LOCAL_MODEL, INSTALL_LINE, whatIsMissing, type LocalRead } from "./setup"
+import { useOpenModels } from "../settings/models-open"
 
 /**
  * What a new chat shows under the composer (patch P14).
@@ -22,9 +20,11 @@ import { DEFAULT_LOCAL_MODEL, INSTALL_LINE, whatIsMissing, type LocalRead } from
  *
  *   - What can this machine do? One line of hardware, measured.
  *   - Where do I start? Four starter prompts; a click fills the composer.
- *   - Which model? If none is connected, the models already on this machine,
- *     each one click away - the only step the harness ever required before
- *     a first message, now done without leaving the page.
+ *   - Which model? If none is connected, two buttons and nothing else: a
+ *     model on this computer, or one with an API key. Both open Settings >
+ *     Models, the one page where models are added (Jaden, 2026-10-03: "attach
+ *     a local model takes you to route, select a model takes you to route
+ *     settings ... simple").
  */
 
 const STARTERS = [
@@ -47,18 +47,16 @@ function machineLine(specs: Specs | undefined) {
 }
 
 export function HarnessStart(props: { composer: ComposerModel }) {
-  const dialog = useDialog()
-  const location = useWorkspaceLocation()
   const selection = useLocal()
+  const openModels = useOpenModels()
   // A new chat's composer registers their shell mode and their location
   // cycle; the same overrides the session mount makes (session/unsupported.ts),
   // made here too because a new chat has no session mount yet.
   useCommand().register("harness.start", () => [...unsupportedCommandOverrides()])
   const [specs] = createResource(() => harness<Specs>("/local_specs").catch(() => undefined))
-  // The connections, re-read whenever they may have changed: after the API-key
-  // dialog closes, and on the facade's `provider.updated` / `model.updated`
-  // (app/facade/stream.py CATALOG_EVENTS), so a model connected in Settings or
-  // in that dialog clears "Pick a model" without a reload.
+  // The connections, re-read whenever they may have changed: on the facade's
+  // `provider.updated` / `model.updated` (app/facade/stream.py CATALOG_EVENTS),
+  // so a model connected in Settings clears the card without a reload.
   //
   // A failed read is NOT "no model": it used to fall back to an empty list,
   // which told a person with a model connected to pick one.
@@ -76,66 +74,10 @@ export function HarnessStart(props: { composer: ComposerModel }) {
   const sdk = useServerSDK()
   onCleanup(sdk.event.on("provider.updated", () => void refetch()))
   onCleanup(sdk.event.on("model.updated", () => void refetch()))
-  // A failed read is Ollama not answering, which is not the same as Ollama
-  // answering with no models: each has its own sentence below, and the error
-  // is shown in Ollama's own words rather than dropped.
-  const [local, { refetch: lookAgain }] = createResource(noModel, () =>
-    listLocalModels().then(
-      (models): LocalRead => ({ models }),
-      (error): LocalRead => ({ models: [], error: error instanceof Error ? error.message : String(error) }),
-    ),
-  )
-  const missing = () => whatIsMissing(local.latest)
-  // While nothing can be picked, look again every few seconds, so a model
-  // pulled in another window (or by the install line) appears by itself.
-  const poll = setInterval(() => {
-    if (noModel() && missing() && !local.loading) void lookAgain()
-  }, 5_000)
-  onCleanup(() => clearInterval(poll))
-  // A refused clipboard write (a webview can deny it) says how to copy by
-  // hand - one click on the line selects all of it - instead of doing nothing.
-  const [copied, setCopied] = createSignal<"copied" | "selected">()
-  let line: HTMLElement | undefined
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(INSTALL_LINE)
-      setCopied("copied")
-    } catch {
-      const range = document.createRange()
-      if (line) range.selectNodeContents(line)
-      window.getSelection()?.removeAllRanges()
-      window.getSelection()?.addRange(range)
-      setCopied("selected")
-    }
-  }
-  const [busy, setBusy] = createSignal<string>()
-  const [failure, setFailure] = createSignal<string>()
-
   const fill = (text: string) => {
     props.composer.onInput(text, [{ type: "text", content: text, start: 0, end: text.length }], text.length)
     props.composer.restoreFocus(text.length)
   }
-
-  const connect = async (model: string) => {
-    setBusy(model)
-    setFailure(undefined)
-    try {
-      await connectLocal(model)
-      await refetch()
-    } catch (error) {
-      setFailure(error instanceof Error ? error.message : String(error))
-    } finally {
-      setBusy(undefined)
-    }
-  }
-
-  const openKeyDialog = () =>
-    void import("@/providers/connect/dialog").then(({ DialogConnectProvider }) => {
-      void dialog.show(
-        () => <DialogConnectProvider directory={location().directory} />,
-        () => void refetch(),
-      )
-    })
 
   return (
     // CENTRED, "This computer" first (the owner, 2026-09-22: "This computer at
@@ -170,71 +112,28 @@ export function HarnessStart(props: { composer: ComposerModel }) {
         )}
       </Show>
       <Show when={noModel()}>
-        <div class="flex w-full flex-col items-center gap-2 rounded-[10px] bg-v2-background-bg-layer-01 p-3">
-          <div class="text-[13px] [font-weight:530] text-v2-text-text-base">Pick a model to start</div>
-          <Show
-            when={(local.latest?.models ?? []).length > 0}
-            fallback={
-              <Show
-                when={missing()}
-                fallback={<div class="text-12-regular text-v2-text-text-muted">Looking for models on this computer…</div>}
-              >
-                {(what) => (
-                  <div data-slot="start-no-local" data-missing={what()} class="flex w-full max-w-[560px] flex-col items-center gap-2">
-                    <div class="text-12-regular text-v2-text-text-muted">
-                      {what() === "ollama"
-                        ? "Ollama is not answering on this computer, so there is no local model to pick. If it is installed, open it from the Start menu. If not, run this line in PowerShell: it installs Ollama and the model " +
-                          DEFAULT_LOCAL_MODEL +
-                          " (about 5 GB) and connects it."
-                        : "Ollama is running and has no models yet. Run this line in PowerShell: it pulls " +
-                          DEFAULT_LOCAL_MODEL +
-                          " (about 3.4 GB) and connects it. A model you pull yourself appears here too."}
-                    </div>
-                    <div class="flex w-full items-center gap-2 rounded-[8px] bg-v2-background-bg-layer-02 px-2 py-1 text-left">
-                      <code ref={line} class="min-w-0 flex-1 select-all break-all font-mono text-[12px] text-v2-text-text-base">
-                        {INSTALL_LINE}
-                      </code>
-                      <Button size="small" variant="outline" onClick={() => void copy()}>
-                        {copied() === "copied" ? "Copied" : copied() === "selected" ? "Click the line, then Ctrl+C" : "Copy"}
-                      </Button>
-                    </div>
-                    <Show when={local.latest?.error}>
-                      {(error) => <div class="font-mono text-[11px] text-v2-text-text-faint">Ollama: {error()}</div>}
-                    </Show>
-                    <Button size="small" variant="ghost" onClick={() => void lookAgain()}>
-                      Look again
-                    </Button>
-                  </div>
-                )}
-              </Show>
-            }
-          >
-            <div class="flex flex-wrap justify-center gap-2">
-              <For each={local.latest?.models}>
-                {(model) => (
-                  <Button
-                    size="small"
-                    variant="outline"
-                    disabled={busy() !== undefined}
-                    title={model.name}
-                    onClick={() => void connect(model.name)}
-                  >
-                    {busy() === model.name
-                      ? `Connecting ${localModelLabel(model.name, settledList())}…`
-                      : localModelLabel(model.name, settledList())}
-                  </Button>
-                )}
-              </For>
+        <div
+          data-slot="start-no-model"
+          class="flex w-full max-w-[520px] flex-col items-center gap-3 rounded-[12px] bg-v2-background-bg-layer-01 px-4 py-4"
+        >
+          <div class="flex flex-col items-center gap-1">
+            <div class="text-[14px] [font-weight:560] text-v2-text-text-base">Connect a model to start</div>
+            <div class="text-12-regular text-v2-text-text-muted">
+              ML Harness ships no AI. Use one on this computer, or one you reach with an API key.
             </div>
-          </Show>
-          <Show when={failure()}>
-            <div class="text-12-regular text-v2-state-fg-danger">{failure()}</div>
-          </Show>
-          <div>
-            <Button size="small" variant="ghost" onClick={openKeyDialog}>
-              Use an API key instead
-            </Button>
           </div>
+          <Show when={openModels}>
+            {(open) => (
+              <div class="flex flex-wrap justify-center gap-2">
+                <Button size="normal" variant="contrast" icon="monitor" onClick={() => open()("local")}>
+                  Use a model on this computer
+                </Button>
+                <Button size="normal" variant="neutral" icon="key" onClick={() => open()("api")}>
+                  Use an API key
+                </Button>
+              </div>
+            )}
+          </Show>
         </div>
       </Show>
 

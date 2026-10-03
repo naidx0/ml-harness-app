@@ -38,7 +38,10 @@ describe("settings with no backing are hidden everywhere they are listed", () =>
   it("settings search offers none of them, and still offers the rest", () => {
     const tabs = [...clientSettings, ...serverSettings, ...projectSettings].map((entry) => entry.tab as string)
     expect(tabs.filter((tab) => UNBACKED_SETTINGS.has(tab))).toEqual([])
-    expect(tabs).toContain("providers")
+    // Their Providers and Models pages are gone too (2026-10-03): the harness's
+    // Models page is the one place a model is added.
+    expect(tabs).not.toContain("providers")
+    expect(tabs).not.toContain("models")
     expect(tabs).toContain("general")
   })
 

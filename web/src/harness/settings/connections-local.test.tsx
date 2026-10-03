@@ -98,3 +98,27 @@ describe("what is already running here, when the read fails", () => {
     expect(host.querySelector('[data-slot="discover-error"]')).toBeNull()
   })
 })
+
+describe("when there is no local model to pick", () => {
+  const INSTALL = "irm https://raw.githubusercontent.com/naidx0/ml-harness-app/main/install.ps1 | iex"
+
+  it("says Ollama is not answering, shows its words, and offers the one-line fix", async () => {
+    listLocalModels.mockRejectedValue(new Error("connection refused at 127.0.0.1:11434"))
+    const host = await mount(() => <LocalModels connections={[]} busy={false} run={async () => true} />)
+    const card = host.querySelector<HTMLElement>('[data-slot="local-missing"]')!
+    expect(card.dataset.missing).toBe("ollama")
+    expect(card.textContent).toContain("Ollama is not answering on this computer")
+    expect(card.textContent).toContain("connection refused at 127.0.0.1:11434")
+    expect(card.querySelector("code")?.textContent).toBe(INSTALL)
+  })
+
+  it("says Ollama has no model yet, and offers the same line, which pulls one and connects it", async () => {
+    listLocalModels.mockResolvedValue([])
+    const host = await mount(() => <LocalModels connections={[]} busy={false} run={async () => true} />)
+    const card = host.querySelector<HTMLElement>('[data-slot="local-missing"]')!
+    expect(card.dataset.missing).toBe("model")
+    expect(card.textContent).toContain("Ollama is running and has no models yet")
+    expect(card.textContent).toContain("qwen3.5:4b")
+    expect(card.querySelector("code")?.textContent).toBe(INSTALL)
+  })
+})

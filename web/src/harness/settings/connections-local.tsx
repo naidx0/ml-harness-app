@@ -7,6 +7,8 @@ import { connectLocal, listLocalModels, localModelLabel, type Connection, type L
 import { inUseModel, modelList, reachable, type Candidate } from "./connections-model"
 import { EmptyLine, message, SettingsSection } from "./connections-parts"
 import type { Run } from "./connections"
+import { InstallLine } from "../start/install-line"
+import { DEFAULT_LOCAL_MODEL } from "../start/setup"
 
 /**
  * What a local model's capabilities say about tool calling. No list at all
@@ -72,8 +74,8 @@ export function LocalModels(props: { connections: Connection[] | undefined; busy
 
   return (
     <SettingsSection
-      title="Models on this computer"
-      note="A model already pulled into Ollama needs no address and no key. One click connects it, makes it the active one, and checks what it can do."
+      title="On this computer"
+      note="A model pulled into Ollama needs no address and no key. One click connects it and makes it the one in use."
       action={
         <Button
           size="small"
@@ -90,18 +92,29 @@ export function LocalModels(props: { connections: Connection[] | undefined; busy
         <Switch>
           <Match when={models.error}>
             {/* Not running Ollama is an ordinary choice, not a fault. */}
-            <EmptyLine>
-              No local models could be read: {models.error instanceof Error ? models.error.message : String(models.error)}.
-              That is fine if you do not run one - add a connection by hand below.
-            </EmptyLine>
+            <div data-slot="local-missing" data-missing="ollama" class="flex flex-col gap-2 px-3 py-3 text-[13px] text-v2-text-text-muted">
+              <span>
+                Ollama is not answering on this computer. If it is installed, open it from the Start menu. If not, run
+                this line in PowerShell: it installs Ollama and {DEFAULT_LOCAL_MODEL} (about 5 GB) and connects it. Or
+                use an API key below.
+              </span>
+              <InstallLine />
+              <span class="font-mono text-[11px] text-v2-text-text-faint">
+                Ollama: {models.error instanceof Error ? models.error.message : String(models.error)}
+              </span>
+            </div>
           </Match>
           <Match when={models.loading && !list()}>
             <EmptyLine>Reading the models on this computer…</EmptyLine>
           </Match>
           <Match when={(list() ?? []).length === 0}>
-            <EmptyLine>
-              Ollama answered and has no models pulled yet, so there is nothing to click. Pull a model and look again.
-            </EmptyLine>
+            <div data-slot="local-missing" data-missing="model" class="flex flex-col gap-2 px-3 py-3 text-[13px] text-v2-text-text-muted">
+              <span>
+                Ollama is running and has no models yet. Run this line in PowerShell: it pulls {DEFAULT_LOCAL_MODEL}
+                (about 3.4 GB) and connects it. A model you pull yourself appears here after Look again.
+              </span>
+              <InstallLine />
+            </div>
           </Match>
           <Match when={true}>
             <For each={list()}>

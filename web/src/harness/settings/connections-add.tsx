@@ -40,8 +40,8 @@ export function AddByHand(props: { presets: Preset[]; keychain: Keychain | undef
 
   return (
     <SettingsSection
-      title="Add a connection by hand"
-      note="For a server on your network, a gateway, or an API you pay for. Pick a preset to fill the address, or type everything."
+      title="With an API key"
+      note="OpenAI, OpenRouter, or any OpenAI-compatible server. Pick one to fill the address, then type the model name and paste the key."
     >
       <Show when={props.presets.length > 0}>
         <div class="flex flex-wrap gap-2" role="group" aria-label="Presets">
