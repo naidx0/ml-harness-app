@@ -238,6 +238,15 @@ jobs:
             echo "| $name | $(du -m "out/$name" | cut -f1) | no |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # A PERSON'S MAC HAS NO CHECKOUT. The shell was compiled here, and it
+      # recognises the checkout it was compiled from (CARGO_MANIFEST_DIR plus
+      # docs/diagnosis_engine.yaml, engine.rs) and installs THAT instead of its
+      # wheel - so the engine ran from this workspace and published engine.json
+      # here, not in ~/.local/share (seen on run 37154377592). Hiding the marker
+      # makes the installed app behave as it will on a machine that never built it.
+      - name: Hide the build's checkout from the installed app
+        run: mv docs/diagnosis_engine.yaml docs/diagnosis_engine.yaml.hidden-for-the-install-test
+
       # The one line, as a person runs it, against the .dmg this job built.
       # qwen3.5:0.8b keeps the pull small on a runner; the default is 4b.
       - name: Install it with the one line, with Ollama and a model
