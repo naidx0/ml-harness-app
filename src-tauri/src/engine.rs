@@ -208,10 +208,26 @@ fn uv_sidecar() -> Option<PathBuf> {
 
 /// What to install into a fresh interpreter, and what to call it when saying so.
 fn payload() -> Result<(String, PathBuf), String> {
-    let beside = std::env::current_exe()
+    let bases = std::env::current_exe()
         .ok()
-        .and_then(|exe| exe.parent().map(Path::to_path_buf));
-    choose_payload(repository_root(), beside.as_deref())
+        .and_then(|exe| exe.parent().map(resource_bases))
+        .unwrap_or_default();
+    choose_payload(repository_root(), &bases)
+}
+
+/// Where `bundle.resources` can be, relative to the binary's own folder.
+///
+/// Beside it on Windows (the NSIS and MSI layouts). In a Mac app bundle the
+/// binary is `Contents/MacOS/` and resources are `Contents/Resources/`, so
+/// looking only beside the binary found no wheel, made no interpreter, and fell
+/// through to a system Python with no uvicorn - measured on a macos-14 runner,
+/// run 37156534374.
+fn resource_bases(exe_dir: &Path) -> Vec<PathBuf> {
+    let mut bases = vec![exe_dir.to_path_buf()];
+    if let Some(contents) = exe_dir.parent() {
+        bases.push(contents.join("Resources"));
+    }
+    bases
 }
 
 /// The decision, as a function of what was found rather than of where it ran.
@@ -230,12 +246,12 @@ fn payload() -> Result<(String, PathBuf), String> {
 /// already proven imports.
 fn choose_payload(
     repository: Option<PathBuf>,
-    beside: Option<&Path>,
+    bases: &[PathBuf],
 ) -> Result<(String, PathBuf), String> {
     if let Some(root) = repository {
         return Ok(("the checkout this binary was built in".into(), root));
     }
-    if let Some(beside) = beside {
+    for beside in bases {
         let resources = beside.join("resources");
         if let Ok(entries) = std::fs::read_dir(&resources) {
             let mut wheels: Vec<PathBuf> = entries
@@ -296,12 +312,30 @@ mod payload_tests {
     }
 
     #[test]
+    fn a_mac_app_bundle_finds_its_wheel_under_contents_resources() {
+        // Contents/MacOS/<binary> and Contents/Resources/resources/<wheel>.
+        let contents = a_directory("macbundle");
+        let macos = contents.join("MacOS");
+        let resources = contents.join("Resources");
+        std::fs::create_dir_all(&macos).unwrap();
+        std::fs::create_dir_all(resources.join("resources")).unwrap();
+        a_wheel(&resources, "ml_harness-0.1.1-py3-none-any.whl");
+
+        let bases = resource_bases(&macos);
+        assert_eq!(bases, vec![macos.clone(), resources.clone()]);
+        let (what, source) = choose_payload(None, &bases).unwrap();
+        assert!(what.contains("wheel"), "{what}");
+        assert_eq!(source.file_name().unwrap(), "ml_harness-0.1.1-py3-none-any.whl");
+        let _ = std::fs::remove_dir_all(&contents);
+    }
+
+    #[test]
     fn a_checkout_installs_itself() {
         let beside = a_directory("checkout");
         a_wheel(&beside, "ml_harness-0.1.0-py3-none-any.whl");
 
         let (what, source) =
-            choose_payload(Some(PathBuf::from("/somewhere/checkout")), Some(&beside)).unwrap();
+            choose_payload(Some(PathBuf::from("/somewhere/checkout")), &[beside.clone()]).unwrap();
 
         // THE CHECKOUT WINS EVEN WITH A WHEEL SITTING THERE, and that order is
         // the whole reason a developer's `cargo run` installs the code they are
@@ -317,7 +351,7 @@ mod payload_tests {
         let beside = a_directory("installed");
         a_wheel(&beside, "ml_harness-0.1.0-py3-none-any.whl");
 
-        let (what, source) = choose_payload(None, Some(&beside)).unwrap();
+        let (what, source) = choose_payload(None, &[beside.clone()]).unwrap();
 
         assert!(what.contains("wheel"), "{what}");
         assert_eq!(
@@ -333,7 +367,7 @@ mod payload_tests {
         a_wheel(&beside, "ml_harness-0.1.0-py3-none-any.whl");
         a_wheel(&beside, "ml_harness-0.2.0-py3-none-any.whl");
 
-        let (_, source) = choose_payload(None, Some(&beside)).unwrap();
+        let (_, source) = choose_payload(None, &[beside.clone()]).unwrap();
 
         assert_eq!(
             source.file_name().unwrap(),
@@ -349,7 +383,7 @@ mod payload_tests {
         let beside = a_directory("stranger");
         a_wheel(&beside, "requests-2.32.0-py3-none-any.whl");
 
-        let refused = choose_payload(None, Some(&beside)).unwrap_err();
+        let refused = choose_payload(None, &[beside.clone()]).unwrap_err();
 
         assert!(refused.contains("no wheel"), "{refused}");
     }
@@ -358,7 +392,7 @@ mod payload_tests {
     fn no_checkout_and_no_wheel_is_a_sentence_not_a_shrug() {
         let beside = a_directory("empty");
 
-        let refused = choose_payload(None, Some(&beside)).unwrap_err();
+        let refused = choose_payload(None, &[beside.clone()]).unwrap_err();
 
         // It has to name what a packaged build would have, or the person
         // reading it learns only that something is missing.
