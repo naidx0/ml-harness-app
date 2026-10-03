@@ -200,7 +200,7 @@ flowchart LR
 | Judge alone | 19 | 0 | 0 |
 | **Judge + wall** | **4** | **0** | **0** |
 
-It misses 4 replies that name no phrase ("drops the final condition"), and the 5-character minimum for a quoted phrase was picked on these same rows, so 15 of 19 is not an out-of-sample score. The rule it led to is the one the app follows everywhere: **a verdict is a yes or no, and the reason shown to you comes from code** (the computed difference between the two texts), never from the judge's own sentence. The full write-up is in [the judge record](docs/judge_runs/THE-JUDGE.md).
+It misses 4 replies that name no phrase ("drops the final condition"), and the 5-character minimum for a quoted phrase was picked on these same rows, so 15 of 19 is not an out-of-sample score. The rule it led to is the one the app follows everywhere: **a verdict is a yes or no, and the reason shown to you comes from code** (the computed difference between the two texts), never from the judge's own sentence. The full write-up is in [the judge record](docs/judge_runs/THE-JUDGE.md). The 72-rewrite run is in [its run record](docs/judge_runs/2026-09-05-sentinel-n-result.md), and a later run on 188 judgements in [its pre-registration](docs/judge_runs/2026-09-05-two-hundred-rows-prereg.md).
 
 ## How it is put together
 
