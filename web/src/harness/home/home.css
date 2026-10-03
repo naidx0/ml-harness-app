@@ -1,0 +1,5 @@
+/* Their chats list draws its own floating New chat; Home's header has the one
+   button (route.tsx), so theirs is not drawn here. */
+[data-component="harness-home"] [data-action="home-new-session"] {
+  display: none;
+}

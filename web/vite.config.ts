@@ -143,6 +143,9 @@ const SUBSTITUTES: Record<string, string> = {
   "session/summary/server-panel.tsx": "./src/harness/panel/unbacked/server-panel.tsx",
   "new-session/workspace/selector.tsx": "./src/harness/panel/unbacked/workspace-selector.tsx",
   "settings/search-catalog.ts": "./src/harness/settings/search-catalog.ts",
+  // Home as one column: the sidebar has projects, Settings and New chat
+  // (docs/onboarding-ui-plan.md, slice 3).
+  "home/route.tsx": "./src/harness/home/route.tsx",
   // Their English strings with this product's name and claims.
   "runtime/i18n/en.ts": "./src/brand/strings.ts",
 }
