@@ -301,6 +301,21 @@ jobs:
           "$py" scripts/smoke_small_task.py --task iris --no-folder --budget 1200 --out iris.json | tee iris.txt
           echo "iris on the runner: $(cat iris.txt)" >> "$GITHUB_STEP_SUMMARY"
 
+      # The download half of the line, against the release that is live now:
+      # the GitHub API answer, the .dmg for this chip, SHA256SUMS.txt. (The
+      # API answers on one line, which the first install.sh did not parse;
+      # found by hand after v0.1.1 was published.)
+      - name: The one line against the published release (download path)
+        run: |
+          set -eu
+          pkill -f "ML Harness.app/Contents/MacOS" || true
+          sleep 2
+          rm -rf "/Applications/ML Harness.app"
+          MLH_NO_OLLAMA=1 MLH_NO_LAUNCH=1 sh install.sh 2>&1 | tee install-live.log
+          grep -q "SHA-256 matches the release" install-live.log
+          test -d "/Applications/ML Harness.app"
+          echo "the live release installed through the one line: $(defaults read "/Applications/ML Harness.app/Contents/Info" CFBundleShortVersionString)" >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -308,6 +323,7 @@ jobs:
           path: |
             out/*
             install.log
+            install-live.log
             shell-run.log
             iris.json
           if-no-files-found: warn

@@ -76,10 +76,12 @@ else
   say "Finding the latest ML Harness release"
   curl -fsSL -H "User-Agent: ml-harness-install" "$API" -o "$WORK/release.json" ||
     fail "could not read $API. Check the internet connection."
-  TAG=$(sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' "$WORK/release.json" | head -n 1)
+  # The API answers on one line: one field per line first, then read them.
+  tr ',' '\n' < "$WORK/release.json" > "$WORK/fields.txt"
+  TAG=$(sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' "$WORK/fields.txt" | head -n 1)
   WANT=${TAG#v}
-  DMG_URL=$(sed -n 's/.*"browser_download_url": *"\([^"]*\)".*/\1/p' "$WORK/release.json" | grep -E "macos-$ARCH\.dmg$" | head -n 1 || true)
-  SUMS_URL=$(sed -n 's/.*"browser_download_url": *"\([^"]*SHA256SUMS\.txt\)".*/\1/p' "$WORK/release.json" | head -n 1)
+  DMG_URL=$(sed -n 's/.*"browser_download_url": *"\([^"]*\)".*/\1/p' "$WORK/fields.txt" | grep -E "macos-$ARCH\.dmg$" | head -n 1 || true)
+  SUMS_URL=$(sed -n 's/.*"browser_download_url": *"\([^"]*SHA256SUMS\.txt\)".*/\1/p' "$WORK/fields.txt" | head -n 1)
   [ -n "$DMG_URL" ] || fail "release $TAG has no macOS ($ARCH) download yet."
   [ -n "$SUMS_URL" ] || fail "release $TAG has no SHA256SUMS.txt, so the download cannot be checked."
   DMG=""
