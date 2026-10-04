@@ -1,7 +1,7 @@
 {
   "name": "ml-harness",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Workspace root. Exists so that node_modules is an ancestor of both web/ and vendor/opencode/ - see the note below.",
   "workspaces": [
     "web"
